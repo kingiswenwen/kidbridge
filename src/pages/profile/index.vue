@@ -5,13 +5,13 @@
       <view class="hero-bg-shape"></view>
       <view class="deco-blob blob-1"></view>
       <view class="deco-blob blob-2"></view>
-      <view class="deco-star s1">✦</view>
-      <view class="deco-star s2">✧</view>
+      <image class="deco-star s1" src="/static/icons/sparkle.svg" mode="aspectFit" />
+      <image class="deco-star s2" src="/static/icons/sparkle.svg" mode="aspectFit" />
 
       <view class="hero-content">
         <view class="avatar-section" @click="editName">
           <view class="avatar-large">
-            <text class="avatar-emoji-lg">{{ store.avatar || '🐼' }}</text>
+            <image class="avatar-img-lg" src="/static/icons/panda.svg" mode="aspectFit" />
           </view>
           <view class="avatar-edit">
             <image class="edit-icon" src="/static/menu/settings.png" mode="aspectFit" />
@@ -172,15 +172,12 @@ function showAbout() {
 .blob-2 { top: 140px; left: -50px; width: 160px; height: 160px; background: rgba(255,217,61,0.45); }
 .deco-star {
   position: absolute;
-  color: rgba(255,255,255,0.9);
-  font-size: 20px;
-  font-weight: 700;
   pointer-events: none;
   z-index: 0;
   animation: float 4s ease-in-out infinite;
 }
-.deco-star.s1 { top: 60px; right: 18%; }
-.deco-star.s2 { top: 200px; right: 8%; font-size: 14px; }
+.deco-star.s1 { top: 60px; right: 18%; width: 22px; height: 22px; }
+.deco-star.s2 { top: 200px; right: 8%; width: 16px; height: 16px; }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -205,7 +202,7 @@ function showAbout() {
   box-shadow: 0 8px 32px rgba(0,0,0,0.12);
   border: 4px solid rgba(255,255,255,0.6);
 }
-.avatar-emoji-lg { font-size: 50px; }
+.avatar-img-lg { width: 60px; height: 60px; }
 .avatar-edit {
   position: absolute;
   bottom: 0; right: 0;

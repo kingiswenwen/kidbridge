@@ -12,7 +12,7 @@
     <!-- 阶段一：选模式 -->
     <view v-if="state === 'select'" class="py-stage px-6 pt-10">
       <view class="py-hero text-center">
-        <text class="py-hero-emoji">📚</text>
+        <image class="py-hero-icon" src="/static/icons/book2.svg" mode="aspectFit" />
         <text class="py-hero-title">拼音练习</text>
         <text class="py-hero-subtitle">选一个模式开始练习吧～</text>
       </view>
@@ -24,7 +24,7 @@
           :class="['mode-card', mode === m.key ? 'selected' : '']"
           @click="mode = m.key"
         >
-          <text class="mode-emoji">{{ m.emoji }}</text>
+          <image class="mode-icon-img" :src="m.icon" mode="aspectFit" />
           <text class="mode-name">{{ m.name }}</text>
           <text class="mode-desc">{{ m.desc }}</text>
         </view>
@@ -43,7 +43,7 @@
       </view>
 
       <view class="start-btn mt-10" @click="start()">
-        <text class="start-text">🚀 开始练习</text>
+        <text class="start-text">开始练习</text>
       </view>
     </view>
 
@@ -89,16 +89,15 @@
         </view>
 
         <view v-if="isAnswered" class="feedback text-center mt-8">
-          <text :class="['fb-emoji', lastCorrect ? 'right' : 'wrong']">
-            {{ lastCorrect ? '🎉' : '💡' }}
-          </text>
+          <image :class="['fb-icon', lastCorrect ? 'right' : 'wrong']" :src="lastCorrect ? '/static/icons/party.svg' : '/static/icons/bulb.svg'" mode="aspectFit" />
           <text :class="['fb-text', lastCorrect ? 'right' : 'wrong']">
             {{ lastCorrect ? pick(encouragements).content : `${q.char} 读 ${displayPinyin}` }}
           </text>
           <view class="next-btn mt-6" @click="next">
             <text class="next-text">
-              {{ currentIndex + 1 === questions.length ? '🏆 查看成绩' : '下一题 →' }}
+              {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
+            <image v-if="currentIndex + 1 === questions.length" class="next-icon" src="/static/icons/trophy.svg" mode="aspectFit" />
           </view>
         </view>
       </view>
@@ -107,8 +106,8 @@
     <!-- 阶段三：结算 -->
     <view v-else-if="state === 'result'" class="py-stage px-6 pt-10">
       <view class="result-card-2">
-        <text class="r-emoji">{{ stars === 3 ? '🏆' : stars === 2 ? '🎉' : stars === 1 ? '💪' : '🌈' }}</text>
-        <text class="r-title">{{ stars === 3 ? '全对啦！小拼音家 🌟' : stars === 2 ? '做得不错！' : stars === 1 ? '有进步！' : '继续加油呀！' }}</text>
+        <image class="r-icon" :src="resultIcon" mode="aspectFit" />
+        <text class="r-title">{{ stars === 3 ? '全对啦！小拼音家' : stars === 2 ? '做得不错！' : stars === 1 ? '有进步！' : '继续加油呀！' }}</text>
         <view class="mt-6">
           <StarRating :stars="stars" :animated="true" />
         </view>
@@ -128,10 +127,12 @@
         </view>
         <view class="r-actions mt-10 flex gap-4">
           <view class="r-btn-a" @click="reset">
-            <text class="r-btn-a-text">🔄 再练一组</text>
+            <image class="r-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
+            <text class="r-btn-a-text">再练一组</text>
           </view>
           <view class="r-btn-b" @click="() => uni.navigateBack()">
-            <text class="r-btn-b-text">↩️ 返回</text>
+            <image class="r-btn-icon" src="/static/icons/arrow.svg" mode="aspectFit" />
+            <text class="r-btn-b-text">返回</text>
           </view>
         </view>
       </view>
@@ -150,8 +151,8 @@ import StarRating, { calculateStars } from "@/components/StarRating.vue";
 type Mode = "char2pinyin" | "pinyin2char";
 
 const modes = [
-  { key: "char2pinyin" as Mode, name: "认字 → 选拼音", desc: "看到汉字，选择正确的读音", emoji: "🔤" },
-  { key: "pinyin2char" as Mode, name: "拼音 → 选汉字", desc: "看到拼音，选出对应的汉字", emoji: "🀄️" },
+  { key: "char2pinyin" as Mode, name: "认字 → 选拼音", desc: "看到汉字，选择正确的读音", icon: "/static/icons/book2.svg" },
+  { key: "pinyin2char" as Mode, name: "拼音 → 选汉字", desc: "看到拼音，选出对应的汉字", icon: "/static/icons/pencil.svg" },
 ];
 
 const mode = ref<Mode>("char2pinyin");
@@ -171,6 +172,12 @@ const rate = computed(() =>
   questions.value.length ? Math.round((correctCount.value / questions.value.length) * 100) : 0,
 );
 const stars = computed(() => calculateStars(correctCount.value, questions.value.length));
+const resultIcon = computed(() => {
+  if (stars.value === 3) return '/static/icons/trophy.svg';
+  if (stars.value === 2) return '/static/icons/party.svg';
+  if (stars.value === 1) return '/static/icons/bulb.svg';
+  return '/static/icons/sparkle.svg';
+});
 
 const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const pickMany = <T,>(arr: T[], n: number): T[] => {
@@ -301,7 +308,7 @@ void vowelsRe;
 .py-stage { max-width: 860rpx; margin: 0 auto; }
 
 .py-hero { display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
-.py-hero-emoji { font-size: 120rpx; }
+.py-hero-icon { width: 120rpx; height: 120rpx; }
 .py-hero-title { font-size: 56rpx; font-weight: 800; color: #047857; }
 .py-hero-subtitle { font-size: 28rpx; color: #6B7280; }
 
@@ -325,7 +332,7 @@ void vowelsRe;
   }
   &:active { transform: scale(0.97); }
 }
-.mode-emoji { font-size: 72rpx; }
+.mode-icon-img { width: 72rpx; height: 72rpx; }
 .mode-name { font-size: 32rpx; font-weight: 700; color: #1F2937; text-align: center; }
 .mode-desc { font-size: 22rpx; color: #6B7280; text-align: center; line-height: 1.4; }
 
@@ -362,7 +369,7 @@ void vowelsRe;
 
 .options-grid-2 { padding: 8rpx 0; }
 .feedback { padding: 8rpx 0; }
-.fb-emoji { font-size: 72rpx; display: block; }
+.fb-icon { width: 90rpx; height: 90rpx; display: block; margin: 0 auto; }
 .fb-text { display: block; margin-top: 8rpx; font-size: 30rpx; font-weight: 600;
   &.right { color: #10B981; }
   &.wrong { color: #FF6B6B; }
@@ -371,11 +378,12 @@ void vowelsRe;
   max-width: 520rpx; margin: 0 auto;
   min-height: 96rpx; border-radius: 32rpx;
   background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   box-shadow: 0 12rpx 32rpx rgba(255,107,107,0.28);
   &:active { transform: scale(0.98); }
 }
 .next-text { color: #FFFFFF; font-size: 32rpx; font-weight: 700; }
+.next-icon { width: 32rpx; height: 32rpx; }
 
 /* Result */
 .result-card-2 {
@@ -386,7 +394,7 @@ void vowelsRe;
   text-align: center;
   margin-top: 24rpx;
 }
-.r-emoji { font-size: 150rpx; display: block; }
+.r-icon { width: 150rpx; height: 150rpx; display: block; margin: 0 auto; }
 .r-title { font-size: 40rpx; font-weight: 800; color: #1F2937; display: block; margin-top: 12rpx; }
 .r-stats {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16rpx;
@@ -402,9 +410,10 @@ void vowelsRe;
 .r-actions { display: flex; gap: 16rpx; }
 .r-btn-a, .r-btn-b {
   flex: 1; min-height: 96rpx; border-radius: 28rpx;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   &:active { transform: scale(0.97); }
 }
+.r-btn-icon { width: 32rpx; height: 32rpx; }
 .r-btn-a {
   background: linear-gradient(135deg, #059669 0%, #34D399 100%);
   box-shadow: 0 10rpx 28rpx rgba(5,150,105,0.28);

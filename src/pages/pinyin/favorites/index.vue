@@ -1,7 +1,7 @@
 <template>
   <view class="fv-bg">
     <view class="fv-hero text-center pt-8 pb-4">
-      <text class="fh-emoji">⭐</text>
+      <image class="fh-icon" src="/static/icons/star.svg" mode="aspectFit" />
       <text class="fh-title">我的收藏</text>
       <text class="fh-sub">{{ favorites.length }} 个已收藏的拼音</text>
     </view>
@@ -11,7 +11,7 @@
         <view class="fv-main" @click="speak(fav.pinyin)">
           <text class="fv-pinyin">{{ fav.pinyin }}</text>
           <view class="fv-speak">
-            <text class="fv-speak-icon">🔊</text>
+            <image class="fv-speak-icon-img" src="/static/icons/speaker.svg" mode="aspectFit" />
           </view>
         </view>
         <view class="fv-meta">
@@ -23,7 +23,7 @@
       </view>
 
       <view class="fv-clear mt-6" @click="clearAll">
-        <text class="fv-clear-text">🗑️ 清空全部收藏</text>
+        <text class="fv-clear-text">清空全部收藏</text>
       </view>
     </view>
 
@@ -84,7 +84,7 @@ function goLearn() {
   padding-bottom: 120rpx;
 }
 .fv-hero { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
-.fh-emoji { font-size: 100rpx; }
+.fh-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .fh-title { font-size: 52rpx; font-weight: 800; color: #D97706; }
 .fh-sub { font-size: 28rpx; color: #6B7280; }
 
@@ -105,7 +105,7 @@ function goLearn() {
   display: flex; align-items: center; justify-content: center;
   box-shadow: 0 6rpx 20rpx rgba(255, 217, 61, 0.3);
 }
-.fv-speak-icon { font-size: 28rpx; }
+.fv-speak-icon-img { width: 28rpx; height: 28rpx; }
 .fv-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 16rpx; }
 .fv-date { font-size: 24rpx; color: #9CA3AF; }
 .fv-remove {

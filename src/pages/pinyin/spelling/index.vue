@@ -1,7 +1,7 @@
 <template>
   <view class="sp-bg">
     <view class="sp-hero text-center pt-8 pb-4">
-      <text class="sh-emoji">🧩</text>
+      <image class="sh-icon" src="/static/icons/puzzle.svg" mode="aspectFit" />
       <text class="sh-title">拼音拼读</text>
       <text class="sh-sub">声母 + 韵母 = 音节，点一点听拼读！</text>
     </view>
@@ -59,12 +59,12 @@
           <text class="sp-char">{{ item.char }}</text>
         </view>
         <view class="sp-speak-btn">
-          <text class="sp-speak-icon">🔊</text>
+          <image class="sp-speak-img" src="/static/icons/speaker.svg" mode="aspectFit" />
         </view>
       </view>
 
       <view v-if="currentExamples.length === 0" class="empty-state text-center py-10">
-        <text class="empty-emoji">🔍</text>
+        <image class="empty-icon" src="/static/icons/magnifier.svg" mode="aspectFit" />
         <text class="empty-text">该声母暂无拼读示例</text>
       </view>
     </view>
@@ -101,7 +101,7 @@ const currentExamples = computed(() =>
   padding-bottom: 120rpx;
 }
 .sp-hero { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
-.sh-emoji { font-size: 100rpx; }
+.sh-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .sh-title { font-size: 52rpx; font-weight: 800; color: #4ECDC4; }
 .sh-sub { font-size: 28rpx; color: #6B7280; }
 
@@ -157,9 +157,9 @@ const currentExamples = computed(() =>
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.sp-speak-icon { font-size: 28rpx; }
+.sp-speak-img { width: 28rpx; height: 28rpx; }
 
 /* Empty */
-.empty-emoji { font-size: 80rpx; display: block; }
+.empty-icon { width: 80rpx; height: 80rpx; display: block; margin: 0 auto; }
 .empty-text { font-size: 28rpx; color: #9CA3AF; margin-top: 12rpx; display: block; }
 </style>

@@ -12,7 +12,7 @@
     <!-- 阶段一：选择题型 -->
     <view v-if="state === 'select'" class="stage">
       <view class="hero text-center pt-8">
-        <text class="hero-emoji">🧮</text>
+        <image class="hero-icon" src="/static/icons/ruler.svg" mode="aspectFit" />
         <text class="hero-title">数学练习</text>
         <text class="hero-subtitle">选择今天要练习的内容吧！</text>
       </view>
@@ -25,13 +25,13 @@
           :class="{ selected: selectedTypes.includes(t.key) }"
           @click="toggleType(t.key)"
         >
-          <text class="type-emoji">{{ t.emoji }}</text>
+          <image class="type-icon-img" :src="t.icon" mode="aspectFit" />
           <view class="type-info">
             <text class="type-name">{{ t.label }}</text>
             <text class="type-desc">{{ t.desc }}</text>
           </view>
           <view :class="['check', selectedTypes.includes(t.key) ? 'checked' : '']">
-            <text v-if="selectedTypes.includes(t.key)" class="check-text">✓</text>
+            <image v-if="selectedTypes.includes(t.key)" class="check-icon-img" src="/static/icons/check.svg" mode="aspectFit" />
           </view>
         </view>
       </view>
@@ -52,7 +52,7 @@
           :class="['start-btn', selectedTypes.length === 0 ? 'disabled' : '']"
           @click="selectedTypes.length && startPractice()"
         >
-          <text class="start-text">🚀 开始练习</text>
+          <text class="start-text">开始练习</text>
         </view>
       </view>
     </view>
@@ -84,16 +84,15 @@
 
         <!-- 答题反馈 + 下一题 -->
         <view v-if="isAnswered" class="feedback text-center mt-8">
-          <text :class="['fb-emoji', lastCorrect ? 'right' : 'wrong']">
-            {{ lastCorrect ? '🎉' : '😿' }}
-          </text>
+          <image :class="['fb-icon', lastCorrect ? 'right' : 'wrong']" :src="lastCorrect ? '/static/icons/party.svg' : '/static/icons/cat.svg'" mode="aspectFit" />
           <text :class="['fb-text', lastCorrect ? 'right' : 'wrong']">
             {{ lastCorrect ? encouragementText : ('正确答案是 ' + String(currentQuestion.answer)) }}
           </text>
           <view class="next-btn" @click="nextQuestion">
             <text class="next-text">
-              {{ currentIndex + 1 === questions.length ? '🏆 查看成绩' : '下一题 →' }}
+              {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
+            <image v-if="currentIndex + 1 === questions.length" class="next-icon" src="/static/icons/trophy.svg" mode="aspectFit" />
           </view>
         </view>
       </view>
@@ -102,7 +101,7 @@
     <!-- 阶段三：结算 -->
     <view v-else-if="state === 'result'" class="stage px-6 pt-10">
       <view class="result-card">
-        <text class="result-emoji">{{ resultStars === 3 ? '🏆' : resultStars === 2 ? '🎉' : resultStars === 1 ? '💪' : '🌈' }}</text>
+        <image class="result-icon" :src="resultIcon" mode="aspectFit" />
         <text class="result-title">{{ resultTitle }}</text>
 
         <view class="mt-6">
@@ -126,10 +125,12 @@
 
         <view class="result-actions mt-10">
           <view class="again-btn" @click="reset()">
-            <text class="again-text">🔄 再练一组</text>
+            <image class="btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
+            <text class="again-text">再练一组</text>
           </view>
           <view class="home-btn" @click="goHome">
-            <text class="home-text">🏠 回首页</text>
+            <image class="btn-icon" src="/static/icons/house.svg" mode="aspectFit" />
+            <text class="home-text">回首页</text>
           </view>
         </view>
       </view>
@@ -151,19 +152,19 @@ import { encouragement as encouragements } from "@/data/encouragements";
 const store = useAppStore();
 
 // 题型清单
-const types: { key: QuestionType; label: string; desc: string; emoji: string }[] = [
-  { key: "addition10", label: "10 以内加法", desc: "3+5=8 入门必练", emoji: "➕" },
-  { key: "subtraction10", label: "10 以内减法", desc: "9-4=5 打好基础", emoji: "➖" },
-  { key: "mixed10", label: "10 以内混合", desc: "含填空题：?+3=7", emoji: "🎲" },
-  { key: "addition20", label: "20 以内加法", desc: "9+8=17 进阶", emoji: "🔢" },
-  { key: "subtraction20", label: "20 以内减法", desc: "17-9=8 进阶", emoji: "🔻" },
-  { key: "mixed20", label: "20 以内混合", desc: "连加连减：3+4-2", emoji: "🌀" },
-  { key: "decompose", label: "数的分解组合", desc: "10 可以分成 ? 和 4", emoji: "🧩" },
-  { key: "adjacent", label: "相邻数/邻居", desc: "5 的前面是？", emoji: "🏠" },
-  { key: "compare", label: "比大小", desc: "7 ○ 10 填 > < =", emoji: "⚖️" },
-  { key: "wordProblem", label: "生活应用题", desc: "小明有 5 个苹果…", emoji: "📖" },
-  { key: "counting", label: "数一数", desc: "看图数图形数量", emoji: "🍎" },
-  { key: "sequence", label: "排序找规律", desc: "1 2 ? 4 5 填一填", emoji: "🚂" },
+const types: { key: QuestionType; label: string; desc: string; icon: string }[] = [
+  { key: "addition10", label: "10 以内加法", desc: "3+5=8 入门必练", icon: "/static/icons/plus.svg" },
+  { key: "subtraction10", label: "10 以内减法", desc: "9-4=5 打好基础", icon: "/static/icons/minus.svg" },
+  { key: "mixed10", label: "10 以内混合", desc: "含填空题：?+3=7", icon: "/static/icons/dice.svg" },
+  { key: "addition20", label: "20 以内加法", desc: "9+8=17 进阶", icon: "/static/icons/numbers.svg" },
+  { key: "subtraction20", label: "20 以内减法", desc: "17-9=8 进阶", icon: "/static/icons/triangle.svg" },
+  { key: "mixed20", label: "20 以内混合", desc: "连加连减：3+4-2", icon: "/static/icons/swirl.svg" },
+  { key: "decompose", label: "数的分解组合", desc: "10 可以分成 ? 和 4", icon: "/static/icons/puzzle.svg" },
+  { key: "adjacent", label: "相邻数/邻居", desc: "5 的前面是？", icon: "/static/icons/houses.svg" },
+  { key: "compare", label: "比大小", desc: "7 ○ 10 填 > < =", icon: "/static/icons/balance.svg" },
+  { key: "wordProblem", label: "生活应用题", desc: "小明有 5 个苹果…", icon: "/static/icons/book2.svg" },
+  { key: "counting", label: "数一数", desc: "看图数图形数量", icon: "/static/icons/apple.svg" },
+  { key: "sequence", label: "排序找规律", desc: "1 2 ? 4 5 填一填", icon: "/static/icons/train.svg" },
 ];
 
 const selectedTypes = ref<QuestionType[]>(["addition10", "subtraction10"]);
@@ -249,6 +250,12 @@ const correctRate = computed(() =>
 const resultStars = computed(() =>
   calculateStars(correctCount.value, questions.value.length),
 );
+const resultIcon = computed(() => {
+  if (resultStars.value === 3) return '/static/icons/trophy.svg';
+  if (resultStars.value === 2) return '/static/icons/party.svg';
+  if (resultStars.value === 1) return '/static/icons/bulb.svg';
+  return '/static/icons/sparkle.svg';
+});
 const resultTitle = computed(() => {
   if (resultStars.value === 3) return "太棒啦，全部都会！";
   if (resultStars.value === 2) return "做得不错，继续加油！";
@@ -274,7 +281,7 @@ const goHome = () => {
 
 /* Hero */
 .hero { display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
-.hero-emoji { font-size: 120rpx; }
+.hero-icon { width: 120rpx; height: 120rpx; }
 .hero-title { font-size: 56rpx; font-weight: 800; color: #FF6B6B; }
 .hero-subtitle { font-size: 28rpx; color: #6B7280; }
 
@@ -306,7 +313,7 @@ const goHome = () => {
     box-shadow: 0 8rpx 28rpx rgba(255, 107, 107, 0.18);
   }
 }
-.type-emoji { font-size: 52rpx; }
+.type-icon-img { width: 52rpx; height: 52rpx; flex-shrink: 0; }
 .type-info { flex: 1; display: flex; flex-direction: column; gap: 4rpx; min-width: 0; }
 .type-name { font-size: 28rpx; font-weight: 700; color: #1F2937; }
 .type-desc { font-size: 22rpx; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -316,7 +323,7 @@ const goHome = () => {
   display: flex; align-items: center; justify-content: center;
   &.checked { background: #FF6B6B; border-color: #FF6B6B; }
 }
-.check-text { color: #FFF; font-size: 24rpx; font-weight: 700; }
+.check-icon-img { width: 26rpx; height: 26rpx; }
 
 /* Action row */
 .action-row { padding: 0 32rpx 40rpx; }
@@ -359,7 +366,7 @@ const goHome = () => {
 
 /* Feedback */
 .feedback { padding: 16rpx 0; }
-.fb-emoji { font-size: 80rpx; display: block; }
+.fb-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .fb-text {
   display: block;
   margin-top: 8rpx;
@@ -371,11 +378,12 @@ const goHome = () => {
   max-width: 520rpx; margin: 32rpx auto 0;
   min-height: 96rpx; border-radius: 32rpx;
   background: linear-gradient(135deg, #4ECDC4 0%, #74B9FF 100%);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   box-shadow: 0 12rpx 32rpx rgba(78, 205, 196, 0.3);
   &:active { transform: scale(0.98); }
 }
 .next-text { color: #FFFFFF; font-size: 34rpx; font-weight: 700; }
+.next-icon { width: 32rpx; height: 32rpx; }
 
 /* Result */
 .result-card {
@@ -386,7 +394,7 @@ const goHome = () => {
   text-align: center;
   margin-top: 24rpx;
 }
-.result-emoji { font-size: 160rpx; display: block; }
+.result-icon { width: 160rpx; height: 160rpx; display: block; margin: 0 auto; }
 .result-title { font-size: 40rpx; font-weight: 800; color: #1F2937; margin-top: 16rpx; display: block; }
 .stats-grid {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16rpx;
@@ -403,9 +411,10 @@ const goHome = () => {
 .result-actions { display: flex; gap: 20rpx; }
 .again-btn, .home-btn {
   flex: 1; min-height: 96rpx; border-radius: 28rpx;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   &:active { transform: scale(0.97); }
 }
+.btn-icon { width: 32rpx; height: 32rpx; }
 .again-btn {
   background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
   box-shadow: 0 10rpx 32rpx rgba(255, 107, 107, 0.28);

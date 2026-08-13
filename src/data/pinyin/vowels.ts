@@ -44,8 +44,8 @@ export const allVowels = [
 ]
 
 export const vowelCategories = {
-  single: { name: '单韵母', emoji: '🔴', items: singleVowels },
-  compound: { name: '复韵母', emoji: '🟠', items: compoundVowels },
-  frontNasal: { name: '前鼻韵母', emoji: '🟡', items: frontNasalVowels },
-  backNasal: { name: '后鼻韵母', emoji: '🟢', items: backNasalVowels },
+  single: { name: '单韵母', emoji: '🔴', icon: '/static/icons/plus.svg', items: singleVowels },
+  compound: { name: '复韵母', emoji: '🟠', icon: '/static/icons/swirl.svg', items: compoundVowels },
+  frontNasal: { name: '前鼻韵母', emoji: '🟡', icon: '/static/icons/triangle.svg', items: frontNasalVowels },
+  backNasal: { name: '后鼻韵母', emoji: '🟢', icon: '/static/icons/houses.svg', items: backNasalVowels },
 }

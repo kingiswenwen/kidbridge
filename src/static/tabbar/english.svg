@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- 英语普通态：字母 A -->
+  <circle cx="24" cy="24" r="18" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="2"/>
+  <text x="24" y="30" text-anchor="middle" font-size="18" font-weight="800" fill="#9CA3AF" font-family="Arial">A</text>
+</svg>

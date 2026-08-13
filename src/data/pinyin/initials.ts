@@ -55,13 +55,13 @@ export const allInitials = [
 ]
 
 export const initialCategories = {
-  labial: { name: '唇音', emoji: '👄', items: labialInitials },
-  alveolar: { name: '舌尖音', emoji: '👅', items: alveolarInitials },
-  velar: { name: '舌根音', emoji: '🗣️', items: velarInitials },
-  palatal: { name: '舌面音', emoji: '😊', items: palatalInitials },
-  flat: { name: '平舌音', emoji: '➖', items: flatInitials },
-  curled: { name: '翘舌音', emoji: '↗️', items: curledInitials },
-  special: { name: '特殊声母', emoji: '⭐', items: specialInitials },
+  labial: { name: '唇音', emoji: '👄', icon: '/static/icons/paw.svg', items: labialInitials },
+  alveolar: { name: '舌尖音', emoji: '👅', icon: '/static/icons/body.svg', items: alveolarInitials },
+  velar: { name: '舌根音', emoji: '🗣️', icon: '/static/icons/speaker.svg', items: velarInitials },
+  palatal: { name: '舌面音', emoji: '😊', icon: '/static/icons/sparkle.svg', items: palatalInitials },
+  flat: { name: '平舌音', emoji: '➖', icon: '/static/icons/minus.svg', items: flatInitials },
+  curled: { name: '翘舌音', emoji: '↗️', icon: '/static/icons/arrow.svg', items: curledInitials },
+  special: { name: '特殊声母', emoji: '⭐', icon: '/static/icons/star.svg', items: specialInitials },
 }
 
 export const flatVsCurled = [

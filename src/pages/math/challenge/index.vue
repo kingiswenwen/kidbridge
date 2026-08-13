@@ -3,11 +3,12 @@
     <!-- 列表：选关 -->
     <view v-if="stage === 'list'" class="ch-stage px-4 pt-8 pb-16">
       <view class="ch-hero text-center">
-        <text class="ch-hero-emoji">🏆</text>
+        <image class="ch-hero-icon" src="/static/icons/trophy.svg" mode="aspectFit" />
         <text class="ch-hero-title">闯关挑战</text>
         <text class="ch-hero-sub">一步步通关，成为数学小达人！</text>
         <view class="ch-progress-chip mt-4">
-          <text class="pc-text">已通关 {{ completedCount }} / {{ levels.length }} 关 · 总星数 {{ totalStars }} ⭐</text>
+          <image class="pc-icon" src="/static/icons/star.svg" mode="aspectFit" />
+          <text class="pc-text">已通关 {{ completedCount }} / {{ levels.length }} 关 · 总星数 {{ totalStars }}</text>
         </view>
       </view>
 
@@ -32,17 +33,20 @@
             <view class="lc-top flex items-center justify-between">
               <text class="lc-no">{{ levelNo(lv.id) }}</text>
               <view class="lc-stars flex gap-1">
-                <text v-if="!isUnlocked(lv)" class="lc-lock">🔒</text>
+                <image v-if="!isUnlocked(lv)" class="lc-lock-img" src="/static/icons/lock.svg" mode="aspectFit" />
                 <template v-else-if="prog(lv.id)?.completed">
-                  <text v-for="n in 3" :key="n" class="lc-star" :class="{ on: n <= (prog(lv.id)?.stars || 0) }">★</text>
+                  <image v-for="n in 3" :key="n" class="lc-star-img" :class="{ on: n <= (prog(lv.id)?.stars || 0) }" src="/static/icons/star.svg" mode="aspectFit" />
                 </template>
-                <text v-else class="lc-play">▶</text>
+                <image v-else class="lc-play-img" src="/static/icons/play.svg" mode="aspectFit" />
               </view>
             </view>
             <text class="lc-name">{{ lv.name }}</text>
             <text class="lc-desc">{{ lv.description }}</text>
             <view class="lc-meta flex items-center justify-between mt-3">
-              <text class="lc-qt">📝 {{ lv.questionCount }} 题</text>
+              <view class="lc-qt-wrap flex items-center gap-1">
+                <image class="lc-qt-icon" src="/static/icons/pencil.svg" mode="aspectFit" />
+                <text class="lc-qt">{{ lv.questionCount }} 题</text>
+              </view>
               <text v-if="!isUnlocked(lv)" class="lc-need">需先通过：{{ unlockText(lv) }}</text>
               <text v-else-if="prog(lv.id)?.attempts" class="lc-attempts">挑战 {{ prog(lv.id)?.attempts }} 次</text>
               <text v-else class="lc-attempts">等待挑战</text>
@@ -96,16 +100,15 @@
         </view>
 
         <view v-if="isAnswered" class="feedback text-center mt-8">
-          <text :class="['fb-emoji', lastCorrect ? 'ok' : 'bad']">
-            {{ lastCorrect ? '🎉' : '😿' }}
-          </text>
+          <image :class="['fb-icon', lastCorrect ? 'ok' : 'bad']" :src="lastCorrect ? '/static/icons/party.svg' : '/static/icons/cat.svg'" mode="aspectFit" />
           <text :class="['fb-text', lastCorrect ? 'ok' : 'bad']">
             {{ lastCorrect ? pick(encouragements).content : '正确答案是 ' + String(currentQuestion.answer) }}
           </text>
           <view class="next-btn" @click="nextQuestion">
             <text class="next-text">
-              {{ currentIndex + 1 === questions.length ? '🏆 查看成绩' : '下一题 →' }}
+              {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
+            <image v-if="currentIndex + 1 === questions.length" class="next-icon" src="/static/icons/trophy.svg" mode="aspectFit" />
           </view>
         </view>
       </view>
@@ -114,9 +117,7 @@
     <!-- 结算 -->
     <view v-else-if="stage === 'result'" class="ch-stage px-6 pt-10">
       <view class="result-card">
-        <text class="result-emoji">
-          {{ stars === 3 ? '🏆' : stars === 2 ? '🎉' : stars === 1 ? '💪' : '🌈' }}
-        </text>
+        <image class="result-icon" :src="resultIcon" mode="aspectFit" />
         <text class="result-title">{{ resultTitle }}</text>
         <view class="mt-6">
           <StarRating :stars="stars" :animated="true" />
@@ -137,10 +138,12 @@
         </view>
         <view class="result-actions mt-10">
           <view class="again-btn" @click="retry">
-            <text class="again-text">🔄 再挑战一次</text>
+            <image class="btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
+            <text class="again-text">再挑战一次</text>
           </view>
           <view class="home-btn" @click="toList">
-            <text class="home-text">📋 关卡列表</text>
+            <image class="btn-icon" src="/static/icons/clipboard.svg" mode="aspectFit" />
+            <text class="home-text">关卡列表</text>
           </view>
         </view>
       </view>
@@ -303,6 +306,12 @@ const correctRate = computed(() =>
   questions.value.length ? Math.round((correctCount.value / questions.value.length) * 100) : 0,
 );
 const stars = computed(() => calculateStars(correctCount.value, questions.value.length));
+const resultIcon = computed(() => {
+  if (stars.value === 3) return '/static/icons/trophy.svg';
+  if (stars.value === 2) return '/static/icons/party.svg';
+  if (stars.value === 1) return '/static/icons/bulb.svg';
+  return '/static/icons/sparkle.svg';
+});
 const resultTitle = computed(() => {
   if (stars.value === 3) return '太厉害啦，满星通关！';
   if (stars.value === 2) return '做得不错，再接再厉！';
@@ -328,14 +337,16 @@ function toList() {
 
 /* Hero */
 .ch-hero { display: flex; flex-direction: column; align-items: center; }
-.ch-hero-emoji { font-size: 120rpx; }
+.ch-hero-icon { width: 120rpx; height: 120rpx; }
 .ch-hero-title { font-size: 56rpx; font-weight: 800; color: #D97706; margin-top: 8rpx; }
 .ch-hero-sub { font-size: 28rpx; color: #6B7280; margin-top: 8rpx; }
 .ch-progress-chip {
+  display: flex; align-items: center; gap: 8rpx;
   padding: 14rpx 28rpx; border-radius: 999rpx;
   background: linear-gradient(135deg, #FFE4A6 0%, #FFD93D 100%);
   box-shadow: 0 6rpx 18rpx rgba(255, 217, 61, 0.3);
 }
+.pc-icon { width: 28rpx; height: 28rpx; }
 .pc-text { font-size: 24rpx; font-weight: 700; color: #78350F; }
 
 /* Difficulty group */
@@ -377,14 +388,17 @@ function toList() {
   padding: 4rpx 16rpx; border-radius: 999rpx;
 }
 .locked .lc-no { color: #9CA3AF; background: #F3F4F6; }
-.lc-lock { font-size: 24rpx; }
-.lc-play { font-size: 22rpx; color: var(--accent); font-weight: 700; }
-.lc-star {
-  font-size: 24rpx; color: #E5E7EB;
-  &.on { color: #FFD93D; text-shadow: 0 2rpx 4rpx rgba(255, 217, 61, 0.4); }
+.lc-lock-img { width: 28rpx; height: 28rpx; opacity: 0.7; }
+.lc-play-img { width: 28rpx; height: 28rpx; }
+.lc-star-img {
+  width: 28rpx; height: 28rpx;
+  &.on { /* 星星图标本身带色 */ }
 }
+.lc-star-img:not(.on) { opacity: 0.25; filter: grayscale(1); }
 .lc-name { font-size: 30rpx; font-weight: 800; color: #1F2937; display: block; }
 .lc-desc { font-size: 24rpx; color: #6B7280; margin-top: 4rpx; display: block; }
+.lc-qt-wrap { display: flex; align-items: center; gap: 6rpx; }
+.lc-qt-icon { width: 24rpx; height: 24rpx; }
 .lc-qt { font-size: 22rpx; color: #4B5563; font-weight: 600; }
 .lc-need, .lc-attempts { font-size: 22rpx; color: #9CA3AF; }
 
@@ -413,7 +427,7 @@ function toList() {
 
 /* Feedback */
 .feedback { padding: 16rpx 0; }
-.fb-emoji { font-size: 80rpx; display: block; }
+.fb-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .fb-text {
   display: block; margin-top: 8rpx; font-size: 30rpx; font-weight: 600;
   &.ok { color: #10B981; }
@@ -423,18 +437,19 @@ function toList() {
   max-width: 520rpx; margin: 32rpx auto 0;
   min-height: 96rpx; border-radius: 32rpx;
   background: linear-gradient(135deg, #4ECDC4 0%, #74B9FF 100%);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   box-shadow: 0 12rpx 32rpx rgba(78, 205, 196, 0.3);
   &:active { transform: scale(0.98); }
 }
 .next-text { color: #FFFFFF; font-size: 34rpx; font-weight: 700; }
+.next-icon { width: 32rpx; height: 32rpx; }
 
 /* Result */
 .result-card {
   background: #FFFFFF; border-radius: 40rpx; padding: 56rpx 32rpx 40rpx;
   box-shadow: 0 16rpx 56rpx rgba(0,0,0,0.08); text-align: center; margin-top: 24rpx;
 }
-.result-emoji { font-size: 160rpx; display: block; }
+.result-icon { width: 160rpx; height: 160rpx; display: block; margin: 0 auto; }
 .result-title { font-size: 40rpx; font-weight: 800; color: #1F2937; margin-top: 16rpx; display: block; }
 .stats-grid {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16rpx; padding: 24rpx;
@@ -449,9 +464,10 @@ function toList() {
 .result-actions { display: flex; gap: 20rpx; }
 .again-btn, .home-btn {
   flex: 1; min-height: 96rpx; border-radius: 28rpx;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   &:active { transform: scale(0.97); }
 }
+.btn-icon { width: 32rpx; height: 32rpx; }
 .again-btn {
   background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
   box-shadow: 0 10rpx 32rpx rgba(255, 107, 107, 0.28);

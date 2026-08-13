@@ -1,7 +1,7 @@
 <template>
   <view class="tb-bg">
     <view class="tb-hero text-center pt-8 pb-4">
-      <text class="th-emoji">📋</text>
+      <image class="th-icon" src="/static/icons/clipboard.svg" mode="aspectFit" />
       <text class="th-title">拼音总表</text>
       <text class="th-sub">声母 {{ initials.length }} 个 · 韵母 {{ vowels.length }} 个 · 整体认读 {{ wholeSyllables.length }} 个</text>
     </view>
@@ -83,7 +83,7 @@
     </view>
 
     <view class="tb-tip px-6 pb-10 text-center">
-      <text class="tip-text">💡 点击任意拼音可听发音</text>
+      <text class="tip-text">点击任意拼音可听发音</text>
     </view>
   </view>
 </template>
@@ -112,7 +112,7 @@ const tones = [
   padding-bottom: 120rpx;
 }
 .tb-hero { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
-.th-emoji { font-size: 100rpx; }
+.th-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .th-title { font-size: 52rpx; font-weight: 800; color: #4ECDC4; }
 .th-sub { font-size: 26rpx; color: #6B7280; }
 

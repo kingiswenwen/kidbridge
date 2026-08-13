@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- 英语选中态 -->
+  <circle cx="24" cy="24" r="18" fill="#5BA8F5" stroke="#1E5FB8" stroke-width="2"/>
+  <text x="24" y="31" text-anchor="middle" font-size="20" font-weight="800" fill="#FFFFFF" font-family="Arial">A</text>
+  <circle cx="14" cy="14" r="3" fill="#FFE873" stroke="#F5B417" stroke-width="1"/>
+  <circle cx="34" cy="34" r="2" fill="#FFFFFF" opacity="0.5"/>
+</svg>

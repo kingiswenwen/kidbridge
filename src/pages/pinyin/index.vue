@@ -124,23 +124,23 @@
         <text class="me-title">更多练习</text>
         <view class="me-grid">
           <view class="me-card" @click="go('/pages/pinyin/spelling/index')">
-            <text class="me-emoji">🧩</text>
+            <image class="me-icon-img" src="/static/icons/puzzle.svg" mode="aspectFit" />
             <text class="me-name">拼音拼读</text>
           </view>
           <view class="me-card" @click="go('/pages/pinyin/practice/index')">
-            <text class="me-emoji">📝</text>
+            <image class="me-icon-img" src="/static/icons/pencil.svg" mode="aspectFit" />
             <text class="me-name">拼音练习</text>
           </view>
           <view class="me-card" @click="go('/pages/pinyin/table/index')">
-            <text class="me-emoji">📋</text>
+            <image class="me-icon-img" src="/static/icons/clipboard.svg" mode="aspectFit" />
             <text class="me-name">拼音总表</text>
           </view>
           <view class="me-card" @click="go('/pages/pinyin/initials/index')">
-            <text class="me-emoji">🔤</text>
+            <image class="me-icon-img" src="/static/icons/letters.svg" mode="aspectFit" />
             <text class="me-name">声母详解</text>
           </view>
           <view class="me-card" @click="go('/pages/pinyin/vowels/index')">
-            <text class="me-emoji">🅰️</text>
+            <image class="me-icon-img" src="/static/icons/lettera.svg" mode="aspectFit" />
             <text class="me-name">韵母详解</text>
           </view>
         </view>
@@ -228,7 +228,7 @@ const speak = (text: string) => {
     }
   } catch (e) {}
   // #endif
-  uni.showToast({ title: `🔊 ${text}`, icon: "none", duration: 800 });
+  uni.showToast({ title: text, icon: "none", duration: 800 });
 };
 const speakWithTone = (base: string, tone: number) => {
   const demo = toneDemos.find((d) => d.idx === tone);
@@ -339,6 +339,6 @@ const go = (url: string) => uni.navigateTo({ url });
   display: flex; flex-direction: column; align-items: center; gap: 10rpx;
   &:active { transform: scale(0.95); }
 }
-.me-emoji { font-size: 52rpx; }
+.me-icon-img { width: 52rpx; height: 52rpx; }
 .me-name { font-size: 24rpx; font-weight: 700; color: #1F2937; }
 </style>

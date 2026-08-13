@@ -12,7 +12,7 @@
     <!-- 阶段一：选择 -->
     <view v-if="stage === 'select'" class="ep-stage px-5 pt-10 pb-12">
       <view class="ep-hero text-center">
-        <text class="ep-hero-emoji">📚</text>
+        <image class="ep-hero-icon" src="/static/icons/book2.svg" mode="aspectFit" />
         <text class="ep-hero-title">英语练习</text>
         <text class="ep-hero-sub">背单词，选一选！</text>
       </view>
@@ -27,7 +27,7 @@
             :class="['mode-card', mode === m.key ? 'active' : '']"
             @click="mode = m.key"
           >
-            <text class="mode-emoji">{{ m.emoji }}</text>
+            <image class="mode-icon-img" :src="m.icon" mode="aspectFit" />
             <text class="mode-name">{{ m.name }}</text>
             <text class="mode-desc">{{ m.desc }}</text>
           </view>
@@ -44,7 +44,7 @@
             :class="['cat-chip', cats.includes(c.key) ? 'active' : '']"
             @click="toggleCat(c.key)"
           >
-            <text class="cc-emoji">{{ c.emoji }}</text>
+            <image class="cc-icon-img" :src="c.icon" mode="aspectFit" />
             <text class="cc-name">{{ c.name }}</text>
           </view>
         </view>
@@ -69,7 +69,7 @@
         :class="['start-btn mt-10', cats.length === 0 ? 'disabled' : '']"
         @click="cats.length && startQuiz()"
       >
-        <text class="start-text">🚀 开始练习</text>
+        <text class="start-text">开始练习</text>
       </view>
     </view>
 
@@ -104,16 +104,15 @@
         </view>
 
         <view v-if="answered" class="feedback text-center mt-8">
-          <text :class="['fb-emoji', lastOk ? 'ok' : 'bad']">
-            {{ lastOk ? '🎉' : '😿' }}
-          </text>
+          <image :class="['fb-icon', lastOk ? 'ok' : 'bad']" :src="lastOk ? '/static/icons/party.svg' : '/static/icons/cat.svg'" mode="aspectFit" />
           <text :class="['fb-text', lastOk ? 'ok' : 'bad']">
             {{ lastOk ? encouragement : '正确答案：' + String(correctLabel) }}
           </text>
           <view class="next-btn" @click="next">
             <text class="next-text">
-              {{ currentIndex + 1 === questions.length ? '🏆 查看成绩' : '下一题 →' }}
+              {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
+            <image v-if="currentIndex + 1 === questions.length" class="next-icon" src="/static/icons/trophy.svg" mode="aspectFit" />
           </view>
         </view>
       </view>
@@ -122,9 +121,7 @@
     <!-- 阶段三：结算 -->
     <view v-else-if="stage === 'result'" class="ep-stage px-6 pt-10">
       <view class="result-card">
-        <text class="result-emoji">
-          {{ stars === 3 ? '🏆' : stars === 2 ? '🎉' : stars === 1 ? '💪' : '🌈' }}
-        </text>
+        <image class="result-icon" :src="resultIcon" mode="aspectFit" />
         <text class="result-title">{{ resultTitle }}</text>
         <view class="mt-6">
           <StarRating :stars="stars" :animated="true" />
@@ -145,10 +142,12 @@
         </view>
         <view class="r-actions mt-10 flex gap-4">
           <view class="r-btn-a" @click="reset">
-            <text class="r-btn-a-text">🔄 再练一组</text>
+            <image class="r-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
+            <text class="r-btn-a-text">再练一组</text>
           </view>
           <view class="r-btn-b" @click="() => uni.navigateBack()">
-            <text class="r-btn-b-text">↩️ 返回</text>
+            <image class="r-btn-icon" src="/static/icons/arrow.svg" mode="aspectFit" />
+            <text class="r-btn-b-text">返回</text>
           </view>
         </view>
       </view>
@@ -173,18 +172,18 @@ interface QItem {
   correctLabel: string;
 }
 
-const modes: { key: Mode; name: string; desc: string; emoji: string }[] = [
-  { key: 'word2cn', name: '英文 → 中文', desc: '看到英文选正确的中文意思', emoji: '🔡' },
-  { key: 'cn2word', name: '中文 → 英文', desc: '看到中文意思，选正确的英文单词', emoji: '🅰️' },
+const modes: { key: Mode; name: string; desc: string; icon: string }[] = [
+  { key: 'word2cn', name: '英文 → 中文', desc: '看到英文选正确的中文意思', icon: '/static/icons/letters.svg' },
+  { key: 'cn2word', name: '中文 → 英文', desc: '看到中文意思，选正确的英文单词', icon: '/static/icons/lettera.svg' },
 ];
-const categories: { key: WordCategory | 'all'; name: string; emoji: string }[] = [
-  { key: 'animals', name: '动物', emoji: '🐾' },
-  { key: 'colors', name: '颜色', emoji: '🎨' },
-  { key: 'numbers', name: '数字', emoji: '🔢' },
-  { key: 'family', name: '家人', emoji: '👨‍👩‍👧' },
-  { key: 'fruits', name: '水果', emoji: '🍎' },
-  { key: 'body', name: '身体', emoji: '🖐️' },
-  { key: 'all', name: '全部混合', emoji: '🌟' },
+const categories: { key: WordCategory | 'all'; name: string; icon: string }[] = [
+  { key: 'animals', name: '动物', icon: '/static/icons/paw.svg' },
+  { key: 'colors', name: '颜色', icon: '/static/icons/palette.svg' },
+  { key: 'numbers', name: '数字', icon: '/static/icons/numbers.svg' },
+  { key: 'family', name: '家人', icon: '/static/icons/family.svg' },
+  { key: 'fruits', name: '水果', icon: '/static/icons/apple.svg' },
+  { key: 'body', name: '身体', icon: '/static/icons/body.svg' },
+  { key: 'all', name: '全部混合', icon: '/static/icons/sparkle.svg' },
 ];
 
 const mode = ref<Mode>('word2cn');
@@ -308,6 +307,12 @@ const rate = computed(() =>
   questions.value.length ? Math.round((correctCount.value / questions.value.length) * 100) : 0,
 );
 const stars = computed(() => calculateStars(correctCount.value, questions.value.length));
+const resultIcon = computed(() => {
+  if (stars.value === 3) return '/static/icons/trophy.svg';
+  if (stars.value === 2) return '/static/icons/party.svg';
+  if (stars.value === 1) return '/static/icons/bulb.svg';
+  return '/static/icons/sparkle.svg';
+});
 const resultTitle = computed(() => {
   if (stars.value === 3) return '太棒啦，全部都会！';
   if (stars.value === 2) return '做得不错，继续加油！';
@@ -329,7 +334,7 @@ function reset() {
 .ep-stage { max-width: 860rpx; margin: 0 auto; }
 
 .ep-hero { display: flex; flex-direction: column; align-items: center; gap: 12rpx; }
-.ep-hero-emoji { font-size: 120rpx; }
+.ep-hero-icon { width: 120rpx; height: 120rpx; }
 .ep-hero-title { font-size: 56rpx; font-weight: 800; color: #74B9FF; }
 .ep-hero-sub { font-size: 28rpx; color: #6B7280; }
 
@@ -348,7 +353,7 @@ function reset() {
   }
   &:active { transform: scale(0.97); }
 }
-.mode-emoji { font-size: 56rpx; }
+.mode-icon-img { width: 56rpx; height: 56rpx; }
 .mode-name { font-size: 28rpx; font-weight: 700; color: #1F2937; }
 .mode-desc { font-size: 22rpx; color: #9CA3AF; }
 
@@ -357,10 +362,10 @@ function reset() {
   padding: 16rpx 24rpx; border-radius: 999rpx; background: #FFFFFF;
   box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.05); display: inline-flex; align-items: center; gap: 8rpx;
   &.active { background: linear-gradient(135deg, #74B9FF 0%, #4ECDC4 100%);
-    .cc-name, .cc-emoji { color: #FFF; }
+    .cc-name { color: #FFF; }
   }
 }
-.cc-emoji { font-size: 28rpx; }
+.cc-icon-img { width: 32rpx; height: 32rpx; }
 .cc-name { font-size: 26rpx; font-weight: 700; color: #4B5563; }
 
 .count-chip {
@@ -397,7 +402,7 @@ function reset() {
 
 /* Feedback */
 .feedback { padding: 16rpx 0; }
-.fb-emoji { font-size: 80rpx; display: block; }
+.fb-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .fb-text {
   display: block; margin-top: 8rpx; font-size: 30rpx; font-weight: 600;
   &.ok { color: #10B981; }
@@ -407,18 +412,19 @@ function reset() {
   max-width: 520rpx; margin: 32rpx auto 0;
   min-height: 96rpx; border-radius: 32rpx;
   background: linear-gradient(135deg, #4ECDC4 0%, #74B9FF 100%);
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   box-shadow: 0 12rpx 32rpx rgba(78, 205, 196, 0.3);
   &:active { transform: scale(0.98); }
 }
 .next-text { color: #FFFFFF; font-size: 34rpx; font-weight: 700; }
+.next-icon { width: 32rpx; height: 32rpx; }
 
 /* Result */
 .result-card {
   background: #FFFFFF; border-radius: 40rpx; padding: 56rpx 32rpx 40rpx;
   box-shadow: 0 16rpx 56rpx rgba(0,0,0,0.08); text-align: center; margin-top: 24rpx;
 }
-.result-emoji { font-size: 160rpx; display: block; }
+.result-icon { width: 160rpx; height: 160rpx; display: block; margin: 0 auto; }
 .result-title { font-size: 40rpx; font-weight: 800; color: #1F2937; margin-top: 16rpx; display: block; }
 .stats-grid {
   display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16rpx; padding: 24rpx;
@@ -432,9 +438,10 @@ function reset() {
 
 .r-btn-a, .r-btn-b {
   flex: 1; min-height: 96rpx; border-radius: 28rpx;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 10rpx;
   &:active { transform: scale(0.97); }
 }
+.r-btn-icon { width: 32rpx; height: 32rpx; }
 .r-btn-a {
   background: linear-gradient(135deg, #74B9FF 0%, #4ECDC4 100%);
   box-shadow: 0 10rpx 32rpx rgba(116, 185, 255, 0.28);

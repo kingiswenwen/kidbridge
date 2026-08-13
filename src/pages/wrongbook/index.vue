@@ -1,7 +1,7 @@
 <template>
   <view class="wb-bg">
     <view v-if="store.wrongBook.length === 0" class="empty text-center">
-      <text class="empty-emoji">🎉</text>
+      <image class="empty-icon" src="/static/icons/party.svg" mode="aspectFit" />
       <text class="empty-title">太棒啦！还没有错题</text>
       <text class="empty-subtitle">多练多答，记录自动整理</text>
       <view class="empty-btn mt-8" @click="() => uni.switchTab({ url: '/pages/home/index' })">
@@ -19,14 +19,18 @@
           class="clear-btn"
           @click="handleClear"
         >
-          <text class="clear-btn-text">🧹 清空</text>
+          <image class="clear-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
+          <text class="clear-btn-text">清空</text>
         </view>
       </view>
 
       <view class="wb-groups flex flex-col gap-4">
         <view class="wb-group">
           <view class="wb-group-title flex items-center justify-between">
-            <text class="gt-text">🧮 数学错题</text>
+            <view class="gt-text-wrap flex items-center gap-2">
+              <image class="gt-icon" src="/static/icons/ruler.svg" mode="aspectFit" />
+              <text class="gt-text">数学错题</text>
+            </view>
             <text class="gt-count">{{ mathWrongs.length }}</text>
           </view>
 
@@ -58,7 +62,8 @@
                   class="wb-btn wb-btn-green"
                   @click="removeWrong(w)"
                 >
-                  <text class="wb-btn-text">✓ 已会，移除</text>
+                  <image class="wb-btn-icon" src="/static/icons/check.svg" mode="aspectFit" />
+                  <text class="wb-btn-text">已会，移除</text>
                 </view>
               </view>
             </view>
@@ -128,7 +133,7 @@ const handleClear = () => {
   padding-bottom: 140rpx;
 }
 .empty { padding: 200rpx 60rpx 0; }
-.empty-emoji { font-size: 160rpx; display: block; }
+.empty-icon { width: 160rpx; height: 160rpx; display: block; margin: 0 auto; }
 .empty-title { font-size: 40rpx; font-weight: 800; color: #1F2937; display: block; margin-top: 20rpx; }
 .empty-subtitle { font-size: 28rpx; color: #6B7280; display: block; margin-top: 8rpx; }
 .empty-btn {
@@ -145,13 +150,17 @@ const handleClear = () => {
 .wb-title { display: block; font-size: 40rpx; font-weight: 800; color: #1F2937; }
 .wb-subtitle { font-size: 24rpx; color: #6B7280; margin-top: 4rpx; }
 .clear-btn {
+  display: flex; align-items: center; gap: 6rpx;
   padding: 14rpx 28rpx; border-radius: 999rpx;
   background: #FFFFFF; box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.06);
 }
+.clear-btn-icon { width: 28rpx; height: 28rpx; }
 .clear-btn-text { color: #4B5563; font-size: 26rpx; font-weight: 600; }
 
 .wb-group { background: #FFFFFF; border-radius: 32rpx; padding: 28rpx; box-shadow: 0 8rpx 28rpx rgba(0,0,0,0.05); }
 .wb-group-title { margin-bottom: 16rpx; padding: 0 4rpx 12rpx; border-bottom: 2rpx dashed #F3F4F6; }
+.gt-text-wrap { display: flex; align-items: center; gap: 8rpx; }
+.gt-icon { width: 36rpx; height: 36rpx; }
 .gt-text { font-size: 30rpx; font-weight: 700; color: #1F2937; }
 .gt-count { font-size: 24rpx; color: #FF6B6B; background: #FFE4E6; padding: 4rpx 16rpx; border-radius: 999rpx; font-weight: 700; }
 .gt-empty { padding: 32rpx; border-radius: 24rpx; background: linear-gradient(135deg, #F0FDFA 0%, #CCFBF1 100%); text-align: center; }
@@ -174,7 +183,8 @@ const handleClear = () => {
 .ans-v { font-size: 30rpx; font-weight: 800; color: #059669; }
 
 .wb-q-actions { display: flex; }
-.wb-btn { padding: 14rpx 28rpx; border-radius: 24rpx; &:active { transform: scale(0.96); } }
+.wb-btn { display: flex; align-items: center; gap: 8rpx; padding: 14rpx 28rpx; border-radius: 24rpx; &:active { transform: scale(0.96); } }
+.wb-btn-icon { width: 28rpx; height: 28rpx; }
 .wb-btn-green { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
 .wb-btn-text { color: #FFFFFF; font-weight: 700; font-size: 26rpx; }
 

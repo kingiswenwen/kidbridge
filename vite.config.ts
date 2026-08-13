@@ -23,6 +23,11 @@ export default defineConfig({
     },
     preprocessorOptions: {
       scss: {
+        // 屏蔽 Dart Sass 弃用警告（不影响编译与运行，仅不再刷屏）：
+        // - "import"：uview-plus 及本项目的 @import 语法在未来版本会被移除，目前仅为警告
+        // - "legacy-js-api"：Vite 5.2 默认调用 sass 旧版 JS API，新版 sass 会提示弃用
+        // 根因在两库且已是各自最新（uni 硬钉 vite 5.2.8 / uview-plus 3.8.86），升级无法消除，仅能静音。
+        silenceDeprecations: ["import", "legacy-js-api"],
         additionalData: `
           @import "uview-plus/theme.scss";
           @import "uview-plus/libs/css/mixin.scss";

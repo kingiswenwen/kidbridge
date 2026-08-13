@@ -1,14 +1,14 @@
 <template>
   <view class="in-bg">
     <view class="in-hero text-center pt-8 pb-4">
-      <text class="ih-emoji">🔤</text>
+      <image class="ih-icon" src="/static/icons/letters.svg" mode="aspectFit" />
       <text class="ih-title">声母学习</text>
       <text class="ih-sub">点击声母卡片，听一听发音吧！</text>
     </view>
 
     <view v-for="(cat, key) in categories" :key="key" class="in-section px-4 mb-8">
       <view class="sec-head flex items-center gap-3 mb-4">
-        <text class="sec-emoji">{{ cat.emoji }}</text>
+        <image class="sec-icon-img" :src="cat.icon" mode="aspectFit" />
         <text class="sec-name">{{ cat.name }}</text>
         <text class="sec-count">{{ cat.items.length }} 个</text>
       </view>
@@ -24,9 +24,9 @@
           <text class="in-pinyin">{{ item.pinyin }}</text>
           <text class="in-tips">{{ item.tips }}</text>
           <view class="in-actions">
-            <text class="in-speak">🔊</text>
-            <text v-if="isFav(item.pinyin)" class="in-fav on">⭐</text>
-            <text v-else class="in-fav">☆</text>
+            <image class="in-speak-img" src="/static/icons/speaker.svg" mode="aspectFit" />
+            <image v-if="isFav(item.pinyin)" class="in-fav-img on" src="/static/icons/star.svg" mode="aspectFit" />
+            <image v-else class="in-fav-img" src="/static/icons/star.svg" mode="aspectFit" style="opacity:0.25;filter:grayscale(1)" />
           </view>
         </view>
       </view>
@@ -35,7 +35,7 @@
     <!-- 平舌 vs 翘舌对比 -->
     <view class="in-section px-4 mb-10">
       <view class="sec-head flex items-center gap-3 mb-4">
-        <text class="sec-emoji">⚖️</text>
+        <image class="sec-icon-img" src="/static/icons/balance.svg" mode="aspectFit" />
         <text class="sec-name">平舌音 vs 翘舌音</text>
       </view>
       <view class="compare-card">
@@ -54,7 +54,7 @@
     </view>
 
     <view class="in-tip px-6 pb-10 text-center">
-      <text class="tip-text">💡 长按卡片可以收藏哦</text>
+      <text class="tip-text">长按卡片可以收藏哦</text>
     </view>
   </view>
 </template>
@@ -83,7 +83,7 @@ function onLongPress(item: PinyinItem) {
     uni.showToast({ title: '已取消收藏', icon: 'none', duration: 800 })
   } else {
     store.addPinyinFavorite(item.pinyin)
-    uni.showToast({ title: '已收藏 ⭐', icon: 'none', duration: 800 })
+    uni.showToast({ title: '已收藏', icon: 'none', duration: 800 })
   }
 }
 </script>
@@ -95,11 +95,11 @@ function onLongPress(item: PinyinItem) {
   padding-bottom: 120rpx;
 }
 .in-hero { display: flex; flex-direction: column; align-items: center; gap: 8rpx; }
-.ih-emoji { font-size: 100rpx; }
+.ih-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .ih-title { font-size: 52rpx; font-weight: 800; color: #4ECDC4; }
 .ih-sub { font-size: 28rpx; color: #6B7280; }
 
-.sec-emoji { font-size: 36rpx; }
+.sec-icon-img { width: 36rpx; height: 36rpx; }
 .sec-name { font-size: 32rpx; font-weight: 800; color: #1F2937; }
 .sec-count { margin-left: auto; font-size: 24rpx; color: #9CA3AF; }
 
@@ -118,8 +118,8 @@ function onLongPress(item: PinyinItem) {
 .in-pinyin { font-size: 64rpx; font-weight: 800; color: #1F2937; }
 .in-tips { font-size: 24rpx; color: #6B7280; text-align: center; line-height: 1.4; }
 .in-actions { display: flex; gap: 24rpx; margin-top: 4rpx; }
-.in-speak { font-size: 32rpx; }
-.in-fav { font-size: 32rpx; color: #D1D5DB; &.on { color: #FFD93D; } }
+.in-speak-img { width: 32rpx; height: 32rpx; }
+.in-fav-img { width: 32rpx; height: 32rpx; }
 
 /* Compare */
 .compare-card {

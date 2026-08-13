@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- 普通态：灰色 -->
+  <path d="M6 22 L24 6 L42 22 L42 42 L28 42 L28 30 L20 30 L20 42 L6 42 Z" fill="#C4C9D4" stroke="#9CA3AF" stroke-width="2" stroke-linejoin="round"/>
+  <circle cx="24" cy="20" r="3" fill="#FFFFFF" opacity="0.5"/>
+</svg>

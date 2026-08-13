@@ -2,7 +2,7 @@
   <view class="flash-bg">
     <view class="flash-stage px-6 pt-8">
       <view class="flash-header text-center">
-        <text class="fh-emoji">🃏</text>
+        <image class="fh-icon" src="/static/icons/book2.svg" mode="aspectFit" />
         <text class="fh-title">英语闪卡</text>
         <text class="fh-subtitle">点击卡片翻一翻，学单词～</text>
       </view>
@@ -14,7 +14,7 @@
           :class="['cat-chip', c.key === category ? 'active' : '']"
           @click="category = c.key; idx = 0; flipped = false"
         >
-          <text class="cat-emoji">{{ c.emoji }}</text>
+          <image class="cat-icon-img" :src="c.icon" mode="aspectFit" />
           <text class="cat-name">{{ c.name }}</text>
           <text class="cat-count">{{ c.data.length }}</text>
         </view>
@@ -42,9 +42,9 @@
             <text class="card-word">{{ card?.word }}</text>
             <text class="card-phonetic">/ {{ card?.phonetic }} /</text>
             <view class="speak-btn" @click.stop="speakWord">
-              <text class="speak-icon">🔊</text>
+              <image class="speak-icon-img" src="/static/icons/speaker.svg" mode="aspectFit" />
             </view>
-            <text class="flip-hint">👆 点卡片看中文意思</text>
+            <text class="flip-hint">点卡片看中文意思</text>
           </view>
 
           <!-- 背面：中文 + 例句 -->
@@ -55,7 +55,7 @@
               <text class="ex-en">{{ card.examples[0].en }}</text>
               <text class="ex-cn">{{ card.examples[0].cn }}</text>
             </view>
-            <text class="flip-hint back">👆 点卡片翻回正面</text>
+            <text class="flip-hint back">点卡片翻回正面</text>
           </view>
         </view>
 
@@ -70,7 +70,8 @@
             class="know-btn"
             @click="markKnown"
           >
-            <text class="know-text">✓ 认识</text>
+            <image class="know-icon-img" src="/static/icons/check.svg" mode="aspectFit" />
+            <text class="know-text">认识</text>
           </view>
           <view
             :class="['nav-btn primary', idx + 1 === cards.length ? 'disabled' : '']"
@@ -85,18 +86,18 @@
       <view class="more-entry">
         <view class="me-grid">
           <view class="me-card" @click="go('/pages/english/sentences/index')">
-            <text class="me-emoji">💬</text>
+            <image class="me-icon-img" src="/static/icons/mic.svg" mode="aspectFit" />
             <text class="me-name">日常句子</text>
           </view>
           <view class="me-card" @click="go('/pages/english/practice/index')">
-            <text class="me-emoji">✏️</text>
+            <image class="me-icon-img" src="/static/icons/pencil.svg" mode="aspectFit" />
             <text class="me-name">英语练习</text>
           </view>
         </view>
       </view>
 
       <view class="footer-tip mt-10 text-center">
-        <text class="tip-text">Tip：H5 浏览器可自动发音，小程序点 🔊 可播放</text>
+        <text class="tip-text">Tip：H5 浏览器可自动发音，小程序点喇叭图标可播放</text>
       </view>
     </view>
   </view>
@@ -107,11 +108,11 @@ import { computed, ref } from "vue";
 import { animalFlashcards, familyFlashcards, fruitFlashcards, colorFlashcards, numberFlashcards, type Flashcard } from "@/data/english";
 
 const cats = [
-  { key: "animal", name: "动物", emoji: "🐾", data: animalFlashcards },
-  { key: "family", name: "家人", emoji: "👨‍👩‍👧", data: familyFlashcards },
-  { key: "fruit", name: "水果", emoji: "🍎", data: fruitFlashcards },
-  { key: "color", name: "颜色", emoji: "🎨", data: colorFlashcards },
-  { key: "number", name: "数字", emoji: "🔢", data: numberFlashcards },
+  { key: "animal", name: "动物", icon: "/static/icons/paw.svg", data: animalFlashcards },
+  { key: "family", name: "家人", icon: "/static/icons/family.svg", data: familyFlashcards },
+  { key: "fruit", name: "水果", icon: "/static/icons/apple.svg", data: fruitFlashcards },
+  { key: "color", name: "颜色", icon: "/static/icons/palette.svg", data: colorFlashcards },
+  { key: "number", name: "数字", icon: "/static/icons/numbers.svg", data: numberFlashcards },
 ];
 const categories = cats;
 
@@ -149,7 +150,7 @@ const markKnown = () => {
   if (!card.value) return;
   const key = category.value + "::" + card.value.word;
   known.value = { ...known.value, [key]: true };
-  uni.showToast({ title: "已标记 ✓", icon: "none", duration: 600 });
+  uni.showToast({ title: "已标记认识", icon: "none", duration: 600 });
   setTimeout(next, 400);
 };
 
@@ -166,7 +167,7 @@ const speakWord = () => {
     }
   } catch (e) {}
   // #endif
-  uni.showToast({ title: `🔊 ${card.value.word}`, icon: "none", duration: 1000 });
+  uni.showToast({ title: card.value.word, icon: "none", duration: 1000 });
 };
 
 const go = (url: string) => uni.navigateTo({ url });
@@ -180,7 +181,7 @@ const go = (url: string) => uni.navigateTo({ url });
 }
 .flash-stage { max-width: 880rpx; margin: 0 auto; }
 
-.fh-emoji { font-size: 100rpx; display: block; }
+.fh-icon { width: 100rpx; height: 100rpx; display: block; margin: 0 auto; }
 .fh-title { display: block; font-size: 48rpx; font-weight: 800; color: #DB2777; margin-top: 8rpx; }
 .fh-subtitle { display: block; font-size: 26rpx; color: #6B7280; margin-top: 6rpx; }
 
@@ -195,10 +196,10 @@ const go = (url: string) => uni.navigateTo({ url });
   background: #FFFFFF;
   box-shadow: 0 4rpx 14rpx rgba(0,0,0,0.05);
   flex-shrink: 0;
-  &.active { background: linear-gradient(135deg, #DB2777 0%, #8B5CF6 100%); .cat-name, .cat-emoji, .cat-count { color: #FFFFFF; } .cat-count { background: rgba(255,255,255,0.25); } }
+  &.active { background: linear-gradient(135deg, #DB2777 0%, #8B5CF6 100%); .cat-name, .cat-count { color: #FFFFFF; } .cat-count { background: rgba(255,255,255,0.25); } }
   &:active { transform: scale(0.97); }
 }
-.cat-emoji { font-size: 30rpx; }
+.cat-icon-img { width: 32rpx; height: 32rpx; }
 .cat-name { font-size: 26rpx; color: #1F2937; font-weight: 700; }
 .cat-count {
   margin-left: 4rpx;
@@ -263,17 +264,18 @@ const go = (url: string) => uni.navigateTo({ url });
   box-shadow: 0 8rpx 24rpx rgba(192, 132, 252, 0.3);
   &:active { transform: scale(0.92); }
 }
-.speak-icon { font-size: 44rpx; }
+.speak-icon-img { width: 44rpx; height: 44rpx; }
 .flip-hint { margin-top: 24rpx; font-size: 24rpx; color: #9CA3AF; &.back { color: #60A5FA; } }
 
 /* Nav */
 .nav-row { display: flex; gap: 16rpx; }
 .nav-btn, .know-btn {
   padding: 20rpx 32rpx; border-radius: 28rpx;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; align-items: center; justify-content: center; gap: 8rpx;
   min-width: 180rpx;
   &:active { transform: scale(0.96); }
 }
+.know-icon-img { width: 28rpx; height: 28rpx; }
 .nav-btn {
   background: #FFFFFF; border: 3rpx solid #E5E7EB;
   &.primary { background: linear-gradient(135deg, #DB2777 0%, #8B5CF6 100%); border-color: transparent; .nav-text { color: #FFFFFF; } }
@@ -301,6 +303,6 @@ const go = (url: string) => uni.navigateTo({ url });
   display: flex; flex-direction: column; align-items: center; gap: 10rpx;
   &:active { transform: scale(0.95); }
 }
-.me-emoji { font-size: 56rpx; }
+.me-icon-img { width: 56rpx; height: 56rpx; }
 .me-name { font-size: 26rpx; font-weight: 700; color: #1F2937; }
 </style>
