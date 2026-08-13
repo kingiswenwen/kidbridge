@@ -1,0 +1,49 @@
+/* Tailwind CSS 入口 —— 必须用 .css 后缀，PostCSS 才能正确处理 @tailwind 指令 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 跨端安全基础样式（小程序端因关闭 preflight，手动补 reset） */
+page,
+view,
+text,
+scroll-view,
+swiper,
+swiper-item,
+input,
+textarea,
+button,
+image {
+  box-sizing: border-box;
+}
+
+@layer components {
+  .card-base {
+    @apply rounded-3xl bg-white p-6 border border-gray-100;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .btn-cartoon {
+    @apply rounded-full px-8 py-3 font-bold text-white transition-transform active:translate-y-1;
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.08), 0 10px 24px rgba(255, 107, 107, 0.15);
+  }
+
+  .tag-pill {
+    @apply inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .page-pad {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 6rem;
+  }
+}
+
+@layer utilities {
+  .pt-safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  .pb-safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}

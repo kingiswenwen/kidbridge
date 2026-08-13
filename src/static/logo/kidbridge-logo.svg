@@ -1,0 +1,19 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="kbBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF9E6"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+  <!-- 圆角方块底 -->
+  <rect x="4" y="4" width="112" height="112" rx="28" fill="url(#kbBg)" stroke="#FFE3C2" stroke-width="2"/>
+  <!-- 彩虹桥：三道弧（珊瑚红 / 暖黄 / 薄荷绿） -->
+  <path d="M24 84 A36 36 0 0 1 96 84" fill="none" stroke="#FF6B6B" stroke-width="8" stroke-linecap="round"/>
+  <path d="M32 84 A28 28 0 0 1 88 84" fill="none" stroke="#FFD93D" stroke-width="8" stroke-linecap="round"/>
+  <path d="M40 84 A20 20 0 0 1 80 84" fill="none" stroke="#4ECDC4" stroke-width="8" stroke-linecap="round"/>
+  <!-- 桥墩 -->
+  <rect x="22" y="82" width="12" height="16" rx="5" fill="#FFFFFF" stroke="#FFD9D9" stroke-width="1.5"/>
+  <rect x="86" y="82" width="12" height="16" rx="5" fill="#FFFFFF" stroke="#CDEEEA" stroke-width="1.5"/>
+  <!-- 小太阳 / 星 -->
+  <path d="M60 22 L65.9 23.9 L69.5 28.9 L65.9 40.1 L60 42 L54.1 40.1 L50.5 35.1 L50.5 28.9 L54.1 23.9 Z" fill="#FFD93D" stroke="#FFF3C4" stroke-width="1"/>
+</svg>

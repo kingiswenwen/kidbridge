@@ -1,0 +1,164 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "彩虹桥",
+        "navigationBarBackgroundColor": "#FF6B6B",
+        "navigationBarTextStyle": "white",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/math/practice/index",
+      "style": {
+        "navigationBarTitleText": "数学练习",
+        "navigationBarBackgroundColor": "#FF6B6B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/math/challenge/index",
+      "style": {
+        "navigationBarTitleText": "闯关挑战",
+        "navigationBarBackgroundColor": "#FF6B6B",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/index",
+      "style": {
+        "navigationBarTitleText": "拼音学习",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/vowels/index",
+      "style": {
+        "navigationBarTitleText": "韵母学习",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/initials/index",
+      "style": {
+        "navigationBarTitleText": "声母学习",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/spelling/index",
+      "style": {
+        "navigationBarTitleText": "拼音拼读",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/table/index",
+      "style": {
+        "navigationBarTitleText": "拼音总表",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/practice/index",
+      "style": {
+        "navigationBarTitleText": "拼音练习",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/pinyin/favorites/index",
+      "style": {
+        "navigationBarTitleText": "我的收藏",
+        "navigationBarBackgroundColor": "#4ECDC4",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/english/flashcard/index",
+      "style": {
+        "navigationBarTitleText": "英语闪卡",
+        "navigationBarBackgroundColor": "#74B9FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/english/sentences/index",
+      "style": {
+        "navigationBarTitleText": "日常句子",
+        "navigationBarBackgroundColor": "#74B9FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/english/practice/index",
+      "style": {
+        "navigationBarTitleText": "英语练习",
+        "navigationBarBackgroundColor": "#74B9FF",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/wrongbook/index",
+      "style": {
+        "navigationBarTitleText": "错题本",
+        "navigationBarBackgroundColor": "#FFD93D",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationBarTitleText": "设置",
+        "navigationBarBackgroundColor": "#64748B",
+        "navigationBarTextStyle": "white"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "彩虹桥",
+    "navigationBarBackgroundColor": "#FF6B6B",
+    "backgroundColor": "#FFF9E6",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "color": "#64748B",
+    "selectedColor": "#FF6B6B",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.png",
+        "selectedIconPath": "static/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/wrongbook/index",
+        "text": "错题本",
+        "iconPath": "static/tabbar/book.png",
+        "selectedIconPath": "static/tabbar/book-active.png"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "text": "设置",
+        "iconPath": "static/tabbar/settings.png",
+        "selectedIconPath": "static/tabbar/settings-active.png"
+      }
+    ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uv-(.*)": "uview-plus/components/u-$1/u-$1.vue"
+    }
+  }
+}

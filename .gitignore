@@ -141,3 +141,46 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# ===== uni-app / 小程序项目额外忽略项（来自 kidbridge-uni） =====
+.DS_Store
+*.local
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ===== WorkBuddy 工作数据（不上传） =====
+.workbuddy/
+
+# ===== 主流 IDE / 编辑器文件夹 =====
+# VS Code
+.vscode/
+# JetBrains 全家桶 (IntelliJ / WebStorm / PyCharm / CLion / GoLand / Rider ...)
+.idea/
+# Visual Studio
+.vs/
+# Cursor
+.cursor/
+# Zed
+.zed/
+# Sublime Text
+.sublime-project
+.sublime-workspace
+# Vim / Neovim
+.vim/
+.nvim/
+*.swp
+*.swo
+# Emacs
+.emacs.d/
+# Atom
+.atom/
+# Eclipse
+.project
+.classpath
+.settings/
+# NetBeans
+.nbproject/

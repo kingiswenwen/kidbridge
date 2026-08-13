@@ -1,0 +1,70 @@
+// ==========================================
+// 彩虹桥 - 儿童风主题变量
+// ==========================================
+
+// --- 主色（珊瑚红 + 薄荷青 + 柠檬黄） ---
+$uni-color-primary: #ff6b6b;
+$uni-color-success: #6bcb77;
+$uni-color-warning: #ffd93d;
+$uni-color-error: #ff8e8e;
+$uni-color-info: #74b9ff;
+
+// 辅助色
+$color-primary-mint: #4ecdc4;
+$color-bg-cream: #fff9e6;
+$color-bg-pink: #fff5f5;
+$color-bg-blue: #f0f9ff;
+$color-bg-mint: #ecfdf5;
+
+// --- 文字颜色 ---
+$uni-text-color: #1f2937;
+$uni-text-color-inverse: #ffffff;
+$uni-text-color-grey: #6b7280;
+$uni-text-color-placeholder: #9ca3af;
+$uni-text-color-disable: #d1d5db;
+
+// --- 背景颜色 ---
+$uni-bg-color: #ffffff;
+$uni-bg-color-grey: #f8fafc;
+$uni-bg-color-hover: #f3f4f6;
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4);
+
+// --- 边框颜色 ---
+$uni-border-color: #e5e7eb;
+
+// --- 文字尺寸（儿童教育类普遍偏大） ---
+$uni-font-size-sm: 24rpx;
+$uni-font-size-base: 28rpx;
+$uni-font-size-lg: 32rpx;
+$uni-font-size-xl: 36rpx;
+$uni-font-size-xxl: 44rpx;
+
+// --- 圆角（卡通风格大圆角） ---
+$uni-border-radius-sm: 8rpx;
+$uni-border-radius-base: 16rpx;
+$uni-border-radius-lg: 24rpx;
+$uni-border-radius-xl: 32rpx;
+$uni-border-radius-circle: 50%;
+
+// --- 间距 ---
+$uni-spacing-row-sm: 10rpx;
+$uni-spacing-row-base: 20rpx;
+$uni-spacing-row-lg: 30rpx;
+$uni-spacing-col-sm: 8rpx;
+$uni-spacing-col-base: 16rpx;
+$uni-spacing-col-lg: 24rpx;
+
+// --- uView Plus 主题覆盖 ---
+$u-primary: #ff6b6b;
+$u-warning: #ffd93d;
+$u-success: #6bcb77;
+$u-error: #ff8e8e;
+$u-info: #74b9ff;
+$u-main-color: $uni-text-color;
+$u-content-color: $uni-text-color-grey;
+$u-tips-color: $uni-text-color-placeholder;
+$u-light-color: $uni-border-color;
+$u-bg-color: #fff9e6;
+
+// uView 组件默认圆角
+$u-border-radius: 24rpx;
