@@ -282,8 +282,12 @@ const goHome = () => {
 .type-grid {
   padding: 40rpx 32rpx;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20rpx;
+}
+/* 平板 / 桌面：题型改为三列，铺满居中内容区（避免大屏下两张巨型卡片） */
+@media screen and (min-width: 768px) {
+  .type-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .type-card {
   background: #FFFFFF;

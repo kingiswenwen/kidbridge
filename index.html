@@ -9,6 +9,34 @@
         '<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' +
         (coverSupport ? ', viewport-fit=cover' : '') + '" />')
     </script>
+    <!--
+      响应式 rem 基准：uni-app 将 rpx 编译为 rem（rootValue=32，即 1rpx = 1/32 rem）。
+      通过把 <html> 的 font-size 设为「按设备宽度封顶后的有效宽度 × 32 / 750」，
+      即可让 750rpx 始终等于有效设计宽度，从而让所有基于 rpx 的页面在
+      手机(满宽) / 平板(封顶 720) / 桌面(封顶 860) 下自动铺满居中内容区，
+      无需逐页改写。与 App.vue 中 #app 的 max-width 断点保持一致。
+    -->
+    <script>
+      (function () {
+        function setRemBase() {
+          var w = window.innerWidth || document.documentElement.clientWidth || 375;
+          var cap = w < 768 ? w : (w < 1024 ? 720 : 860);
+          document.documentElement.style.fontSize = (cap * 32 / 750) + 'px';
+        }
+        setRemBase();
+        // 适配屏幕旋转 / 窗口尺寸变化
+        window.addEventListener('resize', setRemBase);
+        window.addEventListener('orientationchange', setRemBase);
+        window.addEventListener('load', setRemBase);
+        // 兜底：CDP 视口覆盖不会触发 resize 事件，且 reload 后 innerWidth 有过渡态，
+        // 连续若干帧重新应用，确保视口稳定后取到正确值（约 1.5s）
+        var frames = 0;
+        (function catchUp() {
+          setRemBase();
+          if (++frames < 90) requestAnimationFrame(catchUp);
+        })();
+      })();
+    </script>
     <title>KidBridge 彩虹桥</title>
     <link rel="icon" type="image/svg+xml" href="/static/logo/kidbridge-logo.svg" />
     <link rel="apple-touch-icon" href="/static/logo/kidbridge-logo.svg" />

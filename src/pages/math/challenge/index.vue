@@ -348,7 +348,11 @@ function toList() {
 
 /* Level card */
 .level-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20rpx;
+}
+/* 平板 / 桌面：关卡改为三列，铺满居中内容区 */
+@media screen and (min-width: 768px) {
+  .level-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .level-card {
   background: #FFFFFF; border-radius: 32rpx; padding: 24rpx;
