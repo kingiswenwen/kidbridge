@@ -57,7 +57,7 @@
     "pinia": "^2.3.1",
     "pinia-plugin-persistedstate": "^3.2.3",
     "uview-plus": "^3.8.86",
-    "vue": "^3.4.21",
+    "vue": "^3.5.13",
     "vue-i18n": "^9.1.9"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "@dcloudio/uni-stacktracey": "3.0.0-5020420260813001",
     "@dcloudio/vite-plugin-uni": "3.0.0-5020420260813001",
     "@types/node": "^26.2.0",
-    "@vue/runtime-core": "^3.4.21",
+    "@vue/runtime-core": "^3.5.13",
     "@vue/tsconfig": "^0.1.3",
     "autoprefixer": "^10.5.4",
     "postcss": "^8.5.26",
