@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="bk1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8AC4F8"/>
+      <stop offset="1" stop-color="#5BA8F5"/>
+    </linearGradient>
+    <linearGradient id="bk2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EFF6FF"/>
+    </linearGradient>
+  </defs>
+  <path d="M24 11 C19 9 13 9 8 10 C7 10 6 11 6 12 L6 37 C6 38 7 38 8 38 C13 37 19 37 24 39 Z" fill="url(#bk2)" stroke="#5BA8F5" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M24 11 C29 9 35 9 40 10 C41 10 42 11 42 12 L42 37 C42 38 41 38 40 38 C35 37 29 37 24 39 Z" fill="url(#bk2)" stroke="#5BA8F5" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M24 11 L24 39" stroke="#5BA8F5" stroke-width="1.8"/>
+  <g stroke="#8AC4F8" stroke-width="2" stroke-linecap="round">
+    <line x1="11" y1="17" x2="20" y2="16.5"/>
+    <line x1="11" y1="22" x2="20" y2="21.5"/>
+    <line x1="11" y1="27" x2="18" y2="26.5"/>
+  </g>
+  <g stroke="#8AC4F8" stroke-width="2" stroke-linecap="round">
+    <line x1="28" y1="16.5" x2="37" y2="17"/>
+    <line x1="28" y1="21.5" x2="37" y2="22"/>
+    <line x1="30" y1="26.5" x2="37" y2="27"/>
+  </g>
+</svg>

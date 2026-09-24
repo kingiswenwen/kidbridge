@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="ct1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFE4A6"/>
+      <stop offset="1" stop-color="#FFC53D"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="14" cy="14" rx="5" ry="6" fill="#D97706"/>
+  <ellipse cx="34" cy="14" rx="5" ry="6" fill="#D97706"/>
+  <circle cx="24" cy="26" r="14" fill="url(#ct1)" stroke="#D97706" stroke-width="1.5"/>
+  <ellipse cx="18" cy="24" rx="2" ry="2.5" fill="#2D2D2D"/>
+  <ellipse cx="30" cy="24" rx="2" ry="2.5" fill="#2D2D2D"/>
+  <circle cx="18.5" cy="23" r="0.8" fill="#FFFFFF"/>
+  <circle cx="30.5" cy="23" r="0.8" fill="#FFFFFF"/>
+  <path d="M21 30 Q24 28 27 30" stroke="#2D2D2D" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M20 30 Q22 32 24 31 Q26 32 28 30" stroke="#2D2D2D" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <line x1="14" y1="28" x2="11" y2="30" stroke="#9CA3AF" stroke-width="1" stroke-linecap="round"/>
+  <line x1="34" y1="28" x2="37" y2="30" stroke="#9CA3AF" stroke-width="1" stroke-linecap="round"/>
+</svg>
