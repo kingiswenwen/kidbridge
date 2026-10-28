@@ -184,3 +184,7 @@ vite.config.ts.timestamp-*
 .settings/
 # NetBeans
 .nbproject/
+
+# Python deployment tooling
+__pycache__/
+*.py[cod]
