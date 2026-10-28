@@ -35,13 +35,19 @@
         <text class="empty-btn-text">去学习拼音</text>
       </view>
     </view>
+    <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AppDialog from "@/components/AppDialog.vue";
+import { useAppDialog } from "@/utils/dialog";
+
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { speak } from '@/utils/speak'
+
+const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore()
 
@@ -60,8 +66,11 @@ function remove(p: string) {
 }
 
 function clearAll() {
-  uni.showModal({
+  showDialog({
     title: '清空收藏',
+    confirmText: '清空收藏',
+    cancelText: '保留收藏',
+    tone: 'danger',
     content: '确定要清空所有收藏的拼音吗？',
     success: (r) => {
       if (r.confirm) {

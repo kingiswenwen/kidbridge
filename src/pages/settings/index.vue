@@ -12,7 +12,12 @@
         </view>
         <view
           class="edit-btn"
+          role="button"
+          tabindex="0"
+          aria-label="修改昵称"
           @click="editName"
+          @keydown.enter.prevent="editName"
+          @keydown.space.prevent="editName"
         >
           <text class="edit-btn-text">编辑</text>
         </view>
@@ -59,11 +64,7 @@
               <text class="set-desc">答题反馈、鼓励音</text>
             </view>
           </view>
-          <switch
-            :checked="store.soundEnabled"
-            color="#FF6B6B"
-            @change="(e: any) => store.toggleSound(e.detail.value)"
-          />
+          <AppSwitch :model-value="store.soundEnabled" label="音效" @update:model-value="store.toggleSound" />
         </view>
 
         <view class="set-row">
@@ -71,14 +72,10 @@
             <image class="set-icon-img" src="/static/icons/mic.svg" mode="aspectFit" />
             <view class="set-texts">
               <text class="set-name">自动朗读题目</text>
-              <text class="set-desc">答题前自动读一遍（H5/小程序支持）</text>
+              <text class="set-desc">答题前自动读一遍（需浏览器支持）</text>
             </view>
           </view>
-          <switch
-            :checked="store.autoSpeak"
-            color="#4ECDC4"
-            @change="(e: any) => store.setAutoSpeak(e.detail.value)"
-          />
+          <AppSwitch :model-value="store.autoSpeak" label="自动朗读题目" @update:model-value="store.setAutoSpeak" />
         </view>
 
         <view class="set-row">
@@ -134,7 +131,7 @@
             <image class="set-icon-img" src="/static/icons/refresh.svg" mode="aspectFit" />
             <view class="set-texts">
               <text class="set-name">重置学习进度</text>
-              <text class="set-desc">清空调用/错题/收藏（需二次确认）</text>
+              <text class="set-desc">清空学习进度、错题与收藏</text>
             </view>
           </view>
           <text class="arrow">›</text>
@@ -142,11 +139,18 @@
 
       </view>
     </view>
+    <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AppSwitch from "@/components/AppSwitch.vue";
+import AppDialog from "@/components/AppDialog.vue";
+import { useAppDialog } from "@/utils/dialog";
+
 import { useAppStore } from "@/stores/app";
+
+const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore();
 
@@ -171,7 +175,7 @@ const avatarChoices = [
 ];
 
 const editName = () => {
-  uni.showModal({
+  showDialog({
     title: "设置昵称",
     editable: true,
     placeholderText: "输入小朋友的名字",
@@ -183,11 +187,12 @@ const editName = () => {
 };
 
 const resetProgress = () => {
-  uni.showModal({
+  showDialog({
     title: "确定重置所有学习数据？",
     content: "这会清空：总做题数、答对、错题本、收藏、打卡。无法撤销哦。",
-    confirmText: "重置",
-    confirmColor: "#FF6B6B",
+    confirmText: "确定重置",
+    cancelText: "保留数据",
+    tone: "danger",
     success: (r) => {
       if (r.confirm) {
         store.resetAll();

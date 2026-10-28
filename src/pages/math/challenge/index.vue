@@ -148,10 +148,14 @@
         </view>
       </view>
     </view>
+    <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AppDialog from "@/components/AppDialog.vue";
+import { useAppDialog } from "@/utils/dialog";
+
 import { computed, ref } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { levels, difficultyLabels, difficultyColors, getLevelsByDifficulty, type LevelConfig } from '@/data/levels';
@@ -162,6 +166,8 @@ import ProgressBar from '@/components/ProgressBar.vue';
 import QuestionCard from '@/components/QuestionCard.vue';
 import NumberPad from '@/components/NumberPad.vue';
 import StarRating, { calculateStars } from '@/components/StarRating.vue';
+
+const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore();
 
@@ -276,8 +282,10 @@ function nextQuestion() {
   draftAnswer.value = '';
 }
 function quit() {
-  uni.showModal({
+  showDialog({
     title: '确定退出关卡？',
+    confirmText: '退出关卡',
+    cancelText: '继续挑战',
     content: '本次进度将不会保存',
     success: (r) => {
       if (r.confirm) toList();

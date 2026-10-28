@@ -71,13 +71,19 @@
         </view>
       </view>
     </view>
+    <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AppDialog from "@/components/AppDialog.vue";
+import { useAppDialog } from "@/utils/dialog";
+
 import { computed } from "vue";
 import { useAppStore } from "@/stores/app";
 import type { Question } from "@/types";
+
+const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore();
 
@@ -111,11 +117,12 @@ const removeWrong = (w: Question) => {
 };
 
 const handleClear = () => {
-  uni.showModal({
+  showDialog({
     title: "确定清空错题本？",
     content: "清空后无法恢复，建议先做完一轮再清空～",
-    confirmText: "清空",
-    confirmColor: "#FF6B6B",
+    confirmText: "清空错题",
+    cancelText: "保留错题",
+    tone: "danger",
     success: (r) => {
       if (r.confirm) {
         store.clearWrong();
