@@ -4,9 +4,25 @@ import { UnifiedViteWeappTailwindcssPlugin } from "weapp-tailwindcss/vite";
 import path from "node:path";
 import tailwindcss from "tailwindcss";
 import autoprefixer from "autoprefixer";
+import fs from "node:fs";
 
 export default defineConfig({
   plugins: [
+    {
+      name: "kidbridge-navigation",
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const pathname = (req.url || "/").split("?")[0];
+          if (pathname === "/" || pathname === "/index.html") {
+            res.setHeader("Content-Type", "text/html; charset=utf-8");
+            res.end(fs.readFileSync(path.resolve(__dirname, "navigation.html"), "utf8"));
+            return;
+          }
+          if (pathname === "/learning.html") req.url = "/index.html";
+          next();
+        });
+      },
+    },
     uni(),
     // 让 Tailwind 原子类在 uni-app 小程序端生效：rem→rpx 转译 + 选择器适配。
     // 该插件会按平台自动激活（仅小程序端生效，H5 端由 postcss.config.js 处理，不受影响）。

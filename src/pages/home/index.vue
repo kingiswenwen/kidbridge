@@ -1,5 +1,8 @@
 <template>
   <view class="home-page">
+    <!-- #ifdef H5 -->
+    <a href="./" style="display:block;padding:12px 18px;color:#96351e;font-size:14px;text-decoration:underline;text-underline-offset:4px">← 返回彩虹桥资源导航</a>
+    <!-- #endif -->
     <view class="hero-section">
       <view class="deco-blob blob-1"></view>
       <view class="deco-blob blob-2"></view>

@@ -1,0 +1,1815 @@
+{
+  "checkedOn": "2026-10-28T17:58:36.340361+08:00",
+  "scope": "Cloud checks use the managed proxy, not a China mainland direct connection. Mainland classifications use public measurements only.",
+  "sites": [
+    {
+      "id": 1,
+      "domain": "scratch.mit.edu",
+      "status": "anomaly",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=scratch.mit.edu&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-10-27T04:09:56.000000Z",
+          "probe_asn": "AS9808",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261027041003.046146_CN_webconnectivity_234cec058b5d5ee5"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-10-09T13:27:14.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261009132715.852403_CN_webconnectivity_078e7447ea41f172"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-09-30T15:31:43.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260930153144.602018_CN_webconnectivity_ab41488168d435f1"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-09-28T21:24:07.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260928212408.451018_CN_webconnectivity_efb7764a591dab41"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-09-22T18:31:53.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260922183154.987150_CN_webconnectivity_537c4e64bdaed80f"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-09-18T19:32:54.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260918193258.731432_CN_webconnectivity_9cde1893464f0cd0"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-08-23T20:04:28.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260823200429.768871_CN_webconnectivity_9a34ac874fa588f1"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-08-22T16:59:26.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260822165930.418608_CN_webconnectivity_543b312cb16f7b56"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-08-21T18:13:04.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260821181309.339681_CN_webconnectivity_d7ead2e395ff59b7"
+        },
+        {
+          "input": "https://scratch.mit.edu",
+          "measurement_start_time": "2026-08-20T20:13:35.000000Z",
+          "probe_asn": "AS56040",
+          "anomaly": true,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20260820201336.372415_CN_webconnectivity_2dcc305cca26ccae"
+        }
+      ],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://scratch.mit.edu",
+          "source": "https://en.greatfire.org/api/url/https/scratch.mit.edu",
+          "result": {
+            "url": "https://scratch.mit.edu",
+            "found": true,
+            "headline": "blocked",
+            "blocked_percent": 100,
+            "redirected_percent": 0,
+            "disrupted_percent": 100,
+            "blocked_count": 3,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 3,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2020-08-20T20:44:09.000Z",
+            "last_tested": "2026-09-26T18:15:23.000Z",
+            "connfail": null,
+            "verdict": "blocked",
+            "tests": 3
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://scratch.mit.edu/"
+      },
+      "assessment": "blocked",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/scratch.mit.edu",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 2,
+      "domain": "code.org",
+      "status": "observed",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=code.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-27T00:23:18.000000Z",
+          "probe_asn": "AS9808",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261027002324.238288_CN_webconnectivity_a113b071eac0f595"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-25T20:55:58.000000Z",
+          "probe_asn": "AS24400",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261025205623.907002_CN_webconnectivity_c656191f26493907"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-23T09:10:17.000000Z",
+          "probe_asn": "AS4134",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261023091024.103905_CN_webconnectivity_1b357f8784036050"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-22T21:08:22.000000Z",
+          "probe_asn": "AS24400",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261022210847.768084_CN_webconnectivity_19229306d1d0b65a"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-22T16:48:33.000000Z",
+          "probe_asn": "AS214432",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261022164849.966252_CN_webconnectivity_8395a10ed0c22267"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-22T09:23:13.000000Z",
+          "probe_asn": "AS4134",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261022092320.287620_CN_webconnectivity_5e30dd7462124107"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-21T06:23:44.000000Z",
+          "probe_asn": "AS9808",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261021062348.071316_CN_webconnectivity_55176dfc10a58e07"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-20T02:08:42.000000Z",
+          "probe_asn": "AS9808",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261020020852.156511_CN_webconnectivity_d71444ac2fea5974"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-19T13:03:52.000000Z",
+          "probe_asn": "AS17816",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261020080833.281915_CN_webconnectivity_78d1f87e738ca855"
+        },
+        {
+          "input": "https://code.org/",
+          "measurement_start_time": "2026-10-18T22:06:15.000000Z",
+          "probe_asn": "AS9808",
+          "anomaly": false,
+          "confirmed": false,
+          "failure": false,
+          "measurement_url": "https://api.ooni.io/api/v1/raw_measurement?measurement_uid=20261018220622.272719_CN_webconnectivity_3f8e0b40119d4c41"
+        }
+      ],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://code.org/en-US",
+          "source": "https://en.greatfire.org/api/url/https/code.org/en-US",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/code.org/en-US']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://code.org",
+          "source": "https://en.greatfire.org/api/url/https/code.org",
+          "result": {
+            "url": "https://code.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2025-03-31T05:57:03.000Z",
+            "last_tested": "2026-08-06T07:39:05.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://code.org/en-US"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/code.org",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 3,
+      "domain": "blockly.games",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=blockly.games&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://blockly.games",
+          "source": "https://en.greatfire.org/api/url/https/blockly.games",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/blockly.games']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://blockly.games/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=blockly.games&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 4,
+      "domain": "codecombat.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=codecombat.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://codecombat.com",
+          "source": "https://en.greatfire.org/api/url/https/codecombat.com",
+          "result": {
+            "url": "https://codecombat.com",
+            "found": true,
+            "headline": "intermittent",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 100,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 1,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2018-05-28T18:47:39.000Z",
+            "last_tested": "2026-09-22T05:00:19.000Z",
+            "connfail": null,
+            "verdict": "intermittent",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://codecombat.com/"
+      },
+      "assessment": "mixed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/codecombat.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 5,
+      "domain": "makecode.microbit.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=makecode.microbit.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://makecode.microbit.org",
+          "source": "https://en.greatfire.org/api/url/https/makecode.microbit.org",
+          "result": {
+            "url": "https://makecode.microbit.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-08-06T07:26:18.000Z",
+            "last_tested": "2026-10-11T20:53:11.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-11T20:53:11.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://makecode.microbit.org/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/makecode.microbit.org",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 6,
+      "domain": "hourofai.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=hourofai.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://hourofai.org/activities",
+          "source": "https://en.greatfire.org/api/url/https/hourofai.org/activities",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/hourofai.org/activities']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://hourofai.org",
+          "source": "https://en.greatfire.org/api/url/https/hourofai.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/hourofai.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://hourofai.org/en-US/activities"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=hourofai.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 7,
+      "domain": "www.abcya.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.abcya.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.abcya.com",
+          "source": "https://en.greatfire.org/api/url/https/www.abcya.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.abcya.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.abcya.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.abcya.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 8,
+      "domain": "www.starfall.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.starfall.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.starfall.com/h",
+          "source": "https://en.greatfire.org/api/url/https/www.starfall.com/h",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.starfall.com/h']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://www.starfall.com",
+          "source": "https://en.greatfire.org/api/url/https/www.starfall.com",
+          "result": {
+            "url": "https://www.starfall.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-08-24T23:41:38.000Z",
+            "last_tested": "2026-10-24T17:29:04.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-24T17:29:04.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.starfall.com/h/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.starfall.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 9,
+      "domain": "pbskids.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=pbskids.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://pbskids.org",
+          "source": "https://en.greatfire.org/api/url/https/pbskids.org",
+          "result": {
+            "url": "https://pbskids.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2015-12-30T07:42:14.000Z",
+            "last_tested": "2026-08-16T00:07:34.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://pbskids.org/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/pbskids.org",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 10,
+      "domain": "www.sesamestreet.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.sesamestreet.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.sesamestreet.org",
+          "source": "https://en.greatfire.org/api/url/https/www.sesamestreet.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.sesamestreet.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.sesamestreet.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.sesamestreet.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 11,
+      "domain": "www.trtcocuk.net.tr",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.trtcocuk.net.tr&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.trtcocuk.net.tr",
+          "source": "https://en.greatfire.org/api/url/https/www.trtcocuk.net.tr",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.trtcocuk.net.tr']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.trtcocuk.net.tr/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.trtcocuk.net.tr&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 12,
+      "domain": "bilimgenc.tubitak.gov.tr",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=bilimgenc.tubitak.gov.tr&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://bilimgenc.tubitak.gov.tr",
+          "source": "https://en.greatfire.org/api/url/https/bilimgenc.tubitak.gov.tr",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/bilimgenc.tubitak.gov.tr']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://bilimgenc.tubitak.gov.tr/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=bilimgenc.tubitak.gov.tr&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 13,
+      "domain": "kids.nationalgeographic.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=kids.nationalgeographic.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://kids.nationalgeographic.com",
+          "source": "https://en.greatfire.org/api/url/https/kids.nationalgeographic.com",
+          "result": {
+            "url": "https://kids.nationalgeographic.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2021-09-05T01:02:44.000Z",
+            "last_tested": "2026-09-15T18:04:09.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://kids.nationalgeographic.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/kids.nationalgeographic.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 14,
+      "domain": "www.si.edu",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.si.edu&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.si.edu/kids",
+          "source": "https://en.greatfire.org/api/url/https/www.si.edu/kids",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.si.edu/kids']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://www.si.edu",
+          "source": "https://en.greatfire.org/api/url/https/www.si.edu",
+          "result": {
+            "url": "https://www.si.edu",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2022-12-10T07:36:56.000Z",
+            "last_tested": "2026-10-09T21:34:32.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-09T21:34:32.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.si.edu/kids"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.si.edu",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 15,
+      "domain": "kids.britannica.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=kids.britannica.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://kids.britannica.com",
+          "source": "https://en.greatfire.org/api/url/https/kids.britannica.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/kids.britannica.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://kids.britannica.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=kids.britannica.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 16,
+      "domain": "dk.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=dk.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://dk.com/pages/dk-learning",
+          "source": "https://en.greatfire.org/api/url/https/dk.com/pages/dk-learning",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/dk.com/pages/dk-learning']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://dk.com",
+          "source": "https://en.greatfire.org/api/url/https/dk.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/dk.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://dk.com/pages/dk-learning"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=dk.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 17,
+      "domain": "www.ducksters.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.ducksters.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.ducksters.com",
+          "source": "https://en.greatfire.org/api/url/https/www.ducksters.com",
+          "result": {
+            "url": "https://www.ducksters.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": true,
+            "as_of": "2026-05-07T20:41:58.000Z",
+            "as_of_test_id": 26363869,
+            "first_tested": "2022-12-22T11:58:26.000Z",
+            "last_tested": "2026-05-07T20:41:58.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.ducksters.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.ducksters.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 18,
+      "domain": "familieslearning.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=familieslearning.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://familieslearning.org/blog/ncfls-digital-learning-platform-wonderopolis-to-close",
+          "source": "https://en.greatfire.org/api/url/https/familieslearning.org/blog/ncfls-digital-learning-platform-wonderopolis-to-close",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/familieslearning.org/blog/ncfls-digital-learning-platform-wonderopolis-to-close']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://familieslearning.org",
+          "source": "https://en.greatfire.org/api/url/https/familieslearning.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/familieslearning.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://familieslearning.org/blog/ncfls-digital-learning-platform-wonderopolis-to-close/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=familieslearning.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 19,
+      "domain": "www.sciencebuddies.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.sciencebuddies.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.sciencebuddies.org",
+          "source": "https://en.greatfire.org/api/url/https/www.sciencebuddies.org",
+          "result": {
+            "url": "https://www.sciencebuddies.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-10-07T01:46:47.000Z",
+            "last_tested": "2026-10-07T01:46:47.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-07T01:46:47.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.sciencebuddies.org/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.sciencebuddies.org",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 20,
+      "domain": "phet.colorado.edu",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=phet.colorado.edu&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://phet.colorado.edu",
+          "source": "https://en.greatfire.org/api/url/https/phet.colorado.edu",
+          "result": {
+            "url": "https://phet.colorado.edu",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-08-12T05:26:21.000Z",
+            "last_tested": "2026-10-07T00:55:13.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-07T00:55:13.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://phet.colorado.edu/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/phet.colorado.edu",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 21,
+      "domain": "spaceplace.nasa.gov",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=spaceplace.nasa.gov&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://spaceplace.nasa.gov",
+          "source": "https://en.greatfire.org/api/url/https/spaceplace.nasa.gov",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/spaceplace.nasa.gov']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://spaceplace.nasa.gov/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=spaceplace.nasa.gov&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 22,
+      "domain": "science.nasa.gov",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=science.nasa.gov&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://science.nasa.gov/kids/earth",
+          "source": "https://en.greatfire.org/api/url/https/science.nasa.gov/kids/earth",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/science.nasa.gov/kids/earth']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://science.nasa.gov",
+          "source": "https://en.greatfire.org/api/url/https/science.nasa.gov",
+          "result": {
+            "url": "https://science.nasa.gov",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2024-08-11T16:46:35.000Z",
+            "last_tested": "2026-10-07T10:34:56.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-07T10:34:56.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://science.nasa.gov/kids/earth/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/science.nasa.gov",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 23,
+      "domain": "kids.esa.int",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=kids.esa.int&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://kids.esa.int",
+          "source": "https://en.greatfire.org/api/url/https/kids.esa.int",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/kids.esa.int']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://kids.esa.int/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=kids.esa.int&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 24,
+      "domain": "www.exploratorium.edu",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.exploratorium.edu&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.exploratorium.edu",
+          "source": "https://en.greatfire.org/api/url/https/www.exploratorium.edu",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.exploratorium.edu']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.exploratorium.edu/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.exploratorium.edu&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 25,
+      "domain": "mysteryscience.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=mysteryscience.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://mysteryscience.com",
+          "source": "https://en.greatfire.org/api/url/https/mysteryscience.com",
+          "result": {
+            "url": "https://mysteryscience.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-08-12T00:59:43.000Z",
+            "last_tested": "2026-08-12T00:59:43.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://mysteryscience.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/mysteryscience.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 26,
+      "domain": "www.generationgenius.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.generationgenius.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.generationgenius.com",
+          "source": "https://en.greatfire.org/api/url/https/www.generationgenius.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.generationgenius.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.generationgenius.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.generationgenius.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 27,
+      "domain": "nrich.maths.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=nrich.maths.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://nrich.maths.org",
+          "source": "https://en.greatfire.org/api/url/https/nrich.maths.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/nrich.maths.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://nrich.maths.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=nrich.maths.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 28,
+      "domain": "www.mathplayground.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.mathplayground.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.mathplayground.com",
+          "source": "https://en.greatfire.org/api/url/https/www.mathplayground.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.mathplayground.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.mathplayground.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.mathplayground.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 29,
+      "domain": "bedtimemath.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=bedtimemath.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://bedtimemath.org",
+          "source": "https://en.greatfire.org/api/url/https/bedtimemath.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/bedtimemath.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://bedtimemath.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=bedtimemath.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 30,
+      "domain": "www.splashlearn.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.splashlearn.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.splashlearn.com",
+          "source": "https://en.greatfire.org/api/url/https/www.splashlearn.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.splashlearn.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.splashlearn.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.splashlearn.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 31,
+      "domain": "storylineonline.net",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=storylineonline.net&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://storylineonline.net",
+          "source": "https://en.greatfire.org/api/url/https/storylineonline.net",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/storylineonline.net']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://storylineonline.net/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=storylineonline.net&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 32,
+      "domain": "storyweaver.org.in",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=storyweaver.org.in&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://storyweaver.org.in",
+          "source": "https://en.greatfire.org/api/url/https/storyweaver.org.in",
+          "result": {
+            "url": "https://storyweaver.org.in",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-10-07T00:57:00.000Z",
+            "last_tested": "2026-10-07T00:57:00.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-07T00:57:00.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://storyweaver.org.in/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/storyweaver.org.in",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 33,
+      "domain": "www.childrenslibrary.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.childrenslibrary.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.childrenslibrary.org",
+          "source": "https://en.greatfire.org/api/url/https/www.childrenslibrary.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.childrenslibrary.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.childrenslibrary.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.childrenslibrary.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 34,
+      "domain": "freekidsbooks.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=freekidsbooks.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://freekidsbooks.org",
+          "source": "https://en.greatfire.org/api/url/https/freekidsbooks.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/freekidsbooks.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://freekidsbooks.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=freekidsbooks.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 35,
+      "domain": "home.oxfordowl.co.uk",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=home.oxfordowl.co.uk&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://home.oxfordowl.co.uk/reading/free-ebooks",
+          "source": "https://en.greatfire.org/api/url/https/home.oxfordowl.co.uk/reading/free-ebooks",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/home.oxfordowl.co.uk/reading/free-ebooks']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://home.oxfordowl.co.uk",
+          "source": "https://en.greatfire.org/api/url/https/home.oxfordowl.co.uk",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/home.oxfordowl.co.uk']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://home.oxfordowl.co.uk/reading/free-ebooks/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=home.oxfordowl.co.uk&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 36,
+      "domain": "www.uniteforliteracy.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.uniteforliteracy.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.uniteforliteracy.com",
+          "source": "https://en.greatfire.org/api/url/https/www.uniteforliteracy.com",
+          "result": {
+            "url": "https://www.uniteforliteracy.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-10-05T16:14:01.000Z",
+            "last_tested": "2026-10-05T16:14:01.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-05T16:14:01.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.uniteforliteracy.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.uniteforliteracy.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 37,
+      "domain": "www.readingbear.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.readingbear.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.readingbear.org",
+          "source": "https://en.greatfire.org/api/url/https/www.readingbear.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.readingbear.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.readingbear.org/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.readingbear.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 38,
+      "domain": "www.duolingo.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.duolingo.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.duolingo.com",
+          "source": "https://en.greatfire.org/api/url/https/www.duolingo.com",
+          "result": {
+            "url": "https://www.duolingo.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2014-03-07T03:32:58.000Z",
+            "last_tested": "2026-08-17T13:52:24.000Z",
+            "connfail": null,
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.duolingo.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.duolingo.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 39,
+      "domain": "www.gusonthego.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.gusonthego.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.gusonthego.com",
+          "source": "https://en.greatfire.org/api/url/https/www.gusonthego.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.gusonthego.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.gusonthego.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.gusonthego.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 40,
+      "domain": "www.musictheory.net",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.musictheory.net&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.musictheory.net",
+          "source": "https://en.greatfire.org/api/url/https/www.musictheory.net",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.musictheory.net']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.musictheory.net/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.musictheory.net&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 41,
+      "domain": "musiclab.chromeexperiments.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=musiclab.chromeexperiments.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://musiclab.chromeexperiments.com",
+          "source": "https://en.greatfire.org/api/url/https/musiclab.chromeexperiments.com",
+          "result": {
+            "url": "https://musiclab.chromeexperiments.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2020-04-16T04:33:04.000Z",
+            "last_tested": "2026-09-30T03:25:01.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-09-30T03:25:01.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://musiclab.chromeexperiments.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/musiclab.chromeexperiments.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 42,
+      "domain": "sketchrx.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=sketchrx.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://sketchrx.com",
+          "source": "https://en.greatfire.org/api/url/https/sketchrx.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/sketchrx.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://sketchrx.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=sketchrx.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 43,
+      "domain": "artforkidshub.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=artforkidshub.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://artforkidshub.com",
+          "source": "https://en.greatfire.org/api/url/https/artforkidshub.com",
+          "result": {
+            "url": "https://artforkidshub.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 1,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2026-09-11T02:21:51.000Z",
+            "last_tested": "2026-09-11T02:21:51.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-09-11T02:21:51.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 1
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://artforkidshub.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/artforkidshub.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 44,
+      "domain": "archived.metmuseum.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=archived.metmuseum.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://archived.metmuseum.org/art/online-features/metkids",
+          "source": "https://en.greatfire.org/api/url/https/archived.metmuseum.org/art/online-features/metkids",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/archived.metmuseum.org/art/online-features/metkids']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://archived.metmuseum.org",
+          "source": "https://en.greatfire.org/api/url/https/archived.metmuseum.org",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/archived.metmuseum.org']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://archived.metmuseum.org/art/online-features/metkids/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=archived.metmuseum.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 45,
+      "domain": "www.tate.org.uk",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.tate.org.uk&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.tate.org.uk/kids",
+          "source": "https://en.greatfire.org/api/url/https/www.tate.org.uk/kids",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.tate.org.uk/kids']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://www.tate.org.uk",
+          "source": "https://en.greatfire.org/api/url/https/www.tate.org.uk",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.tate.org.uk']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.tate.org.uk/kids"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.tate.org.uk&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 46,
+      "domain": "www.chesskid.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.chesskid.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.chesskid.com",
+          "source": "https://en.greatfire.org/api/url/https/www.chesskid.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/www.chesskid.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.chesskid.com/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.chesskid.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 47,
+      "domain": "lichess.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=lichess.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://lichess.org",
+          "source": "https://en.greatfire.org/api/url/https/lichess.org",
+          "result": {
+            "url": "https://lichess.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 5,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2021-10-10T19:51:42.000Z",
+            "last_tested": "2026-10-14T10:16:39.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 3,
+              "latest": "2026-10-14T10:16:39.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 5
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://lichess.org/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/lichess.org",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 48,
+      "domain": "www.typingclub.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.typingclub.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.typingclub.com",
+          "source": "https://en.greatfire.org/api/url/https/www.typingclub.com",
+          "result": {
+            "url": "https://www.typingclub.com",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2021-04-12T01:27:47.000Z",
+            "last_tested": "2026-10-16T07:40:55.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-10-06T17:40:55.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.typingclub.com/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.typingclub.com",
+      "assessmentBasis": "GreatFire + OONI"
+    },
+    {
+      "id": 49,
+      "domain": "education.lego.com",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=education.lego.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://education.lego.com/ja-jp",
+          "source": "https://en.greatfire.org/api/url/https/education.lego.com/ja-jp",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/education.lego.com/ja-jp']' returned non-zero exit status 22."
+        },
+        {
+          "testedUrl": "https://education.lego.com",
+          "source": "https://en.greatfire.org/api/url/https/education.lego.com",
+          "error": "Command '['curl', '--fail', '--silent', '--show-error', '--max-time', '20', 'https://en.greatfire.org/api/url/https/education.lego.com']' returned non-zero exit status 22."
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://education.lego.com/ja-jp/"
+      },
+      "assessment": "unknown",
+      "assessmentSource": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=education.lego.com&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "assessmentBasis": "OONI"
+    },
+    {
+      "id": 50,
+      "domain": "www.commonsensemedia.org",
+      "status": "unknown",
+      "source": "https://api.ooni.io/api/v1/measurements?probe_cc=CN&domain=www.commonsensemedia.org&test_name=web_connectivity&limit=10&since=2026-07-28&until=2026-10-29",
+      "measurements": [],
+      "error": null,
+      "greatfire": [
+        {
+          "testedUrl": "https://www.commonsensemedia.org",
+          "source": "https://en.greatfire.org/api/url/https/www.commonsensemedia.org",
+          "result": {
+            "url": "https://www.commonsensemedia.org",
+            "found": true,
+            "headline": "not blocked",
+            "blocked_percent": 0,
+            "redirected_percent": 0,
+            "disrupted_percent": 0,
+            "blocked_count": 0,
+            "redirected_count": 0,
+            "contradictory_count": 0,
+            "conclusions": 2,
+            "window_days": 90,
+            "stale": false,
+            "as_of": null,
+            "as_of_test_id": null,
+            "first_tested": "2014-08-19T02:44:27.000Z",
+            "last_tested": "2026-09-03T00:50:10.000Z",
+            "connfail": {
+              "was": "intermittent",
+              "tests": 1,
+              "latest": "2026-08-31T23:40:56.000Z"
+            },
+            "verdict": "not blocked",
+            "tests": 2
+          }
+        }
+      ],
+      "cloudCheck": {
+        "status": 200,
+        "finalUrl": "https://www.commonsensemedia.org/"
+      },
+      "assessment": "observed",
+      "assessmentSource": "https://en.greatfire.org/api/url/https/www.commonsensemedia.org",
+      "assessmentBasis": "GreatFire + OONI"
+    }
+  ]
+}
