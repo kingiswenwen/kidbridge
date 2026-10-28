@@ -1,4 +1,4 @@
-"""Install a static release into an existing Baota root, preserving unrelated files."""
+"""Install a static release into an existing server document root, preserving unrelated files."""
 import argparse
 import json
 import os

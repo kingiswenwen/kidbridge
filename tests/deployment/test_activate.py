@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-SPEC = importlib.util.spec_from_file_location('deploy', pathlib.Path(__file__).parents[2] / 'scripts/activate-baota.py')
+SPEC = importlib.util.spec_from_file_location('deploy', pathlib.Path(__file__).parents[2] / 'scripts/activate-server.py')
 deploy = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(deploy)
 SHA = 'a' * 40
@@ -23,7 +23,7 @@ class DeploymentTests(unittest.TestCase):
         (self.root / 'index.html').write_text('old home')
         (self.root / '.well-known').mkdir()
         (self.root / '.well-known/token').write_text('keep certificate challenge')
-        (self.root / '.user.ini').write_text('keep Baota settings')
+        (self.root / '.user.ini').write_text('keep server settings')
         self.bundle = self.parent / 'release.tar.gz'
 
     def archive(self, extra=None):
@@ -49,7 +49,7 @@ class DeploymentTests(unittest.TestCase):
         self.assertFalse((self.root / 'learning.html').exists())
         self.assertFalse((self.root / 'assets/new.js').exists())
         self.assertTrue((self.root / '.well-known/token').exists())
-        self.assertEqual((self.root / '.user.ini').read_text(), 'keep Baota settings')
+        self.assertEqual((self.root / '.user.ini').read_text(), 'keep server settings')
 
     def test_rejects_traversal_before_updating_homepage(self):
         self.archive({'../escape': 'bad'})

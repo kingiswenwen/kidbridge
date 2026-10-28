@@ -1,4 +1,4 @@
-name: Build and deploy to Baota
+name: Build and deploy to server
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: baota-${{ github.workflow }}-${{ github.ref }}
+  group: server-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -69,7 +69,7 @@ jobs:
         run: |
           for name in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER DEPLOY_PATH DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
             if [[ -z ${!name} ]]; then
-              echo "::error::Missing $name. Complete docs/baota-cicd.md before deploying."
+              echo "::error::Missing $name. Complete docs/server-cicd.md before deploying."
               exit 1
             fi
           done
@@ -78,4 +78,4 @@ jobs:
           printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           trap 'rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts' EXIT
-          bash scripts/deploy-baota.sh
+          bash scripts/deploy-server.sh
