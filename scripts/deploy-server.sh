@@ -18,9 +18,9 @@ remote_tmp=$(ssh "${ssh_options[@]}" "$remote" 'mktemp -d /tmp/kidbridge-deploy.
 trap 'ssh "${ssh_options[@]}" "$remote" "rm -rf -- $remote_tmp" || true' EXIT
 
 scp -P "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes \
-  site.tar.gz scripts/activate-baota.py "$remote:$remote_tmp/"
+  site.tar.gz scripts/activate-server.py "$remote:$remote_tmp/"
 receipt=$(ssh "${ssh_options[@]}" "$remote" \
-  "python3 $remote_tmp/activate-baota.py $DEPLOY_PATH $remote_tmp/site.tar.gz $GITHUB_SHA")
+  "python3 $remote_tmp/activate-server.py $DEPLOY_PATH $remote_tmp/site.tar.gz $GITHUB_SHA")
 [[ $receipt =~ ^[a-f0-9]{32}$ ]] || { echo 'Unexpected deployment receipt' >&2; exit 1; }
 
 verified=false
@@ -38,7 +38,7 @@ done
 if [[ $verified != true ]]; then
   echo 'Online verification failed; restoring the previous release.' >&2
   ssh "${ssh_options[@]}" "$remote" \
-    "python3 $remote_tmp/activate-baota.py --rollback $DEPLOY_PATH $receipt"
+    "python3 $remote_tmp/activate-server.py --rollback $DEPLOY_PATH $receipt"
   exit 1
 fi
 echo "Deployed and verified $GITHUB_SHA; rollback receipt: $receipt"
