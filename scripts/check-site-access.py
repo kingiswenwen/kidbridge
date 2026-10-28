@@ -1,74 +1,78 @@
-"""Refresh network evidence; cloud HTTP checks never establish mainland access."""
+"""Check current directory URLs without assigning regional access labels.
+
+Run from the repository with:
+    python3 scripts/check-site-access.py
+
+This only updates the evidence file. Review failures in a browser before
+editing the directory; an HTTP verification page is not proof a site is dead.
+"""
+import argparse
 import concurrent.futures
 import datetime
+import html
 import json
 import pathlib
 import re
-import subprocess
 import urllib.error
-import urllib.parse
 import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-SITES = json.loads(re.search(r'const SITES = (\[.*?\]);', (ROOT / 'navigation.html').read_text(), re.S)[1])
-previous = json.loads((ROOT / 'docs/site-access-evidence.json').read_text())
-prior = {s['id']: s for s in previous['sites']}
 
-def get_json(url):
-    response = subprocess.run(['curl', '--fail', '--silent', '--show-error',
-                               '--max-time', '20', url], capture_output=True, text=True, check=True)
-    return json.loads(response.stdout)
 
-def check(site):
-    result = prior[site['id']].copy()
-    parsed = urllib.parse.urlsplit(site['url'])
-    urls = [site['url'].rstrip('/')]
-    origin = f'{parsed.scheme}://{parsed.netloc}'
-    if origin not in urls:
-        urls.append(origin)
-    result['greatfire'] = []
-    for target in urls:
-        endpoint = 'https://en.greatfire.org/api/url/' + target.replace('://', '/', 1)
-        record = {'testedUrl': target, 'source': endpoint}
-        try:
-            record['result'] = get_json(endpoint)
-        except Exception as error:
-            record['error'] = str(error)
-        result['greatfire'].append(record)
-        data = record.get('result', {})
-        if data.get('found') and not data.get('stale') and data.get('conclusions', 0):
-            break
+def check(site, timeout):
+    result = {key: site[key] for key in ('id', 'name', 'url')}
+    result['included'] = True
+    request = urllib.request.Request(site['url'], headers={
+        'User-Agent': 'Mozilla/5.0 (compatible; KidbridgeLinkCheck/1.0)',
+        'Accept': 'text/html,application/xhtml+xml',
+        'Accept-Encoding': 'identity',
+    })
     try:
-        request = urllib.request.Request(site['url'], headers={'User-Agent': 'Mozilla/5.0 (Kidbridge link check)'})
-        with urllib.request.urlopen(request, timeout=15) as response:
-            result['cloudCheck'] = {'status': response.status, 'finalUrl': response.url}
-            response.read(1024)
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            body = response.read(300000).decode('utf-8', errors='replace')
+            title = re.search(r'<title[^>]*>(.*?)</title>', body, re.I | re.S)
+            result['http'] = {
+                'status': response.status, 'finalUrl': response.url,
+                'title': html.unescape(re.sub(r'\s+', ' ', title[1]).strip()) if title else '',
+            }
     except urllib.error.HTTPError as error:
-        result['cloudCheck'] = {'status': error.code, 'error': str(error)}
+        result['http'] = {'status': error.code, 'finalUrl': error.url, 'error': str(error)}
     except Exception as error:
-        result['cloudCheck'] = {'status': None, 'error': str(error)}
-    result['assessment'] = result['status']
-    result['assessmentSource'] = result['source']
-    result['assessmentBasis'] = 'OONI'
-    for record in result['greatfire']:
-        data = record.get('result', {})
-        if not data.get('found') or data.get('stale') or not data.get('conclusions', 0):
-            continue
-        verdict = data.get('verdict', data.get('headline', '')).lower()
-        mapped = {'not blocked': 'observed', 'blocked': 'blocked', 'intermittent': 'mixed', 'partly disrupted': 'mixed'}.get(verdict)
-        if mapped:
-            old = result['status']
-            if (mapped == 'observed' and old == 'anomaly') or (mapped == 'blocked' and old == 'observed'):
-                mapped = 'mixed'
-            result.update(assessment=mapped, assessmentSource=record['source'], assessmentBasis='GreatFire + OONI')
-            break
+        result['http'] = {'status': None, 'error': str(error)}
+    title = result['http'].get('title', '')
+    result['needsReview'] = not (
+        result['http'].get('status') == 200
+        and not re.search(r'just a moment|human verification|not found|access denied', title, re.I)
+    )
     return result
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
-    results = list(pool.map(check, SITES))
-output = {'checkedOn': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat(),
-          'scope': 'Cloud checks use the managed proxy, not a China mainland direct connection. Mainland classifications use public measurements only.',
-          'sites': results}
-(ROOT / 'docs/site-access-evidence.json').write_text(json.dumps(output, ensure_ascii=False, indent=2))
-for result in results:
-    print(result['id'], result['domain'], result['assessment'], result['cloudCheck'].get('status'))
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--timeout', type=float, default=18)
+    parser.add_argument('--workers', type=int, default=8)
+    parser.add_argument('--output', type=pathlib.Path, default=ROOT / 'docs/site-access-evidence.json')
+    args = parser.parse_args()
+    if args.timeout <= 0 or not 1 <= args.workers <= 16:
+        parser.error('timeout must be positive; workers must be between 1 and 16')
+    page = (ROOT / 'navigation.html').read_text()
+    sites = json.loads(re.search(r'const SITES = (\[.*?\]);', page, re.S)[1])
+    previous = json.loads(args.output.read_text()) if args.output.exists() else {}
+    removed = [item for item in previous.get('sites', []) if not item.get('included', True)]
+    current_ids = {item['id'] for item in sites}
+    removed = [dict(item, lastCheckedOn=previous.get('checkedOn')) for item in removed if item['id'] not in current_ids]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
+        results = list(pool.map(lambda site: check(site, args.timeout), sites))
+    output = {
+        'checkedOn': datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8))).isoformat(),
+        'method': 'HTTP GET for current directory URLs. Browser review is required for failures and JavaScript-rendered or verification pages. Removed entries retain their previous check date. No regional classifications are generated.',
+        'summary': {'checked': len(results), 'included': len(sites), 'removed': len(removed)},
+        'sites': results + removed,
+    }
+    args.output.write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n')
+    for result in results:
+        print(result['name'], result['http'].get('status'), '需要复核' if result['needsReview'] else 'OK')
+
+
+if __name__ == '__main__':
+    main()

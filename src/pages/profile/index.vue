@@ -9,7 +9,7 @@
       <image class="deco-star s2" src="/static/icons/sparkle.svg" mode="aspectFit" />
 
       <view class="hero-content">
-        <view class="avatar-section" @click="editName">
+        <view class="avatar-section" role="button" tabindex="0" aria-label="修改昵称" @click="editName" @keydown.enter.prevent="editName" @keydown.space.prevent="editName">
           <view class="avatar-large">
             <image class="avatar-img-lg" src="/static/icons/panda.svg" mode="aspectFit" />
           </view>
@@ -92,11 +92,17 @@
     </view>
 
     <view class="safe-bottom"></view>
+    <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
 
 <script setup lang="ts">
+import AppDialog from "@/components/AppDialog.vue";
+import { useAppDialog } from "@/utils/dialog";
+
 import { useAppStore } from "@/stores/app";
+
+const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore();
 
@@ -114,7 +120,7 @@ function goSettings() {
   uni.navigateTo({ url: "/pages/settings/index" });
 }
 function editName() {
-  uni.showModal({
+  showDialog({
     title: "设置昵称",
     editable: true,
     placeholderText: "输入小朋友的名字",
@@ -125,7 +131,7 @@ function editName() {
   });
 }
 function showAbout() {
-  uni.showModal({
+  showDialog({
     title: "彩虹桥 KidBridge",
     content: "一个为 3-6 岁小朋友设计的学习启蒙 App\n\n包含数学、拼音、英语、闯关挑战\n\n版本：2.0.0\n\n希望每个孩子都能快乐学习！",
     showCancel: false,

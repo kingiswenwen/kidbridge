@@ -7,7 +7,7 @@
 | 想做的事 | 主要位置 |
 | --- | --- |
 | 补充或修正资源导航 | `navigation.html` 中的 `SITES` 数据与页面交互 |
-| 调整资源访问提示 | `docs/site-access-evidence.json`、`scripts/render-site-access.py` |
+| 维护链接核验记录 | `docs/site-access-evidence.json`、`scripts/render-site-access.py` |
 | 修正数学题或答案 | `src/utils/questionGenerator.ts`、`src/data/levels.ts` |
 | 修正拼音、例字或音频 | `src/data/pinyin/`、`src/static/audio/`、`src/pages/pinyin/` |
 | 补充英语词汇或日常句子 | `src/data/english/`、`src/pages/english/` |
@@ -25,22 +25,20 @@
 - 可以复现问题的操作步骤、预期结果与实际结果；必要时附截图。
 - 题目、拼音或翻译问题请附原内容、建议修正和可核对的来源。
 
-反馈外部资源时，再补充资源名称、类别、适用年龄、语言和收费方式。访问问题请注明检查日期、网络地区与运营商、是否使用代理，以及是首页还是某个具体音视频或游戏无法打开。
+反馈外部资源时，再补充资源名称、类别、适用年龄、语言和收费方式。链接问题请注明检查日期、具体地址、浏览器中的表现，以及是首页还是某个具体音视频或游戏无法打开。
 
-## 资源与访问数据
+## 资源与链接核验
 
 优先说明资源适合谁、可以学什么、是否需要账号或付费。描述应基于实际页面和可核对来源，避免把导航收录写成合作或官方推荐。
-
-更新已有资源的公开访问证据时，可以运行：
 
 ```bash
 python3 scripts/check-site-access.py
 python3 scripts/render-site-access.py
 ```
 
-前者刷新 GreatFire 与当前执行环境的 HTTP 检查，并保留已有 OONI 快照；后者依据证据更新导航与报告。更新 OONI 数据时，需要根据证据文件中的查询地址另行获取公开测量。
+前者对当前目录逐项进行 HTTP GET，记录状态、跳转地址和页面标题；后者生成维护报告，不向页面添加访问标签。验证页、证书错误和动态页面需要浏览器复核。HTTP 200 也可能是关闭公告或不相关内容，不能只看状态码决定收录。
 
-检查后同时审阅 `navigation.html`、`docs/site-access-report.md` 与 `docs/site-access-evidence.json` 的差异，保留测量日期和来源。新增网站也应同步补充证据文件中对应的站点记录。代理环境中的 HTTP 200、某次大陆直连或首页可访问，都不足以保证整个站点长期可用；缺少证据时保留“待验证”。
+确认无法进入内容、服务关闭或内容不符后，从 `navigation.html` 的 `SITES` 中移除条目，并在 `docs/site-access-evidence.json` 中保留核验与移除依据。保留现有条目的 ID，避免破坏已保存的收藏。新增资源也需要完成链接与内容核验。目录数量和分类计数由页面自动计算。
 
 ## 提交修改
 

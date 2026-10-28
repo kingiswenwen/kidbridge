@@ -19,7 +19,7 @@ onHide(() => {
 
 page {
   background-color: #fff9e6;
-  font-family: "PingFang SC", "Helvetica Neue", Helvetica, "Comic Sans MS",
+  font-family: "PingFang SC", "Noto Sans CJK SC", "Helvetica Neue", Helvetica, "Comic Sans MS",
     "Microsoft YaHei", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
