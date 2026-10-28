@@ -10,3 +10,5 @@ H5 首页现为儿童教育资源导航：`navigation.html`。原互动学习通
 国内访问依据与限制见 [访问核对报告](docs/site-access-report.md)，原始公开测量摘要见 `docs/site-access-evidence.json`。页面中的官网可获取状态来自上传清单，不能当作国内实测结果。访问数据为 2026-10-28 的静态快照，不是实时监测。
 
 本次交叉核对 OONI 与 GreatFire：18 个站点有大陆直连记录，Scratch 有阻断记录，CodeCombat 访问不稳定，30 个站点缺少有效测量。未逐站验证 VPN 效果。刷新访问证据可运行 `python3 scripts/check-site-access.py`，再运行 `python3 scripts/render-site-access.py` 更新导航与报告。前者刷新 GreatFire 与云环境 HTTP 检查，保留现有 OONI 快照；如需更新 OONI，应根据证据文件内的查询地址另行获取。
+
+GitHub Actions → 宝塔自动部署配置与首次接入见 [宝塔 CI/CD](docs/baota-cicd.md)。实际连接服务器并上线前，必须配置 SSH 密钥、可信主机记录和准确的网站根目录。

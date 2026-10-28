@@ -1,0 +1,81 @@
+name: Build and deploy to Baota
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: baota-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  h5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Use official npm download URLs without changing locked versions
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+          for (const value of Object.values(lock.packages)) {
+            if (value.resolved?.startsWith('https://registry.npmmirror.com/')) {
+              value.resolved = value.resolved.replace('https://registry.npmmirror.com/', 'https://registry.npmjs.org/');
+            }
+          }
+          fs.writeFileSync('package-lock.json', JSON.stringify(lock));
+          JS
+      - run: npm ci --registry=https://registry.npmjs.org --no-audit --fund=false
+      - run: npm run type-check
+      - name: Test deployment preservation and rollback
+        run: python3 -m unittest discover -s tests/deployment -v
+      - run: npm run build:h5
+      - name: Package release
+        env:
+          COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          path = pathlib.Path('dist/build/h5/kidbridge-release.json')
+          path.write_text(json.dumps({'commit': os.environ['COMMIT']}))
+          PY
+          tar -czf site.tar.gz -C dist/build/h5 .
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: kidbridge-h5-${{ github.sha }}
+          path: site.tar.gz
+          retention-days: 14
+      - name: Deploy and verify production
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+          DEPLOY_URL: https://kidbridge.wynsunny.cn
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          for name in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER DEPLOY_PATH DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
+            if [[ -z ${!name} ]]; then
+              echo "::error::Missing $name. Complete docs/baota-cicd.md before deploying."
+              exit 1
+            fi
+          done
+          install -m 700 -d ~/.ssh
+          umask 077
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          trap 'rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts' EXIT
+          bash scripts/deploy-baota.sh
