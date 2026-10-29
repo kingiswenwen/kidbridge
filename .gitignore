@@ -188,3 +188,6 @@ vite.config.ts.timestamp-*
 # Python deployment tooling
 __pycache__/
 *.py[cod]
+
+# Local browser test evidence
+artifacts/

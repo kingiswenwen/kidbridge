@@ -128,6 +128,69 @@
         "navigationBarBackgroundColor": "#A98CF5",
         "navigationBarTextStyle": "white"
       }
+    },
+    {
+      "path": "pages/racing/index",
+      "style": {
+        "navigationBarTitleText": "今日赛道",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/racing/task/index",
+      "style": {
+        "navigationBarTitleText": "挑战任务",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/racing/rewards/index",
+      "style": {
+        "navigationBarTitleText": "奖励仓库",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/racing/garage/index",
+      "style": {
+        "navigationBarTitleText": "我的赛车",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/parent/index",
+      "style": {
+        "navigationBarTitleText": "家长中心",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/parent/task-editor/index",
+      "style": {
+        "navigationBarTitleText": "任务安排",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/parent/reward-editor/index",
+      "style": {
+        "navigationBarTitleText": "奖励约定",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/parent/review/index",
+      "style": {
+        "navigationBarTitleText": "审核与兑现",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/parent/records/index",
+      "style": {
+        "navigationBarTitleText": "成长记录",
+        "navigationStyle": "custom"
+      }
     }
   ],
   "globalStyle": {

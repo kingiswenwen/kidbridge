@@ -80,6 +80,11 @@
       </view>
     </view>
 
+    <button role="button" tabindex="0" class="home-racing-entry" @click="go('/pages/racing/index')">
+      <view class="home-racing-car"><RaceCar /></view>
+      <view class="home-racing-text"><text class="home-racing-title">今日赛道</text><text class="home-racing-desc">{{ racing.progress.total ? `完成 ${racing.progress.completed} / ${racing.progress.total} 站 · 现实中的小冒险` : '小任务，让赛车向前一步' }}</text></view><text class="home-racing-arrow">›</text>
+    </button>
+
     <view class="modules-section">
       <view class="section-head">
         <text class="section-title">快乐学习</text>
@@ -161,10 +166,15 @@
 
 <script setup lang="ts">
 import { onMounted, computed } from "vue";
+import { onShow } from "@dcloudio/uni-app";
+import { useRacingStore } from "@/stores/racing";
+import RaceCar from "@/components/racing/RaceCar.vue";
 import { useAppStore } from "@/stores/app";
 import { getRandomEncouragement } from "@/data/encouragements";
 
 const store = useAppStore();
+const racing = useRacingStore();
+onShow(() => { racing.lockParent(); racing.ensureToday(); });
 
 const streak = computed(() => store.progress.streak || 0);
 const todayQuestions = computed(() => store.progress.todayQuestions || 0);
@@ -696,4 +706,8 @@ function goProfile() {
   .mod-icon-img { width: 60px; height: 60px; }
   .mod-name { font-size: 20px; }
 }
+</style>
+
+<style scoped>
+.home-racing-entry{display:flex;align-items:center;gap:10px;box-sizing:border-box;width:calc(100% - 32px);margin:24px 16px 0;padding:20px 14px;min-height:112px;background:#fff0ce;border:1px solid #edcd8d;border-radius:25px;color:#24344c;text-align:left;line-height:1.5}.home-racing-entry::after{border:0}.home-racing-entry:focus-visible{outline:3px solid #197c70;outline-offset:3px}.home-racing-car{width:100px;flex-shrink:0}.home-racing-text{flex:1;min-width:0}.home-racing-title{display:block;font-size:23px;font-weight:850}.home-racing-desc{display:block;font-size:13px;color:#6c573d;margin-top:5px}.home-racing-arrow{font-size:30px;color:#a34a2f}@media(max-width:350px){.home-racing-car{width:75px}.home-racing-title{font-size:20px}}
 </style>

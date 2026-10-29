@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
+import { useRacingStore } from "@/stores/racing";
 
 onLaunch(() => {
   console.log("[彩虹桥] App Launch");
+  // #ifdef H5
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    const target = event.target as HTMLElement;
+    if (!['Enter', ' '].includes(event.key) || target.tagName !== 'UNI-BUTTON' || !target.matches('.racing-page uni-button, .home-racing-entry, .racing-settings-entry uni-button')) return;
+    if (target.hasAttribute('disabled') || target.getAttribute('aria-disabled') === 'true') return;
+    event.preventDefault();
+    target.click();
+  });
+  // #endif
 });
 
 onShow(() => {
@@ -10,12 +20,14 @@ onShow(() => {
 });
 
 onHide(() => {
+  useRacingStore().lockParent();
   console.log("[彩虹桥] App Hide");
 });
 </script>
 
 <style lang="scss">
 @import "uview-plus/index.scss";
+@import "@/styles/racing.scss";
 
 page {
   background-color: #fff9e6;
@@ -36,6 +48,10 @@ text {
    - 桌面（>=1024px）：内容最大 860px 居中
    小程序端使用 rpx（uni-app 原生响应式单位，按屏宽等比缩放），本身已适配，无需此层。 */
 /* #ifdef H5 */
+html, body {
+  margin: 0;
+  padding: 0;
+}
 #app {
   max-width: 100%;
   margin: 0 auto;

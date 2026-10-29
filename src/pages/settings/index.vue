@@ -40,7 +40,7 @@
           </view>
           <view class="stat">
             <text class="sv yellow">{{ store.streakDays }}</text>
-            <text class="sl">连续打卡</text>
+            <text class="sl">连续学习</text>
           </view>
           <view class="stat">
             <text class="sv blue">{{ store.wrongBook.length }}</text>
@@ -139,6 +139,7 @@
 
       </view>
     </view>
+    <view class="racing-settings-entry"><button role="button" tabindex="0" @click="openRacingSettings">赛车音效、减少动画与数据备份 ›</button><text>进入家长中心验证后设置；赛车数据与原学习记录分开保存。</text></view>
     <AppDialog :state="dialog" @resolve="resolveDialog" />
   </view>
 </template>
@@ -153,6 +154,7 @@ import { useAppStore } from "@/stores/app";
 const { dialog, showDialog, resolveDialog } = useAppDialog();
 
 const store = useAppStore();
+function openRacingSettings() { uni.navigateTo({ url: "/pages/parent/index?section=settings" }); }
 
 const gradeLabel = (g?: string) =>
   ({ small: "小班", middle: "中班", big: "大班", grade1: "一年级" }[g || "big"] || "");
@@ -189,7 +191,7 @@ const editName = () => {
 const resetProgress = () => {
   showDialog({
     title: "确定重置所有学习数据？",
-    content: "这会清空：总做题数、答对、错题本、收藏、打卡。无法撤销哦。",
+    content: "这会清空原学习记录、错题与收藏，无法撤销。赛车任务、成长星星和奖励记录会保留。",
     confirmText: "确定重置",
     cancelText: "保留数据",
     tone: "danger",
@@ -295,3 +297,5 @@ const resetProgress = () => {
 }
 .av-icon-img { width: 56rpx; height: 56rpx; }
 </style>
+
+<style scoped>.racing-settings-entry{padding:0 20px 30px}.racing-settings-entry button{padding:15px;background:#fff4d1;border:1px solid #dfc49c;border-radius:18px;color:#7f432c;font-size:16px;min-height:52px}.racing-settings-entry text{display:block;font-size:13px;color:#655c52;line-height:1.7;margin-top:10px}</style>

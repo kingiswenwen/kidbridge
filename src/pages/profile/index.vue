@@ -34,7 +34,7 @@
           <view class="ov-divider"></view>
           <view class="overview-item">
             <text class="ov-num gold">{{ store.streakDays }}</text>
-            <text class="ov-label">连续打卡</text>
+            <text class="ov-label">连续学习</text>
           </view>
           <view class="ov-divider"></view>
           <view class="overview-item">
@@ -68,6 +68,11 @@
           <text class="menu-desc">喜欢的拼音和内容</text>
         </view>
         <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-card" role="button" tabindex="0" @click="go('/pages/parent/index')" @keydown.enter="go('/pages/parent/index')">
+        <image class="menu-icon-img" src="/static/racing/family.svg" mode="aspectFit" />
+        <view class="menu-texts"><text class="menu-name">家长中心</text><text class="menu-desc">赛车任务、审核、奖励与成长备份</text></view><text class="menu-arrow">›</text>
       </view>
 
       <!-- 设置 -->
