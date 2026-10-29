@@ -97,4 +97,5 @@ const range = (a: number, b: number) =>
   70% { transform: scale(1.2); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
+@media (prefers-reduced-motion: reduce) { .dot, .stick, .fruit-item { animation: none; } }
 </style>

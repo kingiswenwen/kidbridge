@@ -38,6 +38,7 @@ jobs:
           JS
       - run: npm ci --registry=https://registry.npmjs.org --no-audit --fund=false
       - run: npm run type-check
+      - run: npm run test:functional
       - name: Test deployment preservation and rollback
         run: python3 -m unittest discover -s tests/deployment -v
       - run: npm run build:h5

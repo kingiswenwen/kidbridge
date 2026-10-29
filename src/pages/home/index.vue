@@ -23,9 +23,9 @@
               <text class="brand-sub">KIDBRIDGE</text>
             </view>
           </view>
-          <view class="profile-entry" @click="goProfile">
+          <view class="profile-entry" @click="goProfile" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <view class="profile-avatar">
-              <image class="profile-avatar-img" src="/static/icons/panda.svg" mode="aspectFit" />
+              <image class="profile-avatar-img" :src="store.avatar.startsWith('/static/') ? store.avatar : '/static/icons/panda.svg'" mode="aspectFit" />
             </view>
             <view class="profile-edit-dot"></view>
           </view>
@@ -36,7 +36,7 @@
           <text class="greeting-desc">{{ timeGreeting }} · 今天想学什么呀？</text>
         </view>
 
-        <view class="daily-card" @click="go('/pages/math/practice/index')">
+        <view class="daily-card" @click="go('/pages/math/practice/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="daily-header">
             <view class="daily-title-row">
               <view class="daily-icon-dot">
@@ -87,7 +87,7 @@
       </view>
 
       <view class="mod-list">
-        <view class="mod-row mod-math" @click="go('/pages/math/practice/index')">
+        <view class="mod-row mod-math" @click="go('/pages/math/practice/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="mod-icon-box">
             <image class="mod-icon-img" src="/static/modules/math.png" mode="aspectFit" />
           </view>
@@ -101,7 +101,7 @@
           </view>
         </view>
 
-        <view class="mod-row mod-pinyin" @click="go('/pages/pinyin/index')">
+        <view class="mod-row mod-pinyin" @click="go('/pages/pinyin/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="mod-icon-box">
             <image class="mod-icon-img" src="/static/modules/pinyin.png" mode="aspectFit" />
           </view>
@@ -115,7 +115,7 @@
           </view>
         </view>
 
-        <view class="mod-row mod-english" @click="go('/pages/english/flashcard/index')">
+        <view class="mod-row mod-english" @click="go('/pages/english/flashcard/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="mod-icon-box">
             <image class="mod-icon-img" src="/static/modules/english.png" mode="aspectFit" />
           </view>
@@ -129,7 +129,7 @@
           </view>
         </view>
 
-        <view class="mod-row mod-challenge" @click="go('/pages/math/challenge/index')">
+        <view class="mod-row mod-challenge" @click="go('/pages/math/challenge/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="mod-icon-box">
             <image class="mod-icon-img" src="/static/modules/challenge.png" mode="aspectFit" />
             <view class="mod-corner-badge">
@@ -160,6 +160,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { onMounted, computed } from "vue";
 import { useAppStore } from "@/stores/app";
 import { getRandomEncouragement } from "@/data/encouragements";

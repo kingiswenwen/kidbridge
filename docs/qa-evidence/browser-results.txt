@@ -1,0 +1,34 @@
+
+> kidbridge-uni@2.0.0 test:browser
+> node tests/functional/browser.cjs && node tests/functional/journeys.cjs && node tests/functional/ui-regression.cjs
+
+16 routes + navigation search/reset 390 PASS
+16 routes + navigation search/reset 1280 PASS
+math quiz PASS
+english quiz PASS
+pinyin quiz PASS
+persisted totals PASS
+challenge result and attempt persistence PASS
+flashcard learned words persistence PASS
+nickname/avatar persistence PASS
+reset cancel/confirm clears nested data PASS
+runtime errors []
+PASS navigation: search, age/price intersection, favorite/filter/reload/remove
+PASS pinyin favorites: empty navigation, star, reload, list, removal
+PASS spelling: every initial and repeated two/three-syllable tab switches
+PASS counting wrongbook: actual wrong answer and visible review graphics
+PASS english mode 0: 5 questions, feedback, result, storage/reload
+PASS english mode 1: 10 questions, feedback, result, storage/reload
+PASS pinyin mode 0: 5 questions, feedback, result, storage/reload
+PASS pinyin mode 1: 10 questions, feedback, result, storage/reload
+PASS: no page JavaScript errors in all extended H5 journeys
+PASS: math progress counts answered questions and keyboard answers
+PASS: English feedback, disabled state and duplicate-answer guard
+PASS: nickname validation, actual input labels, Escape focus and sound Space
+Checked 16 routes at 320×740
+Checked 16 routes at 375×812
+Checked 16 routes at 768×1024
+Checked 16 routes at 1024×768
+Checked 16 routes at 1440×1000
+Checked 16 routes at 844×390
+PASS: six screen sizes, all routes, overflow and critical touch targets

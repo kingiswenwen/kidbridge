@@ -4,7 +4,7 @@
       <image class="empty-icon" src="/static/icons/party.svg" mode="aspectFit" />
       <text class="empty-title">太棒啦！还没有错题</text>
       <text class="empty-subtitle">多练多答，记录自动整理</text>
-      <view class="empty-btn mt-8" @click="() => uni.switchTab({ url: '/pages/home/index' })">
+      <view class="empty-btn mt-8" @click="() => uni.switchTab({ url: '/pages/home/index' })" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="empty-btn-text">去首页练习</text>
       </view>
     </view>
@@ -18,7 +18,7 @@
         <view
           class="clear-btn"
           @click="handleClear"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <image class="clear-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
           <text class="clear-btn-text">清空</text>
         </view>
@@ -50,6 +50,7 @@
               </view>
               <view class="wb-q-body">
                 <text class="q-content">{{ w.content }}</text>
+                <VisualAid v-if="w.visual" :visual="w.visual" :highlight-num="w.num1" />
                 <view class="q-answer-row mt-2 flex items-center gap-3 flex-wrap">
                   <view class="ans-cell correct">
                     <text class="ans-k">正确答案</text>
@@ -61,7 +62,7 @@
                 <view
                   class="wb-btn wb-btn-green"
                   @click="removeWrong(w)"
-                >
+                 role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
                   <image class="wb-btn-icon" src="/static/icons/check.svg" mode="aspectFit" />
                   <text class="wb-btn-text">已会，移除</text>
                 </view>
@@ -76,7 +77,9 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import AppDialog from "@/components/AppDialog.vue";
+import VisualAid from "@/components/VisualAid.vue";
 import { useAppDialog } from "@/utils/dialog";
 
 import { computed } from "vue";

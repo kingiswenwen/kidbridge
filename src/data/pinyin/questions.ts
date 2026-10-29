@@ -45,7 +45,7 @@ export const pinyinCharPairs: PinyinCharPair[] = [
   { pinyin: 'hou', tone: 2, char: '猴', image: '🐒' },
   { pinyin: 'lang', tone: 2, char: '狼', image: '🐺' },
   { pinyin: 'wa', tone: 1, char: '蛙', image: '🐸' },
-  { pinyin: 'feng', tone: 4, char: '蜂', image: '🐝' },
+  { pinyin: 'feng', tone: 1, char: '蜂', image: '🐝' },
   { pinyin: 'die', tone: 2, char: '蝶', image: '🦋' },
   
   // ===== 水果蔬菜 =====
@@ -66,7 +66,7 @@ export const pinyinCharPairs: PinyinCharPair[] = [
   { pinyin: 'mang', tone: 2, char: '芒', image: '🥭' },
   { pinyin: 'cai', tone: 4, char: '菜', image: '🥬' },
   { pinyin: 'luo', tone: 2, char: '萝', image: '🥕' },
-  { pinyin: 'bo', tone: 2, char: '卜', image: '🥕' },
+  { pinyin: 'bo', tone: 1, char: '菠', image: '🍍' },
   { pinyin: 'fan', tone: 1, char: '番', image: '🍅' },
   { pinyin: 'qie', tone: 2, char: '茄', image: '🍆' },
   { pinyin: 'dou', tone: 4, char: '豆', image: '🫘' },
@@ -145,7 +145,7 @@ export const pinyinCharPairs: PinyinCharPair[] = [
   { pinyin: 'ji', tone: 1, char: '机', image: '✈️' },
   { pinyin: 'huo', tone: 3, char: '火', image: '🚂' },
   { pinyin: 'gong', tone: 1, char: '公', image: '🚌' },
-  { pinyin: 'jiao', tone: 3, char: '交', image: '🚌' },
+  { pinyin: 'jiao', tone: 1, char: '交', image: '🚌' },
   { pinyin: 'di', tone: 4, char: '地', image: '🚇' },
   { pinyin: 'tie', tone: 3, char: '铁', image: '🚇' },
   { pinyin: 'dan', tone: 1, char: '单', image: '🚲' },

@@ -23,7 +23,7 @@ export const defaultSettings: Settings = {
   pinyinSpeed: "normal",
   showSpellingHint: true,
   grade: "big",
-  avatar: "🐼",
+  avatar: "/static/icons/panda.svg",
   childName: "小朋友",
 };
 
@@ -47,6 +47,16 @@ export const defaultProgress: Progress = {
   },
 };
 
+export function createDefaultProgress(): Progress {
+  return {
+    ...defaultProgress,
+    lastActiveDate: getTodayDateString(),
+    mathProgress: { ...defaultProgress.mathProgress },
+    pinyinProgress: { ...defaultProgress.pinyinProgress, learnedPinyin: [] },
+    englishProgress: { ...defaultProgress.englishProgress, learnedWords: [] },
+  };
+}
+
 export function checkAndUpdateStreak(progress: Progress): Progress {
   const today = getTodayDateString();
   if (progress.lastActiveDate === today) return progress;
@@ -62,7 +72,6 @@ export function checkAndUpdateStreak(progress: Progress): Progress {
   return {
     ...progress,
     streak: newStreak,
-    lastActiveDate: today,
     todayQuestions: 0,
     todayCorrect: 0,
   };

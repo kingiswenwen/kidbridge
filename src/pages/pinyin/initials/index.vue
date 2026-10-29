@@ -18,15 +18,21 @@
           :key="item.pinyin"
           class="in-card"
           :class="{ flat: item.isFlat, curled: item.isCurled }"
-          @click="onTap(item)"
           @longpress="onLongPress(item)"
         >
+          <view class="pinyin-play" role="button" tabindex="0" :aria-label="'朗读 ' + item.pinyin"
+            @click="onTap(item)" @keydown.enter.prevent.stop="onTap(item)" @keydown.space.prevent.stop="onTap(item)">
           <text class="in-pinyin">{{ item.pinyin }}</text>
           <text class="in-tips">{{ item.tips }}</text>
+          </view>
           <view class="in-actions">
             <image class="in-speak-img" src="/static/icons/speaker.svg" mode="aspectFit" />
-            <image v-if="isFav(item.pinyin)" class="in-fav-img on" src="/static/icons/star.svg" mode="aspectFit" />
-            <image v-else class="in-fav-img" src="/static/icons/star.svg" mode="aspectFit" style="opacity:0.25;filter:grayscale(1)" />
+            <button class="favorite-action" type="button" role="button" tabindex="0"
+              :aria-label="(isFav(item.pinyin) ? '取消收藏 ' : '收藏 ') + item.pinyin"
+              :aria-pressed="isFav(item.pinyin)" @click.stop="onLongPress(item)"
+              @keydown.enter.prevent.stop="onLongPress(item)" @keydown.space.prevent.stop="onLongPress(item)">
+              <image class="in-fav-img" :style="{ opacity: isFav(item.pinyin) ? 1 : 0.4 }" src="/static/icons/star.svg" mode="aspectFit" />
+            </button>
           </view>
         </view>
       </view>
@@ -40,12 +46,12 @@
       </view>
       <view class="compare-card">
         <view v-for="(c, i) in flatVsCurled" :key="i" class="cmp-row">
-          <view class="cmp-side flat" @click="speak(c.flat.split(' ')[0])">
+          <view class="cmp-side flat" @click="speak(c.flat.split(' ')[0])" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="cmp-py">{{ c.flat }}</text>
             <text class="cmp-label">平舌</text>
           </view>
           <text class="cmp-vs">vs</text>
-          <view class="cmp-side curled" @click="speak(c.curled.split(' ')[0])">
+          <view class="cmp-side curled" @click="speak(c.curled.split(' ')[0])" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="cmp-py">{{ c.curled }}</text>
             <text class="cmp-label">翘舌</text>
           </view>
@@ -54,12 +60,13 @@
     </view>
 
     <view class="in-tip px-6 pb-10 text-center">
-      <text class="tip-text">长按卡片可以收藏哦</text>
+      <text class="tip-text">点击星星或长按卡片可以收藏哦</text>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { useAppStore } from '@/stores/app'
 import { initialCategories, flatVsCurled } from '@/data/pinyin/initials'
 import type { PinyinItem } from '@/types'
@@ -144,4 +151,9 @@ function onLongPress(item: PinyinItem) {
 
 .in-tip { margin-top: 8rpx; }
 .tip-text { font-size: 26rpx; color: #9CA3AF; }
+
+.favorite-action { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin: 0; padding: 10px; background: transparent; border: 0; border-radius: 50%; }
+.favorite-action::after { border: 0; }
+
+.pinyin-play { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 44px; }
 </style>

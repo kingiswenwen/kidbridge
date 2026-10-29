@@ -29,7 +29,7 @@
             :class="['level-card', isUnlocked(lv) ? 'unlocked' : 'locked']"
             :style="isUnlocked(lv) ? { '--accent': difficultyColors[lv.difficulty] } : {}"
             @click="isUnlocked(lv) && enterLevel(lv)"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <view class="lc-top flex items-center justify-between">
               <text class="lc-no">{{ levelNo(lv.id) }}</text>
               <view class="lc-stars flex gap-1">
@@ -61,6 +61,7 @@
       <view class="px-2">
         <ProgressBar
           :current="currentIndex + 1"
+        :answered-count="currentIndex + (isAnswered ? 1 : 0)"
           :total="questions.length"
           :correct="correctCount"
         />
@@ -71,7 +72,7 @@
             <text class="ltc-no">第 {{ levelNo(currentLevel?.id || '') }} 关</text>
             <text class="ltc-name">{{ currentLevel?.name }}</text>
           </view>
-          <view class="ltc-quit" @click="quit">
+          <view class="ltc-quit" @click="quit" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="ltc-quit-text">退出</text>
           </view>
         </view>
@@ -104,7 +105,7 @@
           <text :class="['fb-text', lastCorrect ? 'ok' : 'bad']">
             {{ lastCorrect ? pick(encouragements).content : '正确答案是 ' + String(currentQuestion.answer) }}
           </text>
-          <view class="next-btn" @click="nextQuestion">
+          <view class="next-btn" @click="nextQuestion" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="next-text">
               {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
@@ -137,11 +138,11 @@
           </view>
         </view>
         <view class="result-actions mt-10">
-          <view class="again-btn" @click="retry">
+          <view class="again-btn" @click="retry" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
             <text class="again-text">再挑战一次</text>
           </view>
-          <view class="home-btn" @click="toList">
+          <view class="home-btn" @click="toList" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="btn-icon" src="/static/icons/clipboard.svg" mode="aspectFit" />
             <text class="home-text">关卡列表</text>
           </view>
@@ -153,6 +154,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import AppDialog from "@/components/AppDialog.vue";
 import { useAppDialog } from "@/utils/dialog";
 
@@ -258,6 +260,7 @@ function handleAnswer(ans: number | string) {
   selectedAnswer.value = ans;
   isAnswered.value = true;
   const ok = checkAnswer(currentQuestion.value, ans);
+  store.recordAnswer(ok, "math");
   lastCorrect.value = ok;
   if (ok) correctCount.value += 1;
   else {
@@ -272,6 +275,7 @@ function onNum(n: number) {
   draftAnswer.value = String(Number(draftAnswer.value + String(n)));
 }
 function nextQuestion() {
+  if (!isAnswered.value || stage.value !== "quiz") return;
   if (currentIndex.value + 1 >= questions.value.length) {
     finishLevel();
     return;
@@ -286,7 +290,7 @@ function quit() {
     title: '确定退出关卡？',
     confirmText: '退出关卡',
     cancelText: '继续挑战',
-    content: '本次进度将不会保存',
+    content: '已答题记录会保留，本次关卡成绩不会保存',
     success: (r) => {
       if (r.confirm) toList();
     },
@@ -298,10 +302,6 @@ function finishLevel() {
   const stars = calculateStars(correctCount.value, questions.value.length);
   const passed = stars >= 1; // 有 1 星就算通关
   const prev = store.challengeProgress[id];
-  store.addProgress({
-    totalDone: questions.value.length,
-    totalCorrect: correctCount.value,
-  });
   store.updateChallengeProgress(id, {
     completed: passed || !!prev?.completed,
     stars: Math.max(prev?.stars || 0, stars),
