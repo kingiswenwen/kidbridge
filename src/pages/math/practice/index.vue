@@ -4,6 +4,7 @@
     <view v-if="state === 'practice'" class="px-4 pt-4">
       <ProgressBar
         :current="currentIndex + 1"
+        :answered-count="currentIndex + (isAnswered ? 1 : 0)"
         :total="questions.length"
         :correct="correctCount"
       />
@@ -24,7 +25,7 @@
           class="type-card"
           :class="{ selected: selectedTypes.includes(t.key) }"
           @click="toggleType(t.key)"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <image class="type-icon-img" :src="t.icon" mode="aspectFit" />
           <view class="type-info">
             <text class="type-name">{{ t.label }}</text>
@@ -44,14 +45,14 @@
             :key="n"
             :class="['count-chip', n === count ? 'active' : '']"
             @click="count = n"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="count-chip-text">{{ n }} 题</text>
           </view>
         </view>
         <view
           :class="['start-btn', selectedTypes.length === 0 ? 'disabled' : '']"
           @click="selectedTypes.length && startPractice()"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="start-text">开始练习</text>
         </view>
       </view>
@@ -88,7 +89,7 @@
           <text :class="['fb-text', lastCorrect ? 'right' : 'wrong']">
             {{ lastCorrect ? encouragementText : ('正确答案是 ' + String(currentQuestion.answer)) }}
           </text>
-          <view class="next-btn" @click="nextQuestion">
+          <view class="next-btn" @click="nextQuestion" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="next-text">
               {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
@@ -124,11 +125,11 @@
         </view>
 
         <view class="result-actions mt-10">
-          <view class="again-btn" @click="reset()">
+          <view class="again-btn" @click="reset()" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
             <text class="again-text">再练一组</text>
           </view>
-          <view class="home-btn" @click="goHome">
+          <view class="home-btn" @click="goHome" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="btn-icon" src="/static/icons/house.svg" mode="aspectFit" />
             <text class="home-text">回首页</text>
           </view>
@@ -139,6 +140,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { computed, ref } from "vue";
 import { useAppStore } from "@/stores/app";
 import type { Question, QuestionType } from "@/types";
@@ -212,6 +214,7 @@ const handleAnswer = (ans: number | string) => {
   isAnswered.value = true;
 
   const ok = checkAnswer(currentQuestion.value, ans);
+  store.recordAnswer(ok, "math");
   lastCorrect.value = ok;
   if (ok) correctCount.value += 1;
   else {
@@ -229,12 +232,8 @@ const onNum = (n: number) => {
 };
 
 const nextQuestion = () => {
+  if (!isAnswered.value || state.value !== "practice") return;
   if (currentIndex.value + 1 >= questions.value.length) {
-    // 同步进度到 store（总做对 / 总做题）
-    store.addProgress({
-      totalDone: questions.value.length,
-      totalCorrect: correctCount.value,
-    });
     state.value = "result";
   } else {
     currentIndex.value += 1;

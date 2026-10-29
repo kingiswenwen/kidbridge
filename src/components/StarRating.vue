@@ -49,4 +49,5 @@ withDefaults(
   100% { transform: scale(1); }
 }
 .animate-pop { animation: pop 0.5s ease both; }
+@media (prefers-reduced-motion: reduce) { .animate-pop { animation: none; } }
 </style>

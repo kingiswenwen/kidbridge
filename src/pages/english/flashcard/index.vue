@@ -13,7 +13,7 @@
           :key="c.key"
           :class="['cat-chip', c.key === category ? 'active' : '']"
           @click="category = c.key; idx = 0; flipped = false"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <image class="cat-icon-img" :src="c.icon" mode="aspectFit" />
           <text class="cat-name">{{ c.name }}</text>
           <text class="cat-count">{{ c.data.length }}</text>
@@ -35,13 +35,13 @@
         <view
           :class="['flash-card', flipped ? 'flipped' : '']"
           @click="flipped = !flipped"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <!-- 正面：图 + 英 -->
           <view class="card-face card-front">
             <text class="card-emoji">{{ card?.image }}</text>
             <text class="card-word">{{ card?.word }}</text>
             <text class="card-phonetic">/ {{ card?.phonetic }} /</text>
-            <view class="speak-btn" @click.stop="speakWord">
+            <view class="speak-btn" @click.stop="speakWord" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <image class="speak-icon-img" src="/static/icons/speaker.svg" mode="aspectFit" />
             </view>
             <text class="flip-hint">点卡片看中文意思</text>
@@ -63,20 +63,20 @@
           <view
             :class="['nav-btn', idx === 0 ? 'disabled' : '']"
             @click="prev"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="nav-text">← 上一张</text>
           </view>
           <view
             class="know-btn"
             @click="markKnown"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="know-icon-img" src="/static/icons/check.svg" mode="aspectFit" />
             <text class="know-text">认识</text>
           </view>
           <view
             :class="['nav-btn primary', idx + 1 === cards.length ? 'disabled' : '']"
             @click="next"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="nav-text">下一张 →</text>
           </view>
         </view>
@@ -85,11 +85,11 @@
       <!-- 更多功能入口 -->
       <view class="more-entry">
         <view class="me-grid">
-          <view class="me-card" @click="go('/pages/english/sentences/index')">
+          <view class="me-card" @click="go('/pages/english/sentences/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/mic.svg" mode="aspectFit" />
             <text class="me-name">日常句子</text>
           </view>
-          <view class="me-card" @click="go('/pages/english/practice/index')">
+          <view class="me-card" @click="go('/pages/english/practice/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/pencil.svg" mode="aspectFit" />
             <text class="me-name">英语练习</text>
           </view>
@@ -97,14 +97,18 @@
       </view>
 
       <view class="footer-tip mt-10 text-center">
-        <text class="tip-text">Tip：H5 浏览器可自动发音，小程序点喇叭图标可播放</text>
+        <text class="tip-text">Tip：点击喇叭朗读，发音需浏览器支持</text>
       </view>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { activateOnKey } from "@/utils/keyboardAction";
+import { computed, ref, watch } from "vue";
+import { useAppStore } from "@/stores/app";
+import { speak } from "@/utils/speak";
+const store = useAppStore();
 import { animalFlashcards, familyFlashcards, fruitFlashcards, colorFlashcards, numberFlashcards, type Flashcard } from "@/data/english";
 
 const cats = [
@@ -124,14 +128,16 @@ const cards = computed<Flashcard[]>(
 );
 const idx = ref(0);
 const flipped = ref(false);
-const known = ref<Record<string, boolean>>({});
+const known = computed<Record<string, boolean>>(() => Object.fromEntries(
+  store.progress.englishProgress.learnedWords.map((word) => [word, true]),
+));
 
 const card = computed(() => cards.value[idx.value] || null);
 
 const completeRate = computed(() => {
   const all = cards.value;
   if (!all.length) return 0;
-  const k = all.filter((c) => known.value[category.value + "::" + c.word]).length;
+  const k = all.filter((c) => known.value[c.word]).length;
   return Math.round((k / all.length) * 100);
 });
 
@@ -148,27 +154,18 @@ const next = () => {
 
 const markKnown = () => {
   if (!card.value) return;
-  const key = category.value + "::" + card.value.word;
-  known.value = { ...known.value, [key]: true };
+  const word = card.value.word;
+  if (!store.progress.englishProgress.learnedWords.includes(word)) {
+    store.progress.englishProgress.learnedWords.push(word);
+  }
   uni.showToast({ title: "已标记认识", icon: "none", duration: 600 });
   setTimeout(next, 400);
 };
 
 const speakWord = () => {
-  if (!card.value) return;
-  // #ifdef H5
-  try {
-    if ("speechSynthesis" in window) {
-      const u = new SpeechSynthesisUtterance(card.value.word);
-      u.lang = "en-US";
-      u.rate = 0.9;
-      window.speechSynthesis.speak(u);
-      return;
-    }
-  } catch (e) {}
-  // #endif
-  uni.showToast({ title: card.value.word, icon: "none", duration: 1000 });
+  if (card.value) speak(card.value.word, "en-US");
 };
+watch(category, () => { idx.value = 0; flipped.value = false; });
 
 const go = (url: string) => uni.navigateTo({ url });
 </script>

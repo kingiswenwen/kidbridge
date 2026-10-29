@@ -5,6 +5,12 @@
         v-for="num in numbers"
         :key="num"
         class="num-btn"
+        role="button"
+        :tabindex="disabled ? -1 : 0"
+        :aria-disabled="disabled"
+        :aria-label="`输入 ${num}`"
+        @keydown.enter.prevent.stop="!disabled && $emit('number', num)"
+        @keydown.space.prevent.stop="!disabled && $emit('number', num)"
         :class="{ disabled }"
         @click="!disabled && $emit('number', num)"
       >
@@ -15,6 +21,11 @@
     <view class="flex gap-2 mt-4">
       <view
         class="btn-clear flex-1"
+        role="button"
+        :tabindex="disabled ? -1 : 0"
+        :aria-disabled="disabled"
+        @keydown.enter.prevent.stop="!disabled && $emit('clear')"
+        @keydown.space.prevent.stop="!disabled && $emit('clear')"
         :class="{ disabled }"
         @click="!disabled && $emit('clear')"
       >
@@ -22,6 +33,11 @@
       </view>
       <view
         class="btn-submit flex-[2]"
+        role="button"
+        :tabindex="disabled ? -1 : 0"
+        :aria-disabled="disabled"
+        @keydown.enter.prevent.stop="!disabled && $emit('submit')"
+        @keydown.space.prevent.stop="!disabled && $emit('submit')"
         :class="{ disabled }"
         @click="!disabled && $emit('submit')"
       >
@@ -57,7 +73,7 @@ const cols = props.maxValue <= 10 ? 5 : 7;
 .number-pad { width: 100%; max-width: 720rpx; margin: 0 auto; }
 
 .num-btn {
-  min-height: 90rpx;
+  min-height: max(90rpx, 44px);
   background: #FFF;
   border-radius: 20rpx;
   display: flex;
@@ -73,7 +89,7 @@ const cols = props.maxValue <= 10 ? 5 : 7;
   }
   &.disabled { opacity: 0.5; }
 }
-.num-text { font-size: 36rpx; font-weight: 700; color: #FF6B6B; }
+.num-text { font-size: 36rpx; font-weight: 700; color: var(--kb-primary, #b94348); }
 
 .btn-clear {
   min-height: 100rpx;
@@ -94,5 +110,7 @@ const cols = props.maxValue <= 10 ? 5 : 7;
   &:active:not(.disabled) { transform: scale(0.97); }
   &.disabled { opacity: 0.5; }
 }
-.btn-submit-text { font-size: 38rpx; font-weight: 700; color: #FFF; }
+.btn-submit-text { font-size: 38rpx; font-weight: 700; color: #164b44; }
+.num-btn:focus-visible, .btn-clear:focus-visible, .btn-submit:focus-visible { outline: 3px solid var(--kb-focus, #9f3038); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .num-btn, .btn-clear, .btn-submit { transition: none; } }
 </style>

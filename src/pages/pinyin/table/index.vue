@@ -18,7 +18,7 @@
           :key="item.pinyin"
           class="tb-cell initial"
           @click="speak(item.pinyin)"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="cell-py">{{ item.pinyin }}</text>
         </view>
       </view>
@@ -36,7 +36,7 @@
           :key="item.pinyin"
           class="tb-cell vowel"
           @click="speak(item.pinyin)"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="cell-py">{{ item.pinyin }}</text>
         </view>
       </view>
@@ -54,7 +54,7 @@
           :key="item.pinyin"
           class="tb-cell whole"
           @click="speak(item.pinyin)"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="cell-py">{{ item.pinyin }}</text>
         </view>
       </view>
@@ -72,7 +72,7 @@
           :key="t.tone"
           class="tone-card"
           @click="speak(t.example)"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="tone-symbol">{{ t.symbol }}</text>
           <text class="tone-mark">{{ t.mark }}</text>
           <text class="tone-name">{{ t.name }}</text>
@@ -89,6 +89,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { allVowels } from '@/data/pinyin/vowels'
 import { allInitials } from '@/data/pinyin/initials'
 import { wholeSyllables } from '@/data/pinyin/syllables'

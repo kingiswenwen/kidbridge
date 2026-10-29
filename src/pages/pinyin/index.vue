@@ -7,7 +7,7 @@
         :key="t.key"
         :class="['tab', tab === t.key ? 'active' : '']"
         @click="tab = t.key"
-      >
+       role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="tab-text">{{ t.label }}</text>
         <view v-if="tab === t.key" class="tab-line" />
       </view>
@@ -28,7 +28,7 @@
               :key="it.pinyin"
               :class="['py-cell', it.isFlat ? 'flat' : '', it.isCurled ? 'curled' : '']"
               @click="speak(it.pinyin)"
-            >
+             role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <text class="py-char">{{ it.pinyin }}</text>
               <text class="py-tips">{{ it.tips }}</text>
               <text v-if="it.isFlat" class="tag tag-flat">平舌</text>
@@ -52,7 +52,7 @@
               :key="it.pinyin"
               class="py-cell vowel"
               @click="speak(it.pinyin)"
-            >
+             role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <text class="py-char c-vowel">{{ it.pinyin }}</text>
               <text class="py-tips">{{ it.tips }}</text>
             </view>
@@ -70,7 +70,7 @@
               :key="s.pinyin"
               class="py-cell whole"
               @click="speak(s.pinyin)"
-            >
+             role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <text class="py-char c-whole">{{ s.pinyin }}</text>
               <text class="py-tips">第 {{ i + 1 }} 个</text>
             </view>
@@ -88,7 +88,7 @@
               :key="i"
               class="tone-cell"
               @click="speakWithTone(t.base, i)"
-            >
+             role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <text class="tone-sample" :style="{ color: toneColor(i) }">{{ t.symbol }}</text>
               <text class="tone-name">{{ t.name }}</text>
               <text class="tone-desc">{{ t.desc }}</text>
@@ -111,7 +111,7 @@
                     class="vt-item"
                     :style="{ color: toneColor(n) }"
                     @click="speakSingleVowelTone(v.pinyin, n)"
-                  >{{ toneMark(v.pinyin, n) }}</view>
+                   role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">{{ toneMark(v.pinyin, n) }}</view>
                 </view>
               </view>
             </view>
@@ -123,23 +123,23 @@
       <view class="more-entry">
         <text class="me-title">更多练习</text>
         <view class="me-grid">
-          <view class="me-card" @click="go('/pages/pinyin/spelling/index')">
+          <view class="me-card" @click="go('/pages/pinyin/spelling/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/puzzle.svg" mode="aspectFit" />
             <text class="me-name">拼音拼读</text>
           </view>
-          <view class="me-card" @click="go('/pages/pinyin/practice/index')">
+          <view class="me-card" @click="go('/pages/pinyin/practice/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/pencil.svg" mode="aspectFit" />
             <text class="me-name">拼音练习</text>
           </view>
-          <view class="me-card" @click="go('/pages/pinyin/table/index')">
+          <view class="me-card" @click="go('/pages/pinyin/table/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/clipboard.svg" mode="aspectFit" />
             <text class="me-name">拼音总表</text>
           </view>
-          <view class="me-card" @click="go('/pages/pinyin/initials/index')">
+          <view class="me-card" @click="go('/pages/pinyin/initials/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/letters.svg" mode="aspectFit" />
             <text class="me-name">声母详解</text>
           </view>
-          <view class="me-card" @click="go('/pages/pinyin/vowels/index')">
+          <view class="me-card" @click="go('/pages/pinyin/vowels/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="me-icon-img" src="/static/icons/lettera.svg" mode="aspectFit" />
             <text class="me-name">韵母详解</text>
           </view>
@@ -152,6 +152,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { computed, ref } from "vue";
 import {
   labialInitials, alveolarInitials, velarInitials, palatalInitials,

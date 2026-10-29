@@ -4,6 +4,7 @@
     <view v-if="state === 'practice'" class="px-4 pt-4">
       <ProgressBar
         :current="currentIndex + 1"
+        :answered-count="currentIndex + (isAnswered ? 1 : 0)"
         :total="questions.length"
         :correct="correctCount"
       />
@@ -23,7 +24,7 @@
           :key="m.key"
           :class="['mode-card', mode === m.key ? 'selected' : '']"
           @click="mode = m.key"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <image class="mode-icon-img" :src="m.icon" mode="aspectFit" />
           <text class="mode-name">{{ m.name }}</text>
           <text class="mode-desc">{{ m.desc }}</text>
@@ -37,12 +38,12 @@
           :key="n"
           :class="['count-chip', n === count ? 'active' : '']"
           @click="count = n"
-        >
+         role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="count-chip-text">{{ n }} 题</text>
         </view>
       </view>
 
-      <view class="start-btn mt-10" @click="start()">
+      <view class="start-btn mt-10" @click="start()" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="start-text">开始练习</text>
       </view>
     </view>
@@ -93,7 +94,7 @@
           <text :class="['fb-text', lastCorrect ? 'right' : 'wrong']">
             {{ lastCorrect ? pick(encouragements).content : `${q.char} 读 ${displayPinyin}` }}
           </text>
-          <view class="next-btn mt-6" @click="next">
+          <view class="next-btn mt-6" @click="next" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="next-text">
               {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
@@ -126,11 +127,11 @@
           </view>
         </view>
         <view class="r-actions mt-10 flex gap-4">
-          <view class="r-btn-a" @click="reset">
+          <view class="r-btn-a" @click="reset" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="r-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
             <text class="r-btn-a-text">再练一组</text>
           </view>
-          <view class="r-btn-b" @click="() => uni.navigateBack()">
+          <view class="r-btn-b" @click="() => uni.navigateBack()" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="r-btn-icon" src="/static/icons/arrow.svg" mode="aspectFit" />
             <text class="r-btn-b-text">返回</text>
           </view>
@@ -141,8 +142,12 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
+import { useAppStore } from "@/stores/app";
+const store = useAppStore();
 import { computed, ref } from "vue";
 import { pinyinCharPairs, type PinyinCharPair } from "@/data/pinyin/questions";
+import { withTone, buildPinyinOptions } from "@/utils/pinyin";
 import { encouragement as encouragements } from "@/data/encouragements";
 import ProgressBar from "@/components/ProgressBar.vue";
 import OptionButton from "@/components/OptionButton.vue";
@@ -190,32 +195,6 @@ const pickMany = <T,>(arr: T[], n: number): T[] => {
   return out;
 };
 
-// 带声调显示
-const markMap: Record<string, Record<number, string>> = {
-  a: { 1: "ā", 2: "á", 3: "ǎ", 4: "à" },
-  o: { 1: "ō", 2: "ó", 3: "ǒ", 4: "ò" },
-  e: { 1: "ē", 2: "é", 3: "ě", 4: "è" },
-  i: { 1: "ī", 2: "í", 3: "ǐ", 4: "ì" },
-  u: { 1: "ū", 2: "ú", 3: "ǔ", 4: "ù" },
-  ü: { 1: "ǖ", 2: "ǘ", 3: "ǚ", 4: "ǜ" },
-};
-const vowelsRe = /[aeiouü]/;
-
-const withTone = (pinyin: string, tone: number): string => {
-  if (tone === 0 || !tone) return pinyin;
-  // 找到主要的元音字母（最靠近 a/o/e 的那个；否则最左）
-  const vowelsIn = pinyin.match(/[aeiouü]+/g) || [];
-  if (!vowelsIn.length) return pinyin;
-  const group = vowelsIn[vowelsIn.length - 1];
-  // 在组里优先 a > o > e > 其他
-  let vowel: string = group[0];
-  for (const order of ["a", "o", "e", "i", "u", "ü"]) {
-    if (group.includes(order)) { vowel = order; break; }
-  }
-  const repl = markMap[vowel]?.[tone] || vowel;
-  return pinyin.replace(vowel, repl);
-};
-
 const displayPinyin = computed(() =>
   q.value ? withTone(q.value.pinyin, q.value.tone) : "",
 );
@@ -231,8 +210,8 @@ const start = () => {
   const all = pinyinCharPairs.slice();
   // 打乱 + 截取 count
   questions.value = pickMany(all, Math.min(count.value, all.length));
-  buildOptions();
   currentIndex.value = 0;
+  buildOptions();
   selected.value = null;
   isAnswered.value = false;
   correctCount.value = 0;
@@ -241,16 +220,7 @@ const start = () => {
 
 const buildOptions = () => {
   if (!q.value) return;
-  const distractors = pickMany(
-    pinyinCharPairs.filter(
-      (x) =>
-        mode.value === "char2pinyin"
-          ? x.pinyin + String(x.tone) !== q.value!.pinyin + String(q.value!.tone)
-          : x.char !== q.value!.char,
-    ),
-    3,
-  );
-  options.value = pickMany([q.value, ...distractors], 4);
+  options.value = buildPinyinOptions(q.value, mode.value, pinyinCharPairs);
 };
 
 const isSelected = (opt: PinyinCharPair): boolean =>
@@ -283,7 +253,9 @@ const handlePick = (opt: PinyinCharPair) => {
 };
 
 const next = () => {
+  if (!isAnswered.value || state.value !== "practice") return;
   if (currentIndex.value + 1 >= questions.value.length) {
+    store.updatePinyinProgress(questions.value.length, correctCount.value);
     state.value = "result";
     return;
   }
@@ -295,8 +267,6 @@ const next = () => {
 
 const reset = () => (state.value = "select");
 
-// 避免 unused
-void vowelsRe;
 </script>
 
 <style lang="scss" scoped>

@@ -9,7 +9,7 @@ import type {
 } from "@/types";
 import {
   defaultSettings,
-  defaultProgress,
+  createDefaultProgress,
   getTodayDateString,
   checkAndUpdateStreak,
 } from "@/utils/storage";
@@ -17,7 +17,7 @@ import {
 export const useAppStore = defineStore("app", {
   state: () => ({
     settings: { ...defaultSettings } as Settings,
-    progress: { ...defaultProgress } as Progress,
+    progress: createDefaultProgress() as Progress,
     // 错题本：直接存 Question + 附带 timestamp，便于页面直接展示
     wrongBook: [] as Question[],
     challengeProgress: {} as ChallengeProgress,
@@ -93,24 +93,19 @@ export const useAppStore = defineStore("app", {
     },
     addProgress(delta: { totalDone: number; totalCorrect: number }) {
       const today = getTodayDateString();
-      if (this.progress.lastActiveDate !== today) {
-        this.progress = checkAndUpdateStreak(this.progress);
+      const lastDate = this.progress.lastActiveDate;
+      const diff = Math.round((Date.parse(today) - Date.parse(lastDate)) / 86400000);
+      this.ensureDailyReset();
+      if (delta.totalDone > 0) {
+        this.progress.streak = lastDate === today
+          ? Math.max(this.progress.streak, 1)
+          : diff === 1 ? this.progress.streak + 1 : 1;
+        this.progress.lastActiveDate = today;
       }
-      const last = new Date(this.progress.lastActiveDate);
-      const now = new Date(today);
-      const diff = Math.floor((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
-
       this.progress.totalQuestions += delta.totalDone;
       this.progress.correctAnswers += delta.totalCorrect;
       this.progress.todayQuestions += delta.totalDone;
       this.progress.todayCorrect += delta.totalCorrect;
-      this.progress.lastActiveDate = today;
-      this.progress.streak =
-        diff === 1 || this.progress.lastActiveDate === today
-          ? Math.max(this.progress.streak, 1)
-          : this.progress.streak === 0
-            ? 1
-            : this.progress.streak;
     },
     recordAnswer(isCorrect: boolean, module: "math" | "pinyin") {
       const mp =
@@ -178,7 +173,7 @@ export const useAppStore = defineStore("app", {
     // ===== 全部重置 =====
     resetAll() {
       this.settings = { ...defaultSettings };
-      this.progress = { ...defaultProgress };
+      this.progress = createDefaultProgress();
       this.wrongBook = [];
       this.challengeProgress = {};
       this.pinyinFavorites = [];

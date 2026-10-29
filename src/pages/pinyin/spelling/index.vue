@@ -11,13 +11,13 @@
       <view
         :class="['tab-chip', tab === 'two' ? 'active' : '']"
         @click="tab = 'two'"
-      >
+       role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="tab-text">两拼音节</text>
       </view>
       <view
         :class="['tab-chip', tab === 'three' ? 'active' : '']"
         @click="tab = 'three'"
-      >
+       role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="tab-text">三拼音节</text>
       </view>
     </view>
@@ -31,7 +31,7 @@
             :key="ini"
             :class="['strip-chip', selectedInitial === ini ? 'active' : '']"
             @click="selectedInitial = ini"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="strip-text">{{ ini }}</text>
           </view>
         </view>
@@ -45,7 +45,7 @@
         :key="i"
         class="sp-card"
         @click="speak(item.result)"
-      >
+       role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <view class="sp-formula">
           <text class="sp-part initial">{{ item.initial }}</text>
           <text v-if="item.medial" class="sp-plus">+</text>
@@ -72,7 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { activateOnKey } from "@/utils/keyboardAction";
+import { computed, ref, watch } from 'vue'
 import { twoSpellExamples, threeSpellExamples } from '@/data/pinyin/syllables'
 import { speak } from '@/utils/speak'
 
@@ -88,6 +89,9 @@ const currentInitials = computed(() => {
 })
 
 const selectedInitial = ref('b')
+watch(currentInitials, (initials) => {
+  if (!initials.includes(selectedInitial.value)) selectedInitial.value = initials[0] || ''
+}, { immediate: true })
 
 const currentExamples = computed(() =>
   currentList.value.filter((e) => e.initial === selectedInitial.value),
