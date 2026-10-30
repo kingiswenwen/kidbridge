@@ -1,6 +1,7 @@
 import type { PinyinItem, PinyinSyllable, ToneType } from '../../types'
+import { withTone } from '../../utils/pinyin'
 
-/** 拼读示例：两拼音节无介母，三拼音节含介母，故 medial 为可选 */
+/** 拼读示例：整体认读不拆拼；两拼保留完整韵母，三拼含介母。 */
 export interface SpellExample {
   initial: string;
   final: string;
@@ -61,58 +62,11 @@ export const toneSymbols: Record<ToneType, string> = {
 }
 
 export function addToneToVowel(vowel: string, tone: ToneType): string {
-  const toneVowels: Record<string, Record<ToneType, string>> = {
-    a: { 1: 'ā', 2: 'á', 3: 'ǎ', 4: 'à', 0: 'a' },
-    o: { 1: 'ō', 2: 'ó', 3: 'ǒ', 4: 'ò', 0: 'o' },
-    e: { 1: 'ē', 2: 'é', 3: 'ě', 4: 'è', 0: 'e' },
-    i: { 1: 'ī', 2: 'í', 3: 'ǐ', 4: 'ì', 0: 'i' },
-    u: { 1: 'ū', 2: 'ú', 3: 'ǔ', 4: 'ù', 0: 'u' },
-    ü: { 1: 'ǖ', 2: 'ǘ', 3: 'ǚ', 4: 'ǜ', 0: 'ü' },
-  }
-
-  let result = vowel
-  for (const [v, tones] of Object.entries(toneVowels)) {
-    if (vowel.includes(v)) {
-      result = vowel.replace(v, tones[tone] || v)
-      break
-    }
-  }
-  return result
+  return withTone(vowel, tone)
 }
 
 export function getTonedPinyin(pinyin: string, tone: ToneType): string {
-  if (tone === 0) return pinyin
-  
-  const toneVowels: Record<string, Record<number, string>> = {
-    'a': { 1: 'ā', 2: 'á', 3: 'ǎ', 4: 'à' },
-    'o': { 1: 'ō', 2: 'ó', 3: 'ǒ', 4: 'ò' },
-    'e': { 1: 'ē', 2: 'é', 3: 'ě', 4: 'è' },
-    'i': { 1: 'ī', 2: 'í', 3: 'ǐ', 4: 'ì' },
-    'u': { 1: 'ū', 2: 'ú', 3: 'ǔ', 4: 'ù' },
-    'ü': { 1: 'ǖ', 2: 'ǘ', 3: 'ǚ', 4: 'ǜ' },
-  }
-  
-  if (pinyin.includes('a')) {
-    return pinyin.replace('a', toneVowels['a'][tone])
-  }
-  if (pinyin.includes('e')) {
-    return pinyin.replace('e', toneVowels['e'][tone])
-  }
-  if (pinyin.includes('ou')) {
-    return pinyin.replace('o', toneVowels['o'][tone])
-  }
-  if (pinyin.includes('iu')) {
-    return pinyin.replace('u', toneVowels['u'][tone])
-  }
-  if (pinyin.includes('ui')) {
-    return pinyin.replace('i', toneVowels['i'][tone])
-  }
-  for (const vowel of ['o', 'i', 'u', 'ü']) {
-    if (pinyin.includes(vowel)) {
-      return pinyin.replace(vowel, toneVowels[vowel][tone])
-    }
-  }
-  return pinyin
+  return withTone(pinyin, tone)
 }
 
 // 丰富的常用音节 - 按主题分类
@@ -314,7 +268,6 @@ export const twoSpellExamples: SpellExample[] = [
   { initial: 'd', final: 'ao', result: 'dao', char: '到' },
   { initial: 'd', final: 'ou', result: 'dou', char: '都' },
   { initial: 'd', final: 'an', result: 'dan', char: '蛋' },
-  { initial: 'd', final: 'en', result: 'den', char: '等' },
   { initial: 'd', final: 'ang', result: 'dang', char: '当' },
   { initial: 'd', final: 'eng', result: 'deng', char: '灯' },
   { initial: 'd', final: 'ong', result: 'dong', char: '东' },
@@ -423,7 +376,6 @@ export const twoSpellExamples: SpellExample[] = [
   // zh 系列
   { initial: 'zh', final: 'a', result: 'zha', char: '炸' },
   { initial: 'zh', final: 'e', result: 'zhe', char: '这' },
-  { initial: 'zh', final: 'i', result: 'zhi', char: '知' },
   { initial: 'zh', final: 'u', result: 'zhu', char: '猪' },
   { initial: 'zh', final: 'ai', result: 'zhai', char: '摘' },
   { initial: 'zh', final: 'ei', result: 'zhei', char: '这' },
@@ -438,7 +390,6 @@ export const twoSpellExamples: SpellExample[] = [
   // ch 系列
   { initial: 'ch', final: 'a', result: 'cha', char: '茶' },
   { initial: 'ch', final: 'e', result: 'che', char: '车' },
-  { initial: 'ch', final: 'i', result: 'chi', char: '吃' },
   { initial: 'ch', final: 'u', result: 'chu', char: '出' },
   { initial: 'ch', final: 'ai', result: 'chai', char: '柴' },
   { initial: 'ch', final: 'ao', result: 'chao', char: '超' },
@@ -452,7 +403,6 @@ export const twoSpellExamples: SpellExample[] = [
   // sh 系列
   { initial: 'sh', final: 'a', result: 'sha', char: '沙' },
   { initial: 'sh', final: 'e', result: 'she', char: '蛇' },
-  { initial: 'sh', final: 'i', result: 'shi', char: '十' },
   { initial: 'sh', final: 'u', result: 'shu', char: '书' },
   { initial: 'sh', final: 'ai', result: 'shai', char: '晒' },
   { initial: 'sh', final: 'ei', result: 'shei', char: '谁' },
@@ -465,7 +415,6 @@ export const twoSpellExamples: SpellExample[] = [
   
   // r 系列
   { initial: 'r', final: 'e', result: 're', char: '热' },
-  { initial: 'r', final: 'i', result: 'ri', char: '日' },
   { initial: 'r', final: 'u', result: 'ru', char: '入' },
   { initial: 'r', final: 'ao', result: 'rao', char: '绕' },
   { initial: 'r', final: 'ou', result: 'rou', char: '肉' },
@@ -478,7 +427,6 @@ export const twoSpellExamples: SpellExample[] = [
   // z 系列
   { initial: 'z', final: 'a', result: 'za', char: '杂' },
   { initial: 'z', final: 'e', result: 'ze', char: '则' },
-  { initial: 'z', final: 'i', result: 'zi', char: '字' },
   { initial: 'z', final: 'u', result: 'zu', char: '足' },
   { initial: 'z', final: 'ai', result: 'zai', char: '在' },
   { initial: 'z', final: 'ei', result: 'zei', char: '贼' },
@@ -493,7 +441,6 @@ export const twoSpellExamples: SpellExample[] = [
   // c 系列
   { initial: 'c', final: 'a', result: 'ca', char: '擦' },
   { initial: 'c', final: 'e', result: 'ce', char: '册' },
-  { initial: 'c', final: 'i', result: 'ci', char: '词' },
   { initial: 'c', final: 'u', result: 'cu', char: '粗' },
   { initial: 'c', final: 'ai', result: 'cai', char: '菜' },
   { initial: 'c', final: 'ao', result: 'cao', char: '草' },
@@ -507,7 +454,6 @@ export const twoSpellExamples: SpellExample[] = [
   // s 系列
   { initial: 's', final: 'a', result: 'sa', char: '撒' },
   { initial: 's', final: 'e', result: 'se', char: '色' },
-  { initial: 's', final: 'i', result: 'si', char: '四' },
   { initial: 's', final: 'u', result: 'su', char: '苏' },
   { initial: 's', final: 'ai', result: 'sai', char: '赛' },
   { initial: 's', final: 'ao', result: 'sao', char: '扫' },
@@ -520,27 +466,32 @@ export const twoSpellExamples: SpellExample[] = [
   
   // y 系列
   { initial: 'y', final: 'a', result: 'ya', char: '牙' },
-  { initial: 'y', final: 'e', result: 'ye', char: '也' },
-  { initial: 'y', final: 'i', result: 'yi', char: '一' },
-  { initial: 'y', final: 'u', result: 'yu', char: '鱼' },
   { initial: 'y', final: 'ao', result: 'yao', char: '要' },
   { initial: 'y', final: 'ou', result: 'you', char: '有' },
   { initial: 'y', final: 'an', result: 'yan', char: '眼' },
-  { initial: 'y', final: 'in', result: 'yin', char: '音' },
   { initial: 'y', final: 'ang', result: 'yang', char: '羊' },
-  { initial: 'y', final: 'ing', result: 'ying', char: '英' },
   { initial: 'y', final: 'ong', result: 'yong', char: '用' },
   
   // w 系列
   { initial: 'w', final: 'a', result: 'wa', char: '娃' },
   { initial: 'w', final: 'o', result: 'wo', char: '我' },
-  { initial: 'w', final: 'u', result: 'wu', char: '五' },
   { initial: 'w', final: 'ai', result: 'wai', char: '外' },
   { initial: 'w', final: 'ei', result: 'wei', char: '为' },
   { initial: 'w', final: 'an', result: 'wan', char: '万' },
   { initial: 'w', final: 'en', result: 'wen', char: '文' },
   { initial: 'w', final: 'ang', result: 'wang', char: '王' },
   { initial: 'w', final: 'eng', result: 'weng', char: '翁' },
+
+  // ie、üe 是完整复韵母，与声母构成两拼音节。
+  { initial: 'l', final: 'üe', result: 'lüe', char: '略' },
+  { initial: 'n', final: 'üe', result: 'nüe', char: '虐' },
+  { initial: 'b', final: 'ie', result: 'bie', char: '别' },
+  { initial: 'p', final: 'ie', result: 'pie', char: '撇' },
+  { initial: 'm', final: 'ie', result: 'mie', char: '灭' },
+  { initial: 'd', final: 'ie', result: 'die', char: '跌' },
+  { initial: 't', final: 'ie', result: 'tie', char: '铁' },
+  { initial: 'n', final: 'ie', result: 'nie', char: '捏' },
+  { initial: 'l', final: 'ie', result: 'lie', char: '列' },
 ]
 
 // 三拼音节示例 - 大幅扩展
@@ -622,46 +573,36 @@ export const threeSpellExamples: SpellExample[] = [
   { initial: 'l', medial: 'u', final: 'o', result: 'luo', char: '落' },
   
   // l-ü 组合
-  { initial: 'l', medial: 'ü', final: 'e', result: 'lüe', char: '略' },
-  { initial: 'l', medial: 'ü', final: 'an', result: 'lüan', char: '滦' },
   
   // n-ü 组合
-  { initial: 'n', medial: 'ü', final: 'e', result: 'nüe', char: '虐' },
   
   // b-i 组合
   { initial: 'b', medial: 'i', final: 'an', result: 'bian', char: '边' },
   { initial: 'b', medial: 'i', final: 'ao', result: 'biao', char: '表' },
-  { initial: 'b', medial: 'i', final: 'e', result: 'bie', char: '别' },
   
   // p-i 组合
   { initial: 'p', medial: 'i', final: 'an', result: 'pian', char: '片' },
   { initial: 'p', medial: 'i', final: 'ao', result: 'piao', char: '飘' },
-  { initial: 'p', medial: 'i', final: 'e', result: 'pie', char: '撇' },
   
   // m-i 组合
   { initial: 'm', medial: 'i', final: 'an', result: 'mian', char: '面' },
   { initial: 'm', medial: 'i', final: 'ao', result: 'miao', char: '妙' },
-  { initial: 'm', medial: 'i', final: 'e', result: 'mie', char: '灭' },
   
   // d-i 组合
   { initial: 'd', medial: 'i', final: 'an', result: 'dian', char: '点' },
   { initial: 'd', medial: 'i', final: 'ao', result: 'diao', char: '掉' },
-  { initial: 'd', medial: 'i', final: 'e', result: 'die', char: '跌' },
   
   // t-i 组合
   { initial: 't', medial: 'i', final: 'an', result: 'tian', char: '天' },
   { initial: 't', medial: 'i', final: 'ao', result: 'tiao', char: '跳' },
-  { initial: 't', medial: 'i', final: 'e', result: 'tie', char: '铁' },
   
   // n-i 组合
   { initial: 'n', medial: 'i', final: 'an', result: 'nian', char: '年' },
   { initial: 'n', medial: 'i', final: 'ao', result: 'niao', char: '鸟' },
-  { initial: 'n', medial: 'i', final: 'e', result: 'nie', char: '捏' },
   { initial: 'n', medial: 'i', final: 'ang', result: 'niang', char: '娘' },
   
   // l-i 组合
   { initial: 'l', medial: 'i', final: 'an', result: 'lian', char: '脸' },
   { initial: 'l', medial: 'i', final: 'ao', result: 'liao', char: '了' },
-  { initial: 'l', medial: 'i', final: 'e', result: 'lie', char: '列' },
   { initial: 'l', medial: 'i', final: 'ang', result: 'liang', char: '亮' },
 ]

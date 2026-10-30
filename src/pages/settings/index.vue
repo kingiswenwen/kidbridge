@@ -4,7 +4,7 @@
       <!-- 顶部：个人信息 -->
       <view class="profile-card">
         <view class="avatar-wrap">
-          <image class="avatar-img" src="/static/icons/panda.svg" mode="aspectFit" />
+          <image class="avatar-img" :src="store.avatar.startsWith('/static/') ? store.avatar : '/static/icons/panda.svg'" mode="aspectFit" />
         </view>
         <view class="profile-info">
           <text class="profile-name">{{ store.childName || '小朋友' }}</text>
@@ -60,30 +60,30 @@
           <view class="set-l">
             <image class="set-icon-img" src="/static/icons/speaker.svg" mode="aspectFit" />
             <view class="set-texts">
-              <text class="set-name">音效</text>
-              <text class="set-desc">答题反馈、鼓励音</text>
+              <text class="set-name">声音</text>
+              <text class="set-desc">控制拼音、英语与数学朗读</text>
             </view>
           </view>
-          <AppSwitch :model-value="store.soundEnabled" label="音效" @update:model-value="store.toggleSound" />
+          <AppSwitch :model-value="store.soundEnabled" label="声音" @update:model-value="store.toggleSound" />
         </view>
 
         <view class="set-row">
           <view class="set-l">
             <image class="set-icon-img" src="/static/icons/mic.svg" mode="aspectFit" />
             <view class="set-texts">
-              <text class="set-name">自动朗读题目</text>
+              <text class="set-name">自动朗读数学题</text>
               <text class="set-desc">答题前自动读一遍（需浏览器支持）</text>
             </view>
           </view>
           <AppSwitch :model-value="store.autoSpeak" label="自动朗读题目" @update:model-value="store.setAutoSpeak" />
         </view>
 
-        <view class="set-row">
+        <view class="set-row grade-row">
           <view class="set-l">
             <image class="set-icon-img" src="/static/icons/star.svg" mode="aspectFit" />
             <view class="set-texts">
               <text class="set-name">年级</text>
-              <text class="set-desc">自动建议题目难度</text>
+              <text class="set-desc">记录当前学习阶段</text>
             </view>
           </view>
           <view class="grade-picker flex gap-2">
@@ -92,7 +92,7 @@
               :key="g"
               :class="['grade-chip', store.grade === g ? 'active' : '']"
               @click="store.setGrade(g as any)"
-            >
+             role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
               <text class="grade-chip-text">{{ gradeShortLabel(g as any) }}</text>
             </view>
           </view>
@@ -100,7 +100,7 @@
 
         <view class="set-row">
           <view class="set-l">
-            <image class="set-icon-img" src="/static/icons/panda.svg" mode="aspectFit" />
+            <image class="set-icon-img" :src="store.avatar.startsWith('/static/') ? store.avatar : '/static/icons/panda.svg'" mode="aspectFit" />
             <view class="set-texts">
               <text class="set-name">选择头像</text>
               <text class="set-desc">点一下就能换一个头像</text>
@@ -113,7 +113,7 @@
             :key="a"
             :class="['av-item', store.avatar === a ? 'selected' : '']"
             @click="store.setAvatar(a)"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="av-icon-img" :src="a" mode="aspectFit" />
           </view>
         </view>
@@ -126,7 +126,7 @@
           <text class="card-title">数据与备份</text>
         </view>
 
-        <view class="set-row" @click="resetProgress">
+        <view class="set-row" @click="resetProgress" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <view class="set-l">
             <image class="set-icon-img" src="/static/icons/refresh.svg" mode="aspectFit" />
             <view class="set-texts">
@@ -145,6 +145,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import AppSwitch from "@/components/AppSwitch.vue";
 import AppDialog from "@/components/AppDialog.vue";
 import { useAppDialog } from "@/utils/dialog";

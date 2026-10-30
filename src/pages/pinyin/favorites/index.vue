@@ -8,7 +8,7 @@
 
     <view v-if="favorites.length > 0" class="fv-list px-4 pb-10">
       <view class="fv-card" v-for="fav in favorites" :key="fav.pinyin">
-        <view class="fv-main" @click="speak(fav.pinyin)">
+        <view class="fv-main" @click="speak(fav.pinyin)" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
           <text class="fv-pinyin">{{ fav.pinyin }}</text>
           <view class="fv-speak">
             <image class="fv-speak-icon-img" src="/static/icons/speaker.svg" mode="aspectFit" />
@@ -16,13 +16,13 @@
         </view>
         <view class="fv-meta">
           <text class="fv-date">{{ formatDate(fav.addedAt) }}</text>
-          <view class="fv-remove" @click="remove(fav.pinyin)">
+          <view class="fv-remove" @click="remove(fav.pinyin)" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="fv-remove-text">取消收藏</text>
           </view>
         </view>
       </view>
 
-      <view class="fv-clear mt-6" @click="clearAll">
+      <view class="fv-clear mt-6" @click="clearAll" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="fv-clear-text">清空全部收藏</text>
       </view>
     </view>
@@ -31,7 +31,7 @@
       <text class="empty-emoji">📭</text>
       <text class="empty-title">还没有收藏</text>
       <text class="empty-sub">在声母/韵母学习页长按卡片即可收藏</text>
-      <view class="empty-btn mt-8" @click="goLearn">
+      <view class="empty-btn mt-8" @click="goLearn" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="empty-btn-text">去学习拼音</text>
       </view>
     </view>
@@ -40,6 +40,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import AppDialog from "@/components/AppDialog.vue";
 import { useAppDialog } from "@/utils/dialog";
 
@@ -82,7 +83,7 @@ function clearAll() {
 }
 
 function goLearn() {
-  uni.navigateTo({ url: '/pages/pinyin/index' })
+  uni.switchTab({ url: '/pages/pinyin/index' })
 }
 </script>
 

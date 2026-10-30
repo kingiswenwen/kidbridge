@@ -36,6 +36,8 @@
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "type-check": "vue-tsc --noEmit",
+    "test:functional": "node tests/functional/core.mjs",
+    "test:browser": "node tests/functional/browser.cjs && node tests/functional/journeys.cjs && node tests/functional/ui-regression.cjs",
     "test:racing": "node scripts/test-racing.mjs",
     "test:racing:e2e": "node tests/racing/browser.mjs"
   },
@@ -72,7 +74,7 @@
     "@vue/tsconfig": "^0.9.1",
     "autoprefixer": "^10.5.4",
     "esbuild": "0.20.2",
-    "playwright": "1.56.0",
+    "playwright": "1.56.1",
     "postcss": "^8.5.26",
     "sass": "^1.102.0",
     "tailwindcss": "^3.4.19",

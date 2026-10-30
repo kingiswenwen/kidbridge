@@ -20,7 +20,7 @@
             <text class="sc-en">{{ s.en }}</text>
             <text class="sc-cn">{{ s.cn }}</text>
           </view>
-          <view class="sc-speak" @click.stop="speak(s.en)">
+          <view class="sc-speak" @click.stop="speak(s.en)" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="sc-speak-img" src="/static/icons/speaker.svg" mode="aspectFit" />
           </view>
         </view>
@@ -38,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
+import { speak as speakText } from "@/utils/speak";
 interface Sen {
   emoji: string;
   en: string;
@@ -73,20 +75,9 @@ const sentences: Sen[] = [
 ];
 
 function speak(text: string) {
-  // #ifdef H5
-  try {
-    if ('speechSynthesis' in window) {
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = 'en-US';
-      u.rate = 0.9;
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(u);
-      return;
-    }
-  } catch (e) {}
-  // #endif
-  uni.showToast({ title: text, icon: 'none', duration: 1500 });
+  speakText(text, 'en-US');
 }
+
 </script>
 
 <style lang="scss" scoped>

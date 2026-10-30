@@ -35,30 +35,10 @@ function generateNumberOptions(
   min: number,
   max: number,
 ): number[] {
-  const options = new Set<number>([answer]);
-
-  const nearOptions = [answer - 1, answer + 1, answer - 2, answer + 2];
-  for (const opt of nearOptions) {
-    if (opt >= min && opt <= max && options.size < 4) {
-      options.add(opt);
-    }
-  }
-
-  while (options.size < 4) {
-    const offset = randomInt(-5, 5);
-    const option = answer + offset;
-
-    if (option >= min && option <= max && option !== answer) {
-      options.add(option);
-    } else {
-      const randOpt = randomInt(min, max);
-      if (randOpt !== answer) {
-        options.add(randOpt);
-      }
-    }
-  }
-
-  return shuffleArray(Array.from(options));
+  // 从有限候选池抽取，范围不足四个数时保留实际可用数量。
+  const candidates = Array.from({ length: max - min + 1 }, (_, i) => min + i)
+    .filter((value) => value !== answer);
+  return shuffleArray([answer, ...shuffleArray(candidates).slice(0, 3)]);
 }
 
 function generateAddition10(): Question {

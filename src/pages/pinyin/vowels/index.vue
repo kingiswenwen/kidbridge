@@ -17,27 +17,34 @@
           v-for="item in cat.items"
           :key="item.pinyin"
           class="vw-card"
-          @click="onTap(item)"
           @longpress="onLongPress(item)"
         >
+          <view class="pinyin-play" role="button" tabindex="0" :aria-label="'朗读 ' + item.pinyin"
+            @click="onTap(item)" @keydown.enter.prevent.stop="onTap(item)" @keydown.space.prevent.stop="onTap(item)">
           <text class="vw-pinyin">{{ item.pinyin }}</text>
           <text class="vw-tips">{{ item.tips }}</text>
+          </view>
           <view class="vw-actions">
             <image class="vw-speak-img" src="/static/icons/speaker.svg" mode="aspectFit" />
-            <image v-if="isFav(item.pinyin)" class="vw-fav-img on" src="/static/icons/star.svg" mode="aspectFit" />
-            <image v-else class="vw-fav-img" src="/static/icons/star.svg" mode="aspectFit" style="opacity:0.25;filter:grayscale(1)" />
+            <button class="favorite-action" type="button" role="button" tabindex="0"
+              :aria-label="(isFav(item.pinyin) ? '取消收藏 ' : '收藏 ') + item.pinyin"
+              :aria-pressed="isFav(item.pinyin)" @click.stop="onLongPress(item)"
+              @keydown.enter.prevent.stop="onLongPress(item)" @keydown.space.prevent.stop="onLongPress(item)">
+              <image class="vw-fav-img" :style="{ opacity: isFav(item.pinyin) ? 1 : 0.4 }" src="/static/icons/star.svg" mode="aspectFit" />
+            </button>
           </view>
         </view>
       </view>
     </view>
 
     <view class="vw-tip px-6 pb-10 text-center">
-      <text class="tip-text">长按卡片可以收藏哦</text>
+      <text class="tip-text">点击星星或长按卡片可以收藏哦</text>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import { computed } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { vowelCategories } from '@/data/pinyin/vowels'
@@ -100,4 +107,9 @@ function onLongPress(item: PinyinItem) {
 
 .vw-tip { margin-top: 8rpx; }
 .tip-text { font-size: 26rpx; color: #9CA3AF; }
+
+.favorite-action { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; margin: 0; padding: 10px; background: transparent; border: 0; border-radius: 50%; }
+.favorite-action::after { border: 0; }
+
+.pinyin-play { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 44px; }
 </style>

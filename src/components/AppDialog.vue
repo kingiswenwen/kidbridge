@@ -17,7 +17,7 @@
       </view>
       <text :id="`${dialogId}-title`" class="dialog-title">{{ state.title }}</text>
       <template v-if="state.editable">
-        <label :for="`${dialogId}-input`" class="dialog-label">小朋友的昵称</label>
+        <label :id="`${dialogId}-label`" :for="`${dialogId}-input`" class="dialog-label">小朋友的昵称</label>
         <input
           :id="`${dialogId}-input`"
           v-model="draft"
@@ -69,6 +69,37 @@ function confirm() {
 // #ifdef H5
 let previousFocus: HTMLElement | null = null;
 let previousOverflow: string | null = null;
+let inputEnterArmed = false;
+const guardedInputs = new WeakSet<HTMLInputElement>();
+
+function syncInputAccessibility() {
+  // uni-app 的 H5 input 会生成包装节点，标签与错误状态需关联到真正的输入框。
+  const input = document.getElementById(dialogId)?.querySelector<HTMLInputElement>('input');
+  if (!input) return;
+  const wrapper = input.closest('uni-input');
+  if (wrapper) wrapper.id = `${dialogId}-field`;
+  input.id = `${dialogId}-input`;
+  input.setAttribute('aria-labelledby', `${dialogId}-label`);
+  input.setAttribute('aria-describedby', `${dialogId}-hint`);
+  input.setAttribute('aria-invalid', String(Boolean(error.value)));
+  if (!guardedInputs.has(input)) {
+    guardedInputs.add(input);
+    input.addEventListener('keydown', event => {
+      if (event.key === 'Enter') inputEnterArmed = true;
+    }, true);
+    input.addEventListener('keyup', event => {
+      if (event.key !== 'Enter') return;
+      // 开窗按钮的 keyup 可能落到新聚焦的 INPUT，必须在 uni-input 的监听器前截住。
+      // 输入框自己开始的 Enter 和手机软键盘直接发出的 confirm 都正常保存。
+      if (!inputEnterArmed) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+      inputEnterArmed = false;
+    }, true);
+  }
+}
+watch(error, () => nextTick(syncInputAccessibility));
 
 function keydown(event: KeyboardEvent) {
   if (!props.state.visible) return;
@@ -110,11 +141,13 @@ watch(() => props.state.visible, async visible => {
   draft.value = props.state.editable ? props.state.content || '' : '';
   error.value = '';
   // #ifdef H5
+  inputEnterArmed = false;
   previousFocus = document.activeElement as HTMLElement;
   previousOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   document.addEventListener('keydown', keydown, true);
   await nextTick();
+  syncInputAccessibility();
   const panel = document.getElementById(dialogId);
   const target = props.state.editable
     ? panel?.querySelector<HTMLInputElement>('input')
@@ -133,29 +166,29 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .dialog-overlay { position: fixed; inset: 0; z-index: 10010; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(47, 34, 30, .42); }
-.dialog-panel { box-sizing: border-box; width: 100%; max-width: 408px; max-height: 86vh; overflow-y: auto; background: #fffaf1; border: 1px solid #e9cfb8; border-radius: 25px; padding: 25px; box-shadow: 0 18px 55px rgba(66, 35, 21, .2); color: #293344; font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
+.dialog-panel { box-sizing: border-box; width: 100%; max-width: 408px; max-height: 86vh; max-height: min(86dvh, calc(100dvh - 40px)); overflow-y: auto; background: var(--kb-paper, #fffdf8); border: 1px solid var(--kb-border, #e6d7c4); border-radius: 25px; padding: 25px; box-shadow: 0 18px 55px rgba(66, 35, 21, .2); color: var(--kb-text, #293344); font-family: "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif; }
 .dialog-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .dialog-brand { width: 46px; height: 40px; }
-.dialog-close { display: flex; align-items: center; justify-content: center; margin: 0; padding: 0; width: 36px; height: 36px; background: #fff0de; border: 1px solid #e9d4b9; border-radius: 11px; color: #76513c; font-size: 25px; line-height: 1; }
+.dialog-close { display: flex; align-items: center; justify-content: center; margin: 0; padding: 0; width: 44px; height: 44px; background: #ffe9e8; border: 1px solid var(--kb-border, #e6d7c4); border-radius: 11px; color: var(--kb-primary, #b94348); font-size: 25px; line-height: 1; }
 .dialog-close::after, .dialog-button::after { border: 0; }
 .close-mark { position: relative; width: 16px; height: 16px; }
 .close-mark::before, .close-mark::after { content: ''; position: absolute; left: 7px; top: 0; width: 2px; height: 16px; border-radius: 2px; background: currentColor; transform: rotate(45deg); }
 .close-mark::after { transform: rotate(-45deg); }
-.dialog-panel.is-danger { border-color: #d9ad91; }
+.dialog-panel.is-danger { border-color: var(--kb-error, #b33038); }
 .dialog-title { display: block; font-size: 22px; line-height: 1.5; font-weight: 800; margin-bottom: 14px; }
-.dialog-content { display: block; white-space: pre-line; color: #675b53; font-size: 14px; line-height: 1.9; }
-.dialog-label { display: block; color: #66523f; font-size: 13px; margin-bottom: 8px; }
-.dialog-input { box-sizing: border-box; width: 100%; height: 48px; min-height: 48px; padding: 0 13px; background: #fff; border: 1px solid #c9aa8a; border-radius: 12px; color: #293344; font-size: 16px; caret-color: #b94328; }
-.dialog-input:focus-within { border-color: #b94328; outline: 2px solid #f4d2b9; outline-offset: 2px; }
-.dialog-input.has-error { border-color: #b94328; }
-.dialog-hint { display: block; font-size: 12px; line-height: 1.6; margin-top: 8px; color: #78675a; }
-.dialog-hint.is-error { color: #a13b27; }
+.dialog-content { display: block; white-space: pre-line; color: var(--kb-muted, #606779); font-size: 14px; line-height: 1.9; }
+.dialog-label { display: block; color: var(--kb-muted, #606779); font-size: 13px; margin-bottom: 8px; }
+.dialog-input { box-sizing: border-box; width: 100%; height: 48px; min-height: 48px; padding: 0 13px; background: #fff; border: 1px solid var(--kb-border, #e6d7c4); border-radius: 12px; color: var(--kb-text, #293344); font-size: 16px; caret-color: var(--kb-primary, #b94348); }
+.dialog-input:focus-within { border-color: var(--kb-primary, #b94348); outline: 2px solid #f7ccd0; outline-offset: 2px; }
+.dialog-input.has-error { border-color: var(--kb-primary, #b94348); }
+.dialog-hint { display: block; font-size: 12px; line-height: 1.6; margin-top: 8px; color: var(--kb-muted, #606779); }
+.dialog-hint.is-error { color: var(--kb-error, #b33038); }
 .dialog-actions { display: flex; gap: 10px; margin-top: 25px; }
 .dialog-button { box-sizing: border-box; flex: 1; display: flex; align-items: center; justify-content: center; margin: 0; min-height: 46px; padding: 10px 12px; border-radius: 12px; font-size: 14px; font-weight: 700; line-height: 1.5; }
-.dialog-button.secondary { border: 1px solid #d3b493; background: #fff4e5; color: #76513c; }
-.dialog-button.primary { border: 1px solid #b94328; background: #b94328; color: #fff; }
-.dialog-button.primary:hover { background: #96351e; }
-.dialog-button.secondary:hover { background: #ffe9cf; }
-.dialog-panel button:focus-visible { outline: 3px solid #96351e; outline-offset: 3px; }
+.dialog-button.secondary { border: 1px solid var(--kb-border, #e6d7c4); background: var(--kb-cream, #fff9e6); color: var(--kb-primary, #b94348); }
+.dialog-button.primary { border: 1px solid var(--kb-primary, #b94348); background: var(--kb-primary, #b94348); color: #fff; }
+.dialog-button.primary:hover { background: var(--kb-focus, #9f3038); }
+.dialog-button.secondary:hover { background: #ffe9e8; }
+.dialog-panel button:focus-visible { outline: 3px solid var(--kb-focus, #9f3038); outline-offset: 3px; }
 @media (max-width: 480px) { .dialog-overlay { padding: 20px; } .dialog-panel { padding: 22px; border-radius: 22px; } .dialog-title { font-size: 21px; } }
 </style>

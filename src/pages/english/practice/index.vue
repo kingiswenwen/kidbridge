@@ -4,6 +4,7 @@
     <view v-if="stage === 'quiz'" class="px-4 pt-4">
       <ProgressBar
         :current="currentIndex + 1"
+        :answered-count="currentIndex + (answered ? 1 : 0)"
         :total="questions.length"
         :correct="correctCount"
       />
@@ -26,7 +27,7 @@
             :key="m.key"
             :class="['mode-card', mode === m.key ? 'active' : '']"
             @click="mode = m.key"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="mode-icon-img" :src="m.icon" mode="aspectFit" />
             <text class="mode-name">{{ m.name }}</text>
             <text class="mode-desc">{{ m.desc }}</text>
@@ -43,7 +44,7 @@
             :key="c.key"
             :class="['cat-chip', cats.includes(c.key) ? 'active' : '']"
             @click="toggleCat(c.key)"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="cc-icon-img" :src="c.icon" mode="aspectFit" />
             <text class="cc-name">{{ c.name }}</text>
           </view>
@@ -59,7 +60,7 @@
             :key="n"
             :class="['count-chip', count === n ? 'active' : '']"
             @click="count = n"
-          >
+           role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="count-text">{{ n }} 题</text>
           </view>
         </view>
@@ -68,7 +69,7 @@
       <view
         :class="['start-btn mt-10', cats.length === 0 ? 'disabled' : '']"
         @click="cats.length && startQuiz()"
-      >
+       role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <text class="start-text">开始练习</text>
       </view>
     </view>
@@ -87,18 +88,9 @@
             v-for="(opt, i) in q.options"
             :key="i"
             :value="opt"
-            :label="String(opt)"
-            :index="i"
-            :selected="selectedIdx === i"
-            :status="
-              answered
-                ? i === correctIdx
-                  ? 'correct'
-                  : selectedIdx === i
-                    ? 'wrong'
-                    : 'normal'
-                : 'normal'
-            "
+            :is-selected="selectedIdx === i"
+            :is-correct="answered ? i === correctIdx ? true : selectedIdx === i ? false : null : null"
+            :disabled="answered"
             @click="pick(i)"
           />
         </view>
@@ -108,7 +100,7 @@
           <text :class="['fb-text', lastOk ? 'ok' : 'bad']">
             {{ lastOk ? encouragement : '正确答案：' + String(correctLabel) }}
           </text>
-          <view class="next-btn" @click="next">
+          <view class="next-btn" @click="next" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <text class="next-text">
               {{ currentIndex + 1 === questions.length ? '查看成绩' : '下一题 →' }}
             </text>
@@ -141,11 +133,11 @@
           </view>
         </view>
         <view class="r-actions mt-10 flex gap-4">
-          <view class="r-btn-a" @click="reset">
+          <view class="r-btn-a" @click="reset" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="r-btn-icon" src="/static/icons/refresh.svg" mode="aspectFit" />
             <text class="r-btn-a-text">再练一组</text>
           </view>
-          <view class="r-btn-b" @click="() => uni.navigateBack()">
+          <view class="r-btn-b" @click="() => uni.navigateBack()" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
             <image class="r-btn-icon" src="/static/icons/arrow.svg" mode="aspectFit" />
             <text class="r-btn-b-text">返回</text>
           </view>
@@ -156,7 +148,11 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
+import { useAppStore } from "@/stores/app";
+const store = useAppStore();
 import { computed, ref } from 'vue';
+import { buildChoiceOptions } from '@/utils/practiceOptions';
 import { englishWords, type EnglishWord, type WordCategory } from '@/data/english/words';
 import { encouragement as encouragements } from '@/data/encouragements';
 import ProgressBar from '@/components/ProgressBar.vue';
@@ -240,14 +236,6 @@ function pickWords(n: number): EnglishWord[] {
   return out;
 }
 
-function buildOptions(correct: string, distractors: string[]): string[] {
-  const opts = [correct, ...distractors.slice(0, 3)];
-  for (let i = opts.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [opts[i], opts[j]] = [opts[j], opts[i]];
-  }
-  return opts;
-}
 
 function startQuiz() {
   const words = pickWords(count.value);
@@ -257,7 +245,7 @@ function startQuiz() {
       const meanings = all
         .filter((x) => x.meaning !== w.meaning)
         .map((x) => x.meaning);
-      const opts = buildOptions(w.meaning, meanings);
+      const opts = buildChoiceOptions(w.meaning, meanings);
       return {
         text: w.word,
         hint: w.phonetic,
@@ -267,7 +255,7 @@ function startQuiz() {
       };
     } else {
       const ws = all.filter((x) => x.word !== w.word).map((x) => x.word);
-      const opts = buildOptions(w.word, ws);
+      const opts = buildChoiceOptions(w.word, ws);
       return {
         text: w.meaning,
         hint: '',
@@ -294,7 +282,9 @@ function pick(i: number) {
   if (ok) correctCount.value += 1;
 }
 function next() {
+  if (!answered.value || stage.value !== 'quiz') return;
   if (currentIndex.value + 1 >= questions.value.length) {
+    store.updateEnglishProgress(questions.value.length, correctCount.value);
     stage.value = 'result';
     return;
   }
@@ -326,6 +316,8 @@ function reset() {
 </script>
 
 <style lang="scss" scoped>
+/* Use explicit component spacing: uni-app does not preserve Tailwind sibling spacing reliably. */
+.opts { display: grid; gap: 16px; }
 .ep-bg {
   min-height: 100vh;
   background: linear-gradient(180deg, #DBEAFE 0%, #EFF6FF 50%, #F0FDFA 100%);

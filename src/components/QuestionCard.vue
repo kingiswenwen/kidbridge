@@ -3,8 +3,8 @@
     <!-- 顶部：题型标签 + 朗读 -->
     <view class="q-header">
       <view class="q-badge">{{ questionTypeLabels[question.type] || '数学' }}</view>
-      <view class="q-speak-btn" @click="handleSpeak">
-        <text class="speak-icon">🔊</text>
+      <view class="q-speak-btn" role="button" tabindex="0" aria-label="朗读题目" @click="handleSpeak" @keydown.enter.prevent.stop="handleSpeak" @keydown.space.prevent.stop="handleSpeak">
+        <image class="speak-icon" src="/static/icons/speaker.svg" mode="aspectFit" aria-hidden="true" />
       </view>
     </view>
 
@@ -109,7 +109,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
+import { useAppStore } from "@/stores/app";
+import { speak } from "@/utils/speak";
 import type { Question } from "@/types";
 import OptionButton from "@/components/OptionButton.vue";
 import VisualAid from "@/components/VisualAid.vue";
@@ -158,23 +160,14 @@ const getIsCorrect = (opt: number | string): boolean | null => {
   return null;
 };
 
-const handleSpeak = () => {
-  // 优先 webSpeech (H5)，没有就用系统级 uni.showToast 提示
-  // #ifdef H5
-  try {
-    if ("speechSynthesis" in window) {
-      const u = new SpeechSynthesisUtterance(
-        props.question.content.replace(/\?/g, "多少").replace(/○/g, "和"),
-      );
-      u.lang = "zh-CN";
-      u.rate = 0.9;
-      window.speechSynthesis.speak(u);
-      return;
-    }
-  } catch (e) {}
-  // #endif
-  uni.showToast({ title: "🔊 朗读", icon: "none", duration: 600 });
-};
+const store = useAppStore();
+const handleSpeak = () => speak(
+  props.question.content.replace(/\?/g, "多少").replace(/○/g, "和"),
+);
+watch(() => props.question.id, () => {
+  if (store.autoSpeak) handleSpeak();
+}, { immediate: true });
+
 </script>
 
 <style lang="scss" scoped>
@@ -188,15 +181,16 @@ const handleSpeak = () => {
 .q-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24rpx; }
 .q-badge {
   padding: 8rpx 24rpx; border-radius: 999rpx;
-  background: #FFE4E6; color: #FF6B6B;
+  background: #FFE4E6; color: var(--kb-primary, #b94348);
   font-size: 24rpx; font-weight: 600;
 }
 .q-speak-btn {
-  width: 72rpx; height: 72rpx; border-radius: 20rpx;
+  width: max(72rpx, 44px); height: max(72rpx, 44px); border-radius: 20rpx;
   background: #FFF0F5; display: flex; align-items: center; justify-content: center;
   &:active { transform: scale(0.92); }
 }
-.speak-icon { font-size: 36rpx; }
+.q-speak-btn:focus-visible { outline: 3px solid var(--kb-focus, #9f3038); outline-offset: 3px; }
+.speak-icon { width: 24px; height: 24px; }
 
 .q-body { min-height: 180rpx; display: flex; align-items: center; justify-content: center; padding: 16rpx 0; }
 

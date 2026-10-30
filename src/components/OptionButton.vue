@@ -2,6 +2,13 @@
   <view
     class="option-btn"
     :class="stateClass"
+    role="button"
+    :tabindex="disabled ? -1 : 0"
+    :aria-label="`选项 ${value}${isCorrect === true ? '，正确答案' : isCorrect === false && isSelected ? '，回答错误' : ''}`"
+    :aria-disabled="disabled"
+    :aria-pressed="isSelected"
+    @keydown.enter.prevent.stop="handleClick"
+    @keydown.space.prevent.stop="handleClick"
     @click="handleClick"
   >
     <text v-if="emoji" class="option-emoji">{{ emoji }}</text>
@@ -74,23 +81,24 @@ const emoji = computed(() => {
   &.selected {
     background: #FF6B6B;
     border-color: #FF6B6B;
-    .option-value { color: #FFF; }
+    .option-value { color: #4b1e27; }
   }
   &.correct {
     background: #6BCB77;
     border-color: #6BCB77;
-    .option-value, .option-emoji { color: #FFF; }
+    .option-value, .option-emoji { color: #163e25; }
     animation: bounce-in 0.4s ease;
   }
   &.wrong {
     background: #FC8181;
     border-color: #FC8181;
-    .option-value, .option-emoji { color: #FFF; }
+    .option-value, .option-emoji { color: #641f29; }
     animation: shake 0.4s ease;
   }
   &.clicked { transform: scale(0.95); }
   &.disabled { opacity: 0.55; }
 }
+.option-btn:focus-visible { outline: 3px solid var(--kb-focus, #9f3038); outline-offset: 4px; }
 .option-emoji { font-size: 32rpx; font-weight: 700; }
 .option-value { font-size: 40rpx; font-weight: 700; color: #1F2937; word-break: break-all; text-align: center; }
 
@@ -105,4 +113,5 @@ const emoji = computed(() => {
   25% { transform: translateX(-12rpx); }
   75% { transform: translateX(12rpx); }
 }
+@media (prefers-reduced-motion: reduce) { .option-btn { transition: none; animation: none; } }
 </style>

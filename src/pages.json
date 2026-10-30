@@ -198,7 +198,9 @@
     "navigationBarTitleText": "彩虹桥",
     "navigationBarBackgroundColor": "#FF6B6B",
     "backgroundColor": "#FFF9E6",
-    "backgroundTextStyle": "dark"
+    "backgroundTextStyle": "dark",
+    "rpxCalcMaxDeviceWidth": 480,
+    "rpxCalcBaseDeviceWidth": 480
   },
   "tabBar": {
     "color": "#9CA3AF",

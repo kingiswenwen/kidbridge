@@ -11,7 +11,7 @@
       <view class="hero-content">
         <view class="avatar-section" role="button" tabindex="0" aria-label="修改昵称" @click="editName" @keydown.enter.prevent="editName" @keydown.space.prevent="editName">
           <view class="avatar-large">
-            <image class="avatar-img-lg" src="/static/icons/panda.svg" mode="aspectFit" />
+            <image class="avatar-img-lg" :src="store.avatar.startsWith('/static/') ? store.avatar : '/static/icons/panda.svg'" mode="aspectFit" />
           </view>
           <view class="avatar-edit">
             <image class="edit-icon" src="/static/menu/settings.png" mode="aspectFit" />
@@ -48,7 +48,7 @@
     <!-- ========== 功能入口列表 ========== -->
     <view class="menu-section">
       <!-- 错题本（带徽章） -->
-      <view class="menu-card" @click="goWrongbook">
+      <view class="menu-card" @click="goWrongbook" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <image class="menu-icon-img" src="/static/menu/wrongbook.png" mode="aspectFit" />
         <view class="menu-texts">
           <text class="menu-name">错题本</text>
@@ -61,7 +61,7 @@
       </view>
 
       <!-- 我的收藏 -->
-      <view class="menu-card" @click="go('/pages/pinyin/favorites/index')">
+      <view class="menu-card" @click="go('/pages/pinyin/favorites/index')" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <image class="menu-icon-img" src="/static/menu/favorite.png" mode="aspectFit" />
         <view class="menu-texts">
           <text class="menu-name">我的收藏</text>
@@ -76,7 +76,7 @@
       </view>
 
       <!-- 设置 -->
-      <view class="menu-card" @click="goSettings">
+      <view class="menu-card" @click="goSettings" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <image class="menu-icon-img" src="/static/menu/settings.png" mode="aspectFit" />
         <view class="menu-texts">
           <text class="menu-name">设置</text>
@@ -86,7 +86,7 @@
       </view>
 
       <!-- 关于 -->
-      <view class="menu-card" @click="showAbout">
+      <view class="menu-card" @click="showAbout" role="button" tabindex="0" @keydown.enter.prevent.stop="activateOnKey" @keydown.space.prevent.stop="activateOnKey">
         <image class="menu-icon-img" src="/static/menu/about.png" mode="aspectFit" />
         <view class="menu-texts">
           <text class="menu-name">关于彩虹桥</text>
@@ -102,6 +102,7 @@
 </template>
 
 <script setup lang="ts">
+import { activateOnKey } from "@/utils/keyboardAction";
 import AppDialog from "@/components/AppDialog.vue";
 import { useAppDialog } from "@/utils/dialog";
 

@@ -38,6 +38,7 @@ jobs:
           JS
       - run: npm ci --registry=https://registry.npmjs.org --no-audit --fund=false
       - run: npm run type-check
+      - run: npm run test:functional
       - name: Test racing rules, persistence failures and reward transactions
         run: npm run test:racing
       - name: Test deployment preservation and rollback
