@@ -1,0 +1,21 @@
+{
+  "passed": [
+    "existing home exposes race entry without replacing learning modules",
+    "parent guard and PIN setup with recovery code",
+    "parent creates scheduled review and self-confirm tasks through real editor",
+    "child submits once; pending parent review earns no stars or progress",
+    "self-confirm persists award then shows skippable feedback",
+    "parent login required again after child mode; approval awards exactly once",
+    "configure reward price, real-world reward and preserve task history",
+    "cosmetic purchase charges once and garage saves owned equipment",
+    "real reward request does not deduct, parent approval deducts, cancellation refunds once",
+    "backup export/import survives reload and malformed import preserves data",
+    "parent pages and child pages render on mobile and desktop without overflow",
+    "twelve-task track remains scrollable and child-visible after validated restore",
+    "parent sound and reduced-motion switches persist and disable track motion",
+    "existing mathematics, pinyin, English and challenge routes still load",
+    "corrupted storage is preserved and can be recovered through parent backup tools",
+    "parent PIN recovery changes credentials without clearing growth records"
+  ],
+  "errors": []
+}

@@ -39,9 +39,24 @@ jobs:
       - run: npm ci --registry=https://registry.npmjs.org --no-audit --fund=false
       - run: npm run type-check
       - run: npm run test:functional
+      - name: Test racing rules, persistence failures and reward transactions
+        run: npm run test:racing
       - name: Test deployment preservation and rollback
         run: python3 -m unittest discover -s tests/deployment -v
       - run: npm run build:h5
+      - name: Build WeChat mini program
+        run: npm run build:mp-weixin
+      - name: Install browser for racing flow tests
+        run: npx playwright install --with-deps chromium
+      - name: Test racing user flows and existing learning routes
+        run: npm run test:racing:e2e
+      - name: Retain browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: racing-browser-${{ github.sha }}
+          path: artifacts/racing-browser/
+          retention-days: 14
       - name: Package release
         env:
           COMMIT: ${{ github.sha }}

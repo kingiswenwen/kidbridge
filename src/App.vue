@@ -2,12 +2,22 @@
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { watch } from "vue";
 import { useAppStore } from "@/stores/app";
+import { useRacingStore } from "@/stores/racing";
 import { stopSpeaking } from "@/utils/speak";
 const store = useAppStore();
 watch(() => store.soundEnabled, enabled => { if (!enabled) stopSpeaking(); });
 
 onLaunch(() => {
   console.log("[彩虹桥] App Launch");
+  // #ifdef H5
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    const target = event.target as HTMLElement;
+    if (!['Enter', ' '].includes(event.key) || target.tagName !== 'UNI-BUTTON' || !target.matches('.racing-page uni-button, .home-racing-entry, .racing-settings-entry uni-button')) return;
+    if (target.hasAttribute('disabled') || target.getAttribute('aria-disabled') === 'true') return;
+    event.preventDefault();
+    target.click();
+  });
+  // #endif
 });
 
 onShow(() => {
@@ -16,11 +26,13 @@ onShow(() => {
 
 onHide(() => {
   stopSpeaking();
+  useRacingStore().lockParent();
 });
 </script>
 
 <style lang="scss">
 @import "uview-plus/index.scss";
+@import "@/styles/racing.scss";
 
 page {
   background-color: #fff9e6;
