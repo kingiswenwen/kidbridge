@@ -7,7 +7,10 @@ import assert from "node:assert/strict";
 import { assertImagesLoaded } from "../helpers/images.mjs";
 
 const root = resolve("dist/build/h5");
-if (!existsSync(`${root}/learning.html`))
+const liveUrl = process.env.RACING_TEST_URL;
+if (liveUrl && new URL(liveUrl).protocol !== "https:")
+  throw new Error("Live racing checks require HTTPS");
+if (!liveUrl && !existsSync(`${root}/learning.html`))
   throw new Error("Run npm run build:h5 first");
 const artifacts = resolve(
   process.env.RACING_ARTIFACTS || "artifacts/racing-browser",
@@ -44,9 +47,12 @@ const server = createServer(async (req, res) => {
     res.writeHead(404).end();
   }
 });
-await new Promise((r) => server.listen(0, "127.0.0.1", r));
-const port = server.address().port;
-const base = `http://127.0.0.1:${port}/learning.html#`;
+if (!liveUrl) await new Promise((r) => server.listen(0, "127.0.0.1", r));
+// All growth data stays in a fresh browser context's localStorage. The live
+// option exercises the deployed UI without touching another user's records.
+const base = liveUrl
+  ? `${new URL("learning.html", liveUrl).href}#`
+  : `http://127.0.0.1:${server.address().port}/learning.html#`;
 const executablePath =
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
   (existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : undefined);
@@ -588,5 +594,5 @@ try {
   throw e;
 } finally {
   await browser.close();
-  await new Promise((r) => server.close(r));
+  if (!liveUrl) await new Promise((r) => server.close(r));
 }

@@ -17,11 +17,13 @@ try{
  await page.goto(base.href,{waitUntil:'domcontentloaded'});
  assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Normal homepage must serve the current release');
  assert(await page.getByRole('link',{name:'成长计划',exact:true}).isVisible());
+ await assertImagesLoaded(page);
+ await page.screenshot({path:`${artifacts}/home-mobile.png`,fullPage:false});
  const targets=await page.locator('#pickGrid .pick').evaluateAll(links=>links.map(a=>({href:a.href,target:a.target,name:a.innerText})));
  assert.equal(targets.length,6);
  for(const [i,target] of targets.entries()){
   assert.equal(new URL(target.href).origin,base.origin);assert.notEqual(target.target,'_blank');
-  await page.goto(base.href,{waitUntil:'domcontentloaded'});await page.locator('#pickGrid .pick').nth(i).click();
+  await page.goto(base.href,{waitUntil:'domcontentloaded'});await assertImagesLoaded(page);await page.locator('#pickGrid .pick').nth(i).click();
   await page.locator('uni-page-body').waitFor();
   assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Learning document must serve the current release');
   const marker=[['.race-page-title','今日赛道'],['.hero-title','数学练习'],['uni-page-head','拼音学习'],['.fh-title','英语闪卡'],['.ch-hero-title','闯关挑战'],['.race-page-title','奖励仓库']][i];
