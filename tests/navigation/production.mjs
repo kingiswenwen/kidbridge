@@ -1,7 +1,7 @@
 // Read-only verification against the deployed site; uses an isolated browser context.
 import {chromium} from 'playwright';
 import {existsSync} from 'node:fs';
-import {mkdir,writeFile} from 'node:fs/promises';
+import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const base=new URL(process.env.DEPLOY_URL||'https://kidbridge.wynsunny.cn/');
 const expected=process.env.GITHUB_SHA;if(!/^[a-f0-9]{40}$/.test(expected||''))throw new Error('Expected GITHUB_SHA is required');
@@ -23,11 +23,20 @@ try{
   assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Learning document must serve the current release');
   const marker=[['.race-page-title','今日赛道'],['.hero-title','数学练习'],['uni-page-head','拼音学习'],['.fh-title','英语闪卡'],['.ch-hero-title','闯关挑战'],['.race-page-title','奖励仓库']][i];
   await page.locator(marker[0]).filter({hasText:marker[1]}).first().waitFor();
+  if(i===1){await page.getByText('开始练习',{exact:true}).click();await page.locator('.option-btn').first().click();await page.locator('.feedback').waitFor();}
   await page.screenshot({path:`${artifacts}/entry-${i+1}.png`,fullPage:true});
  }
+ const routes=JSON.parse(await readFile(new URL('../../src/pages.json',import.meta.url),'utf8')).pages;
+ for(const route of routes){
+  const url=new URL('learning.html',base);url.searchParams.set('smokeRoute',route.path);url.hash='/'+route.path;
+  await page.goto(url.href,{waitUntil:'domcontentloaded'});await page.locator('uni-page-body').waitFor();
+  await page.waitForFunction(()=>document.querySelector('uni-page-body')?.innerText.trim().length>0);
+  assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,route.path);
+  assert(!/页面不存在|页面未找到|Page not found|Failed to fetch/i.test(await page.locator('uni-page-body').innerText()),route.path);
+ }
  assert.equal(context.pages().length,1);assert.deepEqual(errors,[]);
- await writeFile(`${artifacts}/result.json`,JSON.stringify({release:expected,base:base.href,entries:targets.map(t=>t.name),errors},null,2));
- console.log(`Verified live homepage, growth entrance and all six quick starts at ${expected}`);
+ await writeFile(`${artifacts}/result.json`,JSON.stringify({release:expected,base:base.href,entries:targets.map(t=>t.name),routes:routes.map(r=>r.path),errors},null,2));
+ console.log(`Verified live homepage, growth entrance and all six quick starts plus ${routes.length} pages at ${expected}`);
 }catch(e){
  const diagnostics=[];
  for(const path of ['','index.html','learning.html']){
