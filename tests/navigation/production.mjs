@@ -10,7 +10,9 @@ const browser=await chromium.launch({headless:true,executablePath:process.env.CH
 const context=await browser.newContext({viewport:{width:375,height:900}});const page=await context.newPage();const errors=[];
 page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(60000);page.on('pageerror',e=>errors.push(e.message));
 page.on('response',response=>{if(response.status()>=400 && new URL(response.url()).origin===base.origin && ['script','stylesheet','document','image'].includes(response.request().resourceType()))errors.push(`${response.status()} ${response.url()}`);});
-page.on('requestfailed',request=>{if(request.resourceType()==='image' && new URL(request.url()).origin===base.origin)errors.push(`Image request failed: ${request.url()} ${request.failure()?.errorText}`);});
+// A navigation intentionally cancels outstanding images from the previous page.
+// Per-page decoding checks and HTTP errors still catch actual broken images.
+page.on('requestfailed',request=>{const reason=request.failure()?.errorText;if(request.resourceType()==='image' && new URL(request.url()).origin===base.origin && reason!=='net::ERR_ABORTED')errors.push(`Image request failed: ${request.url()} ${reason}`);});
 const artifacts='artifacts/production-smoke';await mkdir(artifacts,{recursive:true});
 const illustrations=[];
 try{
