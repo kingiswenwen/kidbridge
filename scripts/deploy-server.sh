@@ -12,12 +12,12 @@ done
 [[ $DEPLOY_URL =~ ^https://[A-Za-z0-9.-]+/?$ ]] || exit 1
 
 remote="${DEPLOY_USER}@${DEPLOY_HOST}"
-ssh_options=(-p "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20)
+ssh_options=(-p "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 remote_tmp=$(ssh "${ssh_options[@]}" "$remote" 'mktemp -d /tmp/kidbridge-deploy.XXXXXXXX')
 [[ $remote_tmp =~ ^/tmp/kidbridge-deploy\.[A-Za-z0-9]+$ ]] || exit 1
 trap 'ssh "${ssh_options[@]}" "$remote" "rm -rf -- $remote_tmp" || true' EXIT
 
-scp -P "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes \
+scp -P "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
   site.tar.gz scripts/activate-server.py "$remote:$remote_tmp/"
 receipt=$(ssh "${ssh_options[@]}" "$remote" \
   "python3 $remote_tmp/activate-server.py $DEPLOY_PATH $remote_tmp/site.tar.gz $GITHUB_SHA")
@@ -29,7 +29,8 @@ for attempt in 1 2 3 4; do
        "${DEPLOY_URL%/}/kidbridge-release.json?commit=$GITHUB_SHA" -o /tmp/kidbridge-release-check.json &&
      python3 -c 'import json,os; assert json.load(open("/tmp/kidbridge-release-check.json"))["commit"] == os.environ["GITHUB_SHA"]' &&
      curl --fail --silent --show-error --max-time 20 "${DEPLOY_URL%/}/" -o /tmp/kidbridge-live.html &&
-     grep -q 'class="learning-entry"' /tmp/kidbridge-live.html; then
+     grep -q 'id="growthEntry"' /tmp/kidbridge-live.html &&
+     node tests/navigation/production.mjs; then
     verified=true
     break
   fi

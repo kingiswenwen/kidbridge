@@ -39,7 +39,8 @@
     "test:functional": "node tests/functional/core.mjs",
     "test:browser": "node tests/functional/browser.cjs && node tests/functional/journeys.cjs && node tests/functional/ui-regression.cjs",
     "test:racing": "node scripts/test-racing.mjs",
-    "test:racing:e2e": "node tests/racing/browser.mjs"
+    "test:racing:e2e": "node tests/racing/browser.mjs",
+    "test:navigation": "node tests/navigation/browser.mjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-5020420260813001",
