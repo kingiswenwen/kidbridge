@@ -67,7 +67,8 @@ const context = await browser.newContext({
   reducedMotion: "reduce",
 });
 const page = await context.newPage();
-page.setDefaultTimeout(10000);
+page.setDefaultTimeout(liveUrl ? 30000 : 10000);
+page.setDefaultNavigationTimeout(liveUrl ? 60000 : 10000);
 const errors = [];
 page.on("pageerror", (e) => errors.push(e.message));
 const results = [];
@@ -87,8 +88,9 @@ let visit = 0;
 async function route(path, authenticate = true) {
   // Exercise supported deep links with fresh page instances; raw hash assignment reuses uni-app's cached page objects.
   await page.goto(`${base.replace("#", `?visit=${++visit}#`)}${path}`, {
-    waitUntil: "networkidle",
+    waitUntil: liveUrl ? "domcontentloaded" : "networkidle",
   });
+  await page.waitForFunction(() => document.querySelector('uni-page-body')?.innerText.trim().length > 0);
   await assertImagesLoaded(page);
   if (
     authenticate &&
@@ -141,7 +143,7 @@ async function confirmDialog(name) {
     .click();
 }
 try {
-  await page.goto(`${base}/`, { waitUntil: "networkidle" });
+  await page.goto(`${base}/`, { waitUntil: liveUrl ? "domcontentloaded" : "networkidle" });
   await record(
     "existing home exposes race entry without replacing learning modules",
     async () => {
