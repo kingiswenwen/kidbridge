@@ -1,0 +1,38 @@
+// Read-only verification against the deployed site; uses an isolated browser context.
+import {chromium} from 'playwright';
+import {existsSync} from 'node:fs';
+import {mkdir,writeFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const base=new URL(process.env.DEPLOY_URL||'https://kidbridge.wynsunny.cn/');
+const expected=process.env.GITHUB_SHA;if(!/^[a-f0-9]{40}$/.test(expected||''))throw new Error('Expected GITHUB_SHA is required');
+const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
+const context=await browser.newContext({viewport:{width:375,height:900}});const page=await context.newPage();const errors=[];
+page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(60000);page.on('pageerror',e=>errors.push(e.message));
+page.on('response',response=>{if(response.status()>=400 && new URL(response.url()).origin===base.origin && ['script','stylesheet','document'].includes(response.request().resourceType()))errors.push(`${response.status()} ${response.url()}`);});
+const artifacts='artifacts/production-smoke';await mkdir(artifacts,{recursive:true});
+try{
+ await page.goto(base.href,{waitUntil:'domcontentloaded'});
+ assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Normal homepage must serve the current release');
+ assert(await page.getByRole('link',{name:'成长计划',exact:true}).isVisible());
+ const targets=await page.locator('#pickGrid .pick').evaluateAll(links=>links.map(a=>({href:a.href,target:a.target,name:a.innerText})));
+ assert.equal(targets.length,6);
+ for(const [i,target] of targets.entries()){
+  assert.equal(new URL(target.href).origin,base.origin);assert.notEqual(target.target,'_blank');
+  await page.goto(base.href,{waitUntil:'domcontentloaded'});await page.locator('#pickGrid .pick').nth(i).click();
+  await page.locator('uni-page-body').waitFor();
+  assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Learning document must serve the current release');
+  const marker=[['.race-page-title','今日赛道'],['.hero-title','数学练习'],['uni-page-head','拼音学习'],['.fh-title','英语闪卡'],['.ch-hero-title','闯关挑战'],['.race-page-title','奖励仓库']][i];
+  await page.locator(marker[0]).filter({hasText:marker[1]}).first().waitFor();
+  await page.screenshot({path:`${artifacts}/entry-${i+1}.png`,fullPage:true});
+ }
+ assert.equal(context.pages().length,1);assert.deepEqual(errors,[]);
+ await writeFile(`${artifacts}/result.json`,JSON.stringify({release:expected,base:base.href,entries:targets.map(t=>t.name),errors},null,2));
+ console.log(`Verified live homepage, growth entrance and all six quick starts at ${expected}`);
+}catch(e){
+ const diagnostics=[];
+ for(const path of ['','index.html','learning.html']){
+  try{const response=await context.request.get(new URL(path,base).href,{timeout:15000});const html=await response.text();diagnostics.push({path:path||'/',status:response.status(),release:html.match(/name="kidbridge-release" content="([a-f0-9]{40})"/)?.[1]||null,hasGrowth:html.includes('id="growthEntry"'),cacheControl:response.headers()['cache-control']||null,age:response.headers()['age']||null});}catch(error){diagnostics.push({path,error:String(error)});}
+ }
+ await writeFile(`${artifacts}/diagnostics.json`,JSON.stringify(diagnostics,null,2));console.error('Live document diagnostics:',JSON.stringify(diagnostics));
+ await page.screenshot({path:`${artifacts}/failure.png`,fullPage:true}).catch(()=>{});await writeFile(`${artifacts}/failure.txt`,String(e));throw e;}
+finally{await browser.close();}

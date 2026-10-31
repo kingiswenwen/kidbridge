@@ -50,12 +50,16 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Test racing user flows and existing learning routes
         run: npm run test:racing:e2e
+      - name: Test same-tab quick starts and embedded navigation
+        run: npm run test:navigation
       - name: Retain browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: racing-browser-${{ github.sha }}
-          path: artifacts/racing-browser/
+          path: |
+            artifacts/racing-browser/
+            artifacts/navigation-browser/
           retention-days: 14
       - name: Package release
         env:
@@ -95,3 +99,11 @@ jobs:
           printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
           trap 'rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts' EXIT
           bash scripts/deploy-server.sh
+
+      - name: Retain live navigation verification evidence
+        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: production-navigation-${{ github.sha }}
+          path: artifacts/production-smoke/
+          retention-days: 14
