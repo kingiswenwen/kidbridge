@@ -3,7 +3,7 @@
 export async function assertImagesLoaded(page) {
   await page.waitForFunction(() => {
     const images = [...document.querySelectorAll('uni-image')];
-    return images.every(wrapper => {
+    return [...document.images].every(image => image.complete && image.naturalWidth > 0 && image.naturalHeight > 0) && images.every(wrapper => {
       const image = wrapper.querySelector('img');
       return image?.complete && image.naturalWidth > 0 && image.naturalHeight > 0;
     });
