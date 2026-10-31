@@ -4,6 +4,7 @@ import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { resolve, extname } from "node:path";
 import assert from "node:assert/strict";
+import { assertImagesLoaded } from "../helpers/images.mjs";
 
 const root = resolve("dist/build/h5");
 if (!existsSync(`${root}/learning.html`))
@@ -82,6 +83,7 @@ async function route(path, authenticate = true) {
   await page.goto(`${base.replace("#", `?visit=${++visit}#`)}${path}`, {
     waitUntil: "networkidle",
   });
+  await assertImagesLoaded(page);
   if (
     authenticate &&
     path.startsWith("/pages/parent/") &&

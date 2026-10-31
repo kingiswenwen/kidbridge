@@ -3,13 +3,16 @@ import {chromium} from 'playwright';
 import {existsSync} from 'node:fs';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import {assertImagesLoaded} from '../helpers/images.mjs';
 const base=new URL(process.env.DEPLOY_URL||'https://kidbridge.wynsunny.cn/');
 const expected=process.env.GITHUB_SHA;if(!/^[a-f0-9]{40}$/.test(expected||''))throw new Error('Expected GITHUB_SHA is required');
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH||(existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),args:['--no-sandbox']});
 const context=await browser.newContext({viewport:{width:375,height:900}});const page=await context.newPage();const errors=[];
 page.setDefaultTimeout(30000);page.setDefaultNavigationTimeout(60000);page.on('pageerror',e=>errors.push(e.message));
-page.on('response',response=>{if(response.status()>=400 && new URL(response.url()).origin===base.origin && ['script','stylesheet','document'].includes(response.request().resourceType()))errors.push(`${response.status()} ${response.url()}`);});
+page.on('response',response=>{if(response.status()>=400 && new URL(response.url()).origin===base.origin && ['script','stylesheet','document','image'].includes(response.request().resourceType()))errors.push(`${response.status()} ${response.url()}`);});
+page.on('requestfailed',request=>{if(request.resourceType()==='image' && new URL(request.url()).origin===base.origin)errors.push(`Image request failed: ${request.url()} ${request.failure()?.errorText}`);});
 const artifacts='artifacts/production-smoke';await mkdir(artifacts,{recursive:true});
+const illustrations=[];
 try{
  await page.goto(base.href,{waitUntil:'domcontentloaded'});
  assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,'Normal homepage must serve the current release');
@@ -24,6 +27,8 @@ try{
   const marker=[['.race-page-title','今日赛道'],['.hero-title','数学练习'],['uni-page-head','拼音学习'],['.fh-title','英语闪卡'],['.ch-hero-title','闯关挑战'],['.race-page-title','奖励仓库']][i];
   await page.locator(marker[0]).filter({hasText:marker[1]}).first().waitFor();
   if(i===1){await page.getByText('开始练习',{exact:true}).click();await page.locator('.option-btn').first().click();await page.locator('.feedback').waitFor();}
+  const images=await assertImagesLoaded(page);illustrations.push({entry:target.name,images});
+  if(i===0||i===5){assert(images.length>=4,'Growth and rewards must render their illustrations');assert(images.every(image=>image.width>0&&image.height>0),'Illustrations must have visible dimensions');}
   await page.screenshot({path:`${artifacts}/entry-${i+1}.png`,fullPage:true});
  }
  const routes=JSON.parse(await readFile(new URL('../../src/pages.json',import.meta.url),'utf8')).pages;
@@ -33,9 +38,10 @@ try{
   await page.waitForFunction(()=>document.querySelector('uni-page-body')?.innerText.trim().length>0);
   assert.equal(await page.locator('meta[name="kidbridge-release"]').getAttribute('content'),expected,route.path);
   assert(!/页面不存在|页面未找到|Page not found|Failed to fetch/i.test(await page.locator('uni-page-body').innerText()),route.path);
+  await assertImagesLoaded(page);
  }
  assert.equal(context.pages().length,1);assert.deepEqual(errors,[]);
- await writeFile(`${artifacts}/result.json`,JSON.stringify({release:expected,base:base.href,entries:targets.map(t=>t.name),routes:routes.map(r=>r.path),errors},null,2));
+ await writeFile(`${artifacts}/result.json`,JSON.stringify({release:expected,base:base.href,entries:targets.map(t=>t.name),routes:routes.map(r=>r.path),illustrations,errors},null,2));
  console.log(`Verified live homepage, growth entrance and all six quick starts plus ${routes.length} pages at ${expected}`);
 }catch(e){
  const diagnostics=[];
