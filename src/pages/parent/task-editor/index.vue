@@ -198,6 +198,7 @@ import {
   timeSlots,
 } from "@/data/racing/catalog";
 import { useRacingStore } from "@/stores/racing";
+import { returnToRacingPage } from "@/utils/racing/navigation";
 import RaceShell from "@/components/racing/RaceShell.vue";
 import ParentGate from "@/components/racing/ParentGate.vue";
 import RaceIcon from "@/components/racing/RaceIcon.vue";
@@ -335,7 +336,7 @@ async function save() {
     ) {
       uni.showToast({ title: "任务安排已保存", icon: "none" });
       if (!pageActive) return;
-      uni.redirectTo({ url: "/pages/parent/index?section=tasks" });
+      returnToRacingPage("/pages/parent/index?section=tasks");
     } else message.value = store.error;
   } finally {
     saving.value = false;

@@ -350,6 +350,7 @@ import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import type { Schedule } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
+import { returnToRacingPage } from "@/utils/racing/navigation";
 import { STORAGE_KEY, taskTemplateExists } from "@/utils/racing/engine";
 import { taskTemplates } from "@/data/racing/catalog";
 import { useAppDialog } from "@/utils/dialog";
@@ -396,7 +397,7 @@ function go(url: string) {
 }
 function exit() {
   store.lockParent();
-  uni.redirectTo({ url: "/pages/racing/index" });
+  returnToRacingPage("/pages/racing/index");
 }
 function scheduleLabel(s: Schedule) {
   return s.kind === "daily"

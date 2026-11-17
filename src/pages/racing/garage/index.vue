@@ -67,6 +67,7 @@
 import { computed, reactive } from "vue";
 import { onShow, onBackPress } from "@dcloudio/uni-app";
 import { useRacingStore } from "@/stores/racing";
+import { leaveRacingPage } from "@/utils/racing/navigation";
 import { useAppDialog } from "@/utils/dialog";
 import RaceShell from "@/components/racing/RaceShell.vue";
 import RaceCar from "@/components/racing/RaceCar.vue";
@@ -89,6 +90,7 @@ const dirty = computed(
   () => JSON.stringify(draft) !== JSON.stringify(store.data.garage.equipped),
 );
 onShow(() => {
+  allowLeave = false;
   store.lockParent();
   store.refresh();
   Object.assign(draft, {
@@ -132,9 +134,7 @@ async function save() {
 function leave() {
   if (!dirty.value) {
     allowLeave = true;
-    uni.navigateBack({
-      fail: () => uni.redirectTo({ url: "/pages/racing/index" }),
-    });
+    leaveRacingPage();
     return;
   }
   showDialog({
@@ -145,9 +145,7 @@ function leave() {
     success: async (r) => {
       if (r.confirm && !(await store.run({ type: "equip", ...draft }))) return;
       allowLeave = true;
-      uni.navigateBack({
-        fail: () => uni.redirectTo({ url: "/pages/racing/index" }),
-      });
+      leaveRacingPage();
     },
   });
 }

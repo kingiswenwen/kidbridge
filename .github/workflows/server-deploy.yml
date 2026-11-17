@@ -61,6 +61,7 @@ jobs:
           path: |
             artifacts/racing-browser/
             artifacts/racing-requirements/
+            artifacts/racing-lifecycle/
             artifacts/navigation-browser/
           retention-days: 14
       - name: Package release
