@@ -32,7 +32,7 @@
 - 动画表现已保存结果，不以动画回调记账；关闭、刷新和跳过不增加重复流水。
 - 存储仍为 v1，没有清理旧学习数据或改变原关卡星级。推荐模板采用稳定定义 ID，旧备份沿用既有校验契约。
 - 跨端轨迹使用普通计时器与 transform，不依赖浏览器 SVG DOM、CSS motion-path 或新增动效库。SVG 路径 API 只用于浏览器测试。
-- 专项回归并入 `npm run test:racing:e2e`，CI 保存 `artifacts/racing-requirements/`。生产部署条件保持原样。
+- 专项回归并入 `npm run test:racing:e2e`，CI 保存 `artifacts/racing-requirements/`。生产部署条件保持原样。GitHub 的 ubuntu-latest 更新至 26.04 后与项目锁定的 Playwright 1.56.1 不兼容，本工作流固定使用受支持的 Ubuntu 24.04。
 
 ## 验证与边界
 
