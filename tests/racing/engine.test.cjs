@@ -11,6 +11,41 @@ const {
   validDate,
 } = require(path.join(process.env.RACING_TEST_DIR, "engine.cjs"));
 const { sha256 } = require(path.join(process.env.RACING_TEST_DIR, "pin.cjs"));
+test('quick templates create a parent-reviewed daily task once and remain editable', () => {
+  const f = fixture();
+  f.today();
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.equal(f.state.taskDefinitions.length, 1);
+  assert.equal(f.state.dailyTasks.length, 1);
+  assert.equal(f.state.dailyTasks[0].status, 'pending');
+  assert.equal(f.state.dailyTasks[0].checkMode, 'parent');
+  assert.equal(f.state.dailyTasks[0].points, 2);
+  assert.equal(balance(f.state), 0);
+  const once = f.state;
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.deepEqual(f.state, once);
+  const definition = f.state.taskDefinitions[0];
+  f.run({ type: 'saveTask', id: definition.id, input: { ...definition, title: '自己改的刷牙任务' } });
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.equal(f.state.taskDefinitions.length, 1, 'Renaming an imported template cannot re-add it accidentally');
+  f.ctx.today = '2026-10-30';
+  f.today();
+  assert.equal(f.state.dailyTasks.length, 2);
+});
+test('quick templates enforce authorization, valid choices, capacity and atomic persistence', () => {
+  const f = fixture();
+  f.ctx.parent = false;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: 0 }), /验证/);
+  f.ctx.parent = true;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: -1 }), /模板/);
+  const before = f.state;
+  assert.throws(() => commitCommand({ getItem: () => JSON.stringify(before), setItem: () => { throw Error('disk full'); } }, before, { type: 'addTemplate', templateIndex: 0 }, f.ctx), /disk full/);
+  assert.deepEqual(f.state, before);
+  for (let i = 0; i < 12; i++) f.add({ title: `小挑战${i}` });
+  const full = f.state;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: 0 }), /12/);
+  assert.deepEqual(f.state, full);
+});
 function fixture() {
   let count = 0;
   let state = initialState(1000);

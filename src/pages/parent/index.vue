@@ -104,8 +104,9 @@
         >
         <text class="race-subheading">常用任务模板</text
         ><text class="race-muted"
-          >添加后可以修改周期、分值和审核方式，不会自动完成任务。</text
+          >点一下加入今天：每天重复、2 星、家长审核。之后可以编辑。</text
         >
+        <text v-if="templateNotice" class="race-success template-notice" role="status">{{ templateNotice }}</text>
         <view class="template-strip"
           ><button
             role="button"
@@ -114,16 +115,16 @@
             :key="t.title"
             class="template-button"
             :disabled="
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              store.busy || taskTemplateExists(store.data, i)
             "
             :aria-disabled="
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              store.busy || taskTemplateExists(store.data, i)
             "
-            @click="go(`/pages/parent/task-editor/index?template=${i}`)"
+            @click="addTemplate(i)"
           >
             <RaceIcon :name="t.icon" :size="42" /><text>{{ t.title }}</text
             ><text class="race-muted">{{
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              taskTemplateExists(store.data, i)
                 ? "已添加"
                 : "添加模板"
             }}</text>
@@ -349,7 +350,7 @@ import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import type { Schedule } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
-import { STORAGE_KEY } from "@/utils/racing/engine";
+import { STORAGE_KEY, taskTemplateExists } from "@/utils/racing/engine";
 import { taskTemplates } from "@/data/racing/catalog";
 import { useAppDialog } from "@/utils/dialog";
 import RaceShell from "@/components/racing/RaceShell.vue";
@@ -363,6 +364,7 @@ const section = ref("today");
 const backupText = ref("");
 const importText = ref("");
 const notice = ref("");
+const templateNotice = ref("");
 const tabs = [
   { id: "today", title: "今天" },
   { id: "tasks", title: "任务" },
@@ -417,6 +419,10 @@ function skip(id: string, title: string) {
 async function addToday(definitionId: string) {
   if (await store.run({ type: "addToday", definitionId }))
     uni.showToast({ title: "今天已安排", icon: "none" });
+}
+async function addTemplate(templateIndex: number) {
+  if (await store.run({ type: 'addTemplate', templateIndex }))
+    templateNotice.value = `${taskTemplates[templateIndex].title}已加入今天，完成后由家长确认。`;
 }
 function preferences(soundsEnabled: boolean, reduceMotion: boolean) {
   store.run({
@@ -544,6 +550,7 @@ function chooseMiniFile() {
 .parent-heading {
   margin: 8px 0 20px;
 }
+.template-notice { display: block; margin-top: 10px; }
 .parent-summary {
   display: flex;
   justify-content: space-around;

@@ -191,7 +191,8 @@ try {
         .getByRole("button", { name: "整理玩具，待完成", exact: true })
         .click();
       await button("我完成啦！").click();
-      await visible("已经提交");
+      await page.getByRole('button', { name: '整理玩具，等家长确认', exact: true }).waitFor();
+      assert(!page.url().includes('/pages/racing/task/index'), 'Submission returns to the track');
       let s = await snapshot();
       assert.equal(
         s.dailyTasks.filter((t) => t.status === "submitted").length,

@@ -1,5 +1,5 @@
 <template>
-  <RaceShell title="挑战任务">
+  <RaceShell title="挑战任务" @before-back="back">
     <view v-if="task" class="task-detail">
       <view class="detail-illustration"
         ><RaceIcon :name="task.icon" :size="118"
@@ -61,22 +61,19 @@
         回到今日赛道
       </button></view
     >
-    <CompletionOverlay ref="completion" />
   </RaceShell>
 </template>
 <script setup lang="ts">
-import { computed, ref, nextTick } from "vue";
+import { computed, ref } from "vue";
 import { onLoad, onShow } from "@dcloudio/uni-app";
 import { useRacingStore } from "@/stores/racing";
 import { useAppStore } from "@/stores/app";
 import { speak } from "@/utils/speak";
 import RaceShell from "@/components/racing/RaceShell.vue";
 import RaceIcon from "@/components/racing/RaceIcon.vue";
-import CompletionOverlay from "@/components/racing/CompletionOverlay.vue";
 const store = useRacingStore();
 const app = useAppStore();
 const id = ref("");
-const completion = ref<InstanceType<typeof CompletionOverlay>>();
 const task = computed(() =>
   store.data.dailyTasks.find((t) => t.id === id.value),
 );
@@ -89,8 +86,8 @@ onShow(() => {
 async function submit() {
   if (!task.value) return;
   if (await store.run({ type: "submit", id: id.value })) {
-    await nextTick();
-    await completion.value?.show();
+    if (task.value.status === 'submitted') uni.showToast({ title: '已经提交，等家长确认后发车', icon: 'none' });
+    back();
   }
 }
 function listen() {
@@ -104,7 +101,12 @@ function listen() {
   );
 }
 function back() {
-  uni.redirectTo({ url: "/pages/racing/index" });
+  const pages = getCurrentPages();
+  if (pages[pages.length - 2]?.route === "pages/racing/index") {
+    uni.navigateBack();
+  } else {
+    uni.redirectTo({ url: "/pages/racing/index" });
+  }
 }
 </script>
 <style scoped>

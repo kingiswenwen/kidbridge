@@ -116,6 +116,7 @@ export interface RacingState {
 }
 export type RacingCommand =
   | { type: "ensure"; date: string }
+  | { type: "addTemplate"; templateIndex: number }
   | { type: "saveTask"; id?: string; input: TaskInput; applyToday?: boolean }
   | { type: "addToday"; definitionId: string }
   | { type: "submit" | "approve" | "reject" | "skip"; id: string }

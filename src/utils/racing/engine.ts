@@ -6,7 +6,7 @@ import type {
   TaskDefinition,
   TaskInput,
 } from "../../types/racing";
-import { defaultRewards } from "../../data/racing/catalog";
+import { defaultRewards, taskTemplates } from "../../data/racing/catalog";
 
 export const STORAGE_KEY = "kidbridge-racing-storage-v1";
 export function localDate(now = new Date()): string {
@@ -47,6 +47,13 @@ export function initialState(now = Date.now()): RacingState {
 }
 export function balance(s: RacingState): number {
   return s.pointTransactions.reduce((n, t) => n + t.amount, 0);
+}
+export function taskTemplateExists(s: RacingState, index: number): boolean {
+  const template = taskTemplates[index];
+  return Boolean(template && s.taskDefinitions.some(task =>
+    task.id === `builtin-task:${index}` ||
+    (task.title === template.title && task.occurrenceKey === template.occurrenceKey),
+  ));
 }
 export function raceProgress(s: RacingState, date: string) {
   const tasks = s.dailyTasks.filter(
@@ -206,6 +213,20 @@ export function transition(
   command: RacingCommand,
   ctx: EngineContext,
 ): RacingState {
+  if (command.type === 'addTemplate') {
+    assert(ctx.parent, '请先进入家长中心完成验证');
+    assert(Number.isInteger(command.templateIndex) && command.templateIndex >= 0 && command.templateIndex < taskTemplates.length, '任务模板不存在');
+    if (taskTemplateExists(current, command.templateIndex)) return current;
+    let definitionCreated = false;
+    return transition(current, {
+      type: 'saveTask',
+      input: { ...taskTemplates[command.templateIndex], sortOrder: current.taskDefinitions.length },
+      applyToday: true,
+    }, { ...ctx, id: () => {
+      if (!definitionCreated) { definitionCreated = true; return `builtin-task:${command.templateIndex}`; }
+      return ctx.id();
+    } });
+  }
   const s: RacingState = JSON.parse(JSON.stringify(current));
   const before = JSON.stringify(s);
   const { now, today, parent, id } = ctx;

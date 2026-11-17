@@ -59,6 +59,7 @@ jobs:
           name: racing-browser-${{ github.sha }}
           path: |
             artifacts/racing-browser/
+            artifacts/racing-requirements/
             artifacts/navigation-browser/
           retention-days: 14
       - name: Package release

@@ -55,6 +55,10 @@ function back() {
     emit("before-back");
     return;
   }
+  if (getCurrentPages().length <= 1) {
+    uni.switchTab({ url: "/pages/home/index" });
+    return;
+  }
   uni.navigateBack({ fail: () => uni.switchTab({ url: "/pages/home/index" }) });
 }
 </script>
