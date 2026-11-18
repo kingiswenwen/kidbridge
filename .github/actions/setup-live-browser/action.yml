@@ -13,4 +13,4 @@ runs:
         version=$(node -p 'require("./package-lock.json").packages["node_modules/playwright"].version')
         npm install --prefix "$tooling" "playwright@$version" --registry=https://registry.npmjs.org --no-audit --fund=false
         ln -s "$tooling/node_modules" node_modules
-        timeout --signal=TERM --kill-after=15s 480s "$tooling/node_modules/.bin/playwright" install --with-deps chromium
+        bash scripts/install-ci-browser.sh "$tooling/node_modules/.bin/playwright"

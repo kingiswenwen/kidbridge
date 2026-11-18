@@ -50,7 +50,7 @@ jobs:
         run: npm run build:mp-weixin
       - name: Install browser for racing flow tests
         timeout-minutes: 8
-        run: npx --no-install playwright install --with-deps chromium
+        run: bash scripts/install-ci-browser.sh node_modules/.bin/playwright
       - name: Test racing user flows and existing learning routes
         run: npm run test:racing:e2e
       - name: Test same-tab quick starts and embedded navigation
