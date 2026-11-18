@@ -141,9 +141,11 @@ const waiting = computed(
   () => store.tasks.filter((t) => t.status === "submitted").length,
 );
 let timer: ReturnType<typeof setInterval>;
+let displayedDate = "";
 async function enter() {
   store.lockParent();
   await store.ensureToday();
+  displayedDate = store.today;
   await nextTick();
   await completion.value?.show();
 }
@@ -151,9 +153,8 @@ onShow(() => {
   enter();
   clearInterval(timer);
   timer = setInterval(() => {
-    const previous = store.today;
     store.tick();
-    if (store.today !== previous) enter();
+    if (store.today !== displayedDate) enter();
   }, 15000);
 });
 onHide(() => { clearInterval(timer); completion.value?.hide(); });

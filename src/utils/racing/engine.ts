@@ -180,6 +180,34 @@ export function validateReward(r: RewardInput) {
       "装扮资源无效",
     );
 }
+/** Imported schedules must obey the same future-day limits as editor saves. */
+function validateScheduleCapacity(definitions: TaskDefinition[]) {
+  const daily = definitions.filter(
+    (x) => x.enabled && x.schedule.kind === "daily",
+  ).length;
+  for (let weekday = 0; weekday < 7; weekday++)
+    assert(
+      daily +
+        definitions.filter(
+          (x) =>
+            x.enabled &&
+            x.schedule.kind === "weekly" &&
+            x.schedule.weekdays.includes(weekday),
+        ).length <=
+        12,
+      "重复日程超过每日 12 项上限",
+    );
+  const dates = new Set(
+    definitions.flatMap((x) =>
+      x.enabled && x.schedule.kind === "once" ? [x.schedule.date] : [],
+    ),
+  );
+  for (const date of dates)
+    assert(
+      definitions.filter((x) => matches(x, date)).length <= 12,
+      "单次日期超过每日 12 项上限",
+    );
+}
 export function matches(t: TaskInput, date: string) {
   if (!t.enabled) return false;
   const r = t.schedule;
@@ -325,32 +353,7 @@ export function transition(
         };
         s.taskDefinitions.push(t);
       }
-      // Reject future schedules that could overflow a 12-station day, not just today's instance.
-      const daily = s.taskDefinitions.filter(
-        (x) => x.enabled && x.schedule.kind === "daily",
-      ).length;
-      for (let weekday = 0; weekday < 7; weekday++)
-        assert(
-          daily +
-            s.taskDefinitions.filter(
-              (x) =>
-                x.enabled &&
-                x.schedule.kind === "weekly" &&
-                x.schedule.weekdays.includes(weekday),
-            ).length <=
-            12,
-          "重复日程超过每日 12 项上限",
-        );
-      const dates = new Set(
-        s.taskDefinitions.flatMap((x) =>
-          x.enabled && x.schedule.kind === "once" ? [x.schedule.date] : [],
-        ),
-      );
-      for (const date of dates)
-        assert(
-          s.taskDefinitions.filter((x) => matches(x, date)).length <= 12,
-          "单次日期超过每日 12 项上限",
-        );
+      validateScheduleCapacity(s.taskDefinitions);
       if (command.applyToday) {
         const old = s.dailyTasks.find(
           (x) => x.date === today && x.definitionId === t!.id,
@@ -667,6 +670,7 @@ export function parseState(raw: string): RacingState {
       "模板时间错误",
     );
   });
+  validateScheduleCapacity(s.taskDefinitions);
   s.rewards.forEach(validateReward);
   s.dailyTasks.forEach((t) => {
     validateTask(t);

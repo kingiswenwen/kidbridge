@@ -496,3 +496,15 @@ test("cleared storage cannot silently resurrect a stale in-memory ledger", () =>
   assert.equal(wrote, false);
   assert.equal(balance(f.state), 3);
 });
+
+test('backup rejects future recurring and single-date schedules exceeding daily capacity', () => {
+  for (const kind of ['daily', 'weekly', 'once']) {
+    const f = fixture();
+    for (let i = 0; i < 12; i++) f.add({ schedule: kind === 'daily' ? { kind } : kind === 'weekly' ? { kind, weekdays: [0] } : { kind, date: '2026-12-20' } });
+    const imported = JSON.parse(JSON.stringify(f.state));
+    imported.taskDefinitions.push({ ...imported.taskDefinitions[0], id: 'extra-template' });
+    assert.throws(() => parseState(JSON.stringify(imported)), /12/);
+    imported.taskDefinitions.at(-1).enabled = false;
+    assert.doesNotThrow(() => parseState(JSON.stringify(imported)), 'Disabled templates must remain restorable');
+  }
+});

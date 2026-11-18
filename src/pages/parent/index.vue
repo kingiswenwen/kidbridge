@@ -346,8 +346,8 @@
   ></RaceShell>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { onLoad, onShow } from "@dcloudio/uni-app";
+import { computed, onUnmounted, ref } from "vue";
+import { onLoad, onShow, onHide } from "@dcloudio/uni-app";
 import type { Schedule } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
 import { returnToRacingPage } from "@/utils/racing/navigation";
@@ -391,7 +391,22 @@ onLoad((q) => {
   if (q?.section && tabs.some((t) => t.id === q.section))
     section.value = q.section;
 });
-onShow(() => store.ensureToday());
+let dayTimer: ReturnType<typeof setInterval>;
+let displayedDate = "";
+async function refreshDay() {
+  await store.ensureToday();
+  displayedDate = store.today;
+}
+onShow(() => {
+  refreshDay();
+  clearInterval(dayTimer);
+  dayTimer = setInterval(() => {
+    store.tick();
+    if (store.today !== displayedDate) refreshDay();
+  }, 15000);
+});
+onHide(() => clearInterval(dayTimer));
+onUnmounted(() => clearInterval(dayTimer));
 function go(url: string) {
   uni.navigateTo({ url });
 }

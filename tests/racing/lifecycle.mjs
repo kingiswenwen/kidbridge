@@ -177,6 +177,38 @@ try {
     await button('返回上一页').click();
     await page.getByText('快乐学习', { exact: true }).waitFor();
   });
+  await check('parent and child pages generate the next day without rewriting past tasks or stars', async () => {
+    await route('/pages/parent/index');
+    await unlockParent();
+    await page.clock.setSystemTime(new Date(`${today}T23:59:50+08:00`));
+    await page.clock.runFor(26000);
+    const nextDate = await page.evaluate(() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    });
+    assert.notEqual(nextDate, today);
+    let saved = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
+    assert(saved.generatedDates.includes(nextDate), 'Open parent page must generate the new day');
+    const previousTasks = saved.dailyTasks.filter(t => t.date === today);
+    const previousLedger = saved.pointTransactions;
+    await unlockParent();
+    await button('退出家长模式').click();
+    await page.locator('.race-page-title').filter({ hasText: '今日赛道' }).waitFor();
+    await page.clock.setSystemTime(new Date(`${nextDate}T23:59:50+08:00`));
+    await page.clock.runFor(26000);
+    saved = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
+    const lastDate = await page.evaluate(() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    });
+    assert(saved.generatedDates.includes(lastDate), 'Open track must generate the new day');
+    const currentTasks = saved.dailyTasks.filter(t => t.date === lastDate);
+    assert.equal(currentTasks.length, saved.taskDefinitions.filter(t => t.enabled).length);
+    assert(currentTasks.every(t => t.status === 'pending'));
+    assert.deepEqual(saved.dailyTasks.filter(t => t.date === today), previousTasks);
+    assert.deepEqual(saved.pointTransactions, previousLedger);
+    assert.equal(await page.locator('.track-landmark').count(), currentTasks.length);
+  });
   assert.deepEqual(errors, []);
   assert.deepEqual(failures, []);
 } finally {
