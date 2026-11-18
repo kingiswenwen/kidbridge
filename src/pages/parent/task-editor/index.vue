@@ -1,5 +1,5 @@
 <template>
-  <RaceShell :title="editingId ? '编辑任务' : '安排新任务'" parent
+  <RaceShell :title="pageTitle" parent
     ><ParentGate>
       <text class="race-heading">让日常变成小冒险</text
       ><text class="race-muted"
@@ -100,10 +100,10 @@
         <label v-if="scheduleKind === 'once'"
           >单次日期<picker
             mode="date"
-            :value="onceDate"
+            :value="onceDate || store.today"
             :start="store.today"
             @change="changeDate"
-            ><view class="race-picker">{{ onceDate }} ▾</view></picker
+            ><view class="race-picker">{{ onceDate || "请选择日期" }} ▾</view></picker
           ></label
         >
         <view
@@ -165,7 +165,9 @@
             ><checkbox
               value="today"
               :checked="applyToday"
-            />同时应用到今天的未完成任务</label
+            />{{
+              copying ? "同时安排副本到今天" : "同时应用到今天的未完成任务"
+            }}</label
           ></checkbox-group
         ><text class="race-muted"
           >不勾选只影响未来。已提交、已完成或跳过的历史不会被覆盖。停用模板不删除已有记录。</text
@@ -177,8 +179,8 @@
           role="button"
           tabindex="0"
           class="race-primary"
-          :disabled="store.busy || saving"
-          :aria-disabled="store.busy || saving"
+          :disabled="store.busy || saving || sourceMissing"
+          :aria-disabled="store.busy || saving || sourceMissing"
           @click="save"
         >
           {{ store.busy ? "正在保存…" : "保存任务安排" }}
@@ -188,7 +190,7 @@
   >
 </template>
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { onLoad, onShow, onHide } from "@dcloudio/uni-app";
 import type { TaskInput, TaskCategory, TimeSlot } from "@/types/racing";
 import {
@@ -206,6 +208,11 @@ import AppSwitch from "@/components/AppSwitch.vue";
 const store = useRacingStore();
 let pageActive = true;
 const editingId = ref("");
+const copying = ref(false);
+const sourceMissing = ref(false);
+const pageTitle = computed(() =>
+  editingId.value ? "编辑任务" : copying.value ? "复制任务模板" : "安排新任务",
+);
 const form = reactive<TaskInput>({
   ...JSON.parse(JSON.stringify(taskTemplates[0])),
   title: "",
@@ -245,7 +252,10 @@ const iconNames: Record<string, string> = {
   moon: "晚间",
 };
 onLoad((q) => {
-  editingId.value = "";
+  editingId.value = q?.id || "";
+  const copyId = editingId.value ? "" : q?.copy || "";
+  copying.value = Boolean(copyId);
+  sourceMissing.value = false;
   Object.assign(form, {
     ...JSON.parse(JSON.stringify(taskTemplates[0])),
     title: "",
@@ -258,14 +268,14 @@ onLoad((q) => {
   scheduleKind.value = "daily";
   selectedDays.value = [1, 2, 3, 4, 5];
   onceDate.value = store.today;
-  applyToday.value = true;
+  const sourceId = editingId.value || copyId;
+  applyToday.value = !sourceId;
   message.value = "";
   let source: TaskInput | undefined;
-  if (q?.id) {
-    editingId.value = q.id;
-    source = store.data.taskDefinitions.find((t) => t.id === q.id);
-    applyToday.value = false;
-    if (!source) message.value = "任务不存在，请返回检查";
+  if (sourceId) {
+    source = store.data.taskDefinitions.find((t) => t.id === sourceId);
+    sourceMissing.value = !source;
+    if (!source) message.value = "任务模板不存在，请返回任务列表";
   } else if (q?.template !== undefined)
     source = taskTemplates[Number(q.template)];
   if (source) {
@@ -275,7 +285,12 @@ onLoad((q) => {
     scheduleKind.value = source.schedule.kind;
     if (source.schedule.kind === "weekly")
       selectedDays.value = [...source.schedule.weekdays];
-    if (source.schedule.kind === "once") onceDate.value = source.schedule.date;
+    if (source.schedule.kind === "once") {
+      onceDate.value =
+        copying.value && source.schedule.date < store.today
+          ? ""
+          : source.schedule.date;
+    }
   }
 });
 onShow(() => {
@@ -303,7 +318,7 @@ function toggleDay(day: number) {
     : [...selectedDays.value, day];
 }
 async function save() {
-  if (saving.value) return;
+  if (saving.value || sourceMissing.value) return;
   saving.value = true;
   try {
     message.value = "";

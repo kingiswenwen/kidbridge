@@ -159,6 +159,17 @@
             ><button
               role="button"
               tabindex="0"
+              class="race-link"
+              @click="
+                go(
+                  `/pages/parent/task-editor/index?copy=${encodeURIComponent(t.id)}`,
+                )
+              "
+            >
+              复制模板</button
+            ><button
+              role="button"
+              tabindex="0"
               v-if="
                 t.enabled && !store.tasks.some((x) => x.definitionId === t.id)
               "
