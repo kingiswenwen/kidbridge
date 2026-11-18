@@ -13,7 +13,7 @@ page.on('response',response=>{if(response.status()>=400 && new URL(response.url(
 // A navigation intentionally cancels outstanding images from the previous page.
 // Per-page decoding checks and HTTP errors still catch actual broken images.
 page.on('requestfailed',request=>{const reason=request.failure()?.errorText;if(request.resourceType()==='image' && new URL(request.url()).origin===base.origin && reason!=='net::ERR_ABORTED')errors.push(`Image request failed: ${request.url()} ${reason}`);});
-const artifacts='artifacts/production-smoke';await mkdir(artifacts,{recursive:true});
+const artifacts=process.env.PRODUCTION_SMOKE_ARTIFACTS||'artifacts/production-smoke';await mkdir(artifacts,{recursive:true});
 const illustrations=[];
 try{
  await page.goto(base.href,{waitUntil:'domcontentloaded'});
