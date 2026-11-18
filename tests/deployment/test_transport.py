@@ -49,7 +49,7 @@ class TransportTests(unittest.TestCase):
         self.root = pathlib.Path(self.temp.name)
         self.bin = self.root / 'bin'
         self.bin.mkdir()
-        for command in ['ssh', 'scp', 'curl', 'node', 'sleep']:
+        for command in ['ssh', 'scp', 'curl', 'node', 'docker', 'sleep']:
             path = self.bin / command
             path.write_text(STUB)
             path.chmod(0o755)
@@ -58,6 +58,7 @@ class TransportTests(unittest.TestCase):
                         DEPLOY_USER='deploy', DEPLOY_PATH='/www/sites/example.test',
                         DEPLOY_URL='https://example.test', GITHUB_SHA=SHA,
                         GITHUB_STEP_SUMMARY=str(self.root / 'summary.md'))
+        self.env.pop('PLAYWRIGHT_CI_IMAGE', None)
 
     def run_deploy(self, config=None):
         (self.root / 'config.json').write_text(json.dumps(config or {}))
@@ -112,6 +113,17 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(self.count('rollback'), 0)
         self.assertEqual([call['artifacts'] for call in self.calls if call['kind'] == 'node'],
                          [f'artifacts/production-smoke/attempt-{i}' for i in range(1, 4)])
+
+    def test_browser_image_receives_each_attempts_evidence_path(self):
+        self.env['PLAYWRIGHT_CI_IMAGE'] = 'playwright:test'
+        result = self.run_deploy({'docker': [1, 0]})
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.count('node'), 0)
+        calls = [call for call in self.calls if call['kind'] == 'docker']
+        self.assertEqual([call['artifacts'] for call in calls],
+                         [f'artifacts/production-smoke/attempt-{i}' for i in (1, 2)])
+        for call in calls:
+            self.assertIn('PRODUCTION_SMOKE_ARTIFACTS', call['args'])
 
     def test_failed_browser_verification_rolls_back_once_and_fails(self):
         self.assertNotEqual(self.run_deploy({'node': [1]}).returncode, 0)

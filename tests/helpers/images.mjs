@@ -3,24 +3,24 @@
 export async function assertImagesLoaded(page) {
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
   const snapshot = await page.waitForFunction(() => {
-    const images = [...document.querySelectorAll('uni-image')];
-    if (![...document.images].every(image => image.complete && image.naturalWidth > 0 && image.naturalHeight > 0)) return false;
-    if (!images.every(wrapper => {
+    const images = [...document.images];
+    const wrappers = [...document.querySelectorAll('uni-image')];
+    if (!images.every(image => image.complete && image.naturalWidth > 0 && image.naturalHeight > 0)) return false;
+    if (!wrappers.every(wrapper => {
       const image = wrapper.querySelector('img');
       return image?.complete && image.naturalWidth > 0 && image.naturalHeight > 0;
     })) return false;
     // Check and collect in one browser turn: Vue can replace these nodes before
     // a second evaluate call, even when the previous set had finished loading.
-    return images.map(wrapper => {
-      const image = wrapper.querySelector('img');
-      const rect = wrapper.getBoundingClientRect();
+    return images.map(image => {
+      const rect = (image.closest('uni-image') || image).getBoundingClientRect();
       return {src: image.currentSrc || image.src, width: rect.width, height: rect.height};
     });
   }, undefined, {timeout: 20000}).catch(async error => {
-    const images = await page.locator('uni-image').evaluateAll(wrappers => wrappers.map(wrapper => ({
-      markup: wrapper.outerHTML,
-      width: wrapper.getBoundingClientRect().width,
-      height: wrapper.getBoundingClientRect().height,
+    const images = await page.locator('uni-image, img:not(uni-image img)').evaluateAll(elements => elements.map(element => ({
+      markup: element.outerHTML,
+      width: element.getBoundingClientRect().width,
+      height: element.getBoundingClientRect().height,
     })));
     throw new Error(`Images failed to render at ${page.url()}: ${JSON.stringify(images)}`, {cause: error});
   });

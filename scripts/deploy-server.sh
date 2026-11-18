@@ -15,6 +15,14 @@ done
 
 artifacts=artifacts/deployment
 mkdir -p "$artifacts"
+browser_check=(node tests/navigation/production.mjs)
+if [[ -n ${PLAYWRIGHT_CI_IMAGE:-} ]]; then
+  browser_check=(docker run --rm --init --ipc=host
+    --volume "$PWD:/workspace" --workdir /workspace
+    --env DEPLOY_URL --env GITHUB_SHA --env PRODUCTION_SMOKE_ARTIFACTS
+    "$PLAYWRIGHT_CI_IMAGE" "${browser_check[@]}")
+fi
+
 remote="${DEPLOY_USER}@${DEPLOY_HOST}"
 ssh_common=(-o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 if [[ -n ${DEPLOY_IDENTITY_FILE:-} ]]; then
@@ -108,7 +116,7 @@ for attempt in 1 2 3; do
   if curl --fail --silent --show-error --connect-timeout 10 --max-time 20 \
        "${DEPLOY_URL%/}/kidbridge-release.json?commit=$GITHUB_SHA" -o "$attempt_dir/release.json" &&
      python3 -c 'import json,os,sys; assert json.load(open(sys.argv[1]))["commit"] == os.environ["GITHUB_SHA"]' "$attempt_dir/release.json" &&
-     PRODUCTION_SMOKE_ARTIFACTS="$attempt_dir" timeout --signal=TERM --kill-after=15s 180s node tests/navigation/production.mjs; then
+     PRODUCTION_SMOKE_ARTIFACTS="$attempt_dir" timeout --signal=TERM --kill-after=15s 180s "${browser_check[@]}"; then
     verified=true
     stage=verified
     break
