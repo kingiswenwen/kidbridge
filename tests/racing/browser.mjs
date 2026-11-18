@@ -1,4 +1,4 @@
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 import { createServer } from "node:http";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
@@ -7,13 +7,17 @@ import assert from "node:assert/strict";
 import { assertImagesLoaded } from "../helpers/images.mjs";
 
 const root = resolve("dist/build/h5");
+const browserName = process.env.RACING_BROWSER || "chromium";
+if (!["chromium", "webkit"].includes(browserName))
+  throw new Error(`Unsupported racing test browser: ${browserName}`);
 const liveUrl = process.env.RACING_TEST_URL;
 if (liveUrl && new URL(liveUrl).protocol !== "https:")
   throw new Error("Live racing checks require HTTPS");
 if (!liveUrl && !existsSync(`${root}/learning.html`))
   throw new Error("Run npm run build:h5 first");
 const artifacts = resolve(
-  process.env.RACING_ARTIFACTS || "artifacts/racing-browser",
+  process.env.RACING_ARTIFACTS ||
+    (browserName === "webkit" ? "artifacts/racing-webkit" : "artifacts/racing-browser"),
 );
 await mkdir(artifacts, { recursive: true });
 const server = createServer(async (req, res) => {
@@ -56,11 +60,9 @@ const base = liveUrl
 const executablePath =
   process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
   (existsSync("/usr/bin/chromium") ? "/usr/bin/chromium" : undefined);
-const browser = await chromium.launch({
-  headless: true,
-  executablePath,
-  args: ["--no-sandbox"],
-});
+const browser = browserName === "webkit"
+  ? await webkit.launch({ headless: true })
+  : await chromium.launch({ headless: true, executablePath, args: ["--no-sandbox"] });
 const context = await browser.newContext({
   timezoneId: "Asia/Shanghai",
   viewport: { width: 390, height: 844 },
@@ -586,7 +588,7 @@ try {
     JSON.stringify({ passed: results, errors }, null, 2),
   );
   console.log(
-    `Passed ${results.length} browser scenarios. Artifacts: ${artifacts}`,
+    `Passed ${results.length} scenarios in ${browserName}. Artifacts: ${artifacts}`,
   );
 } catch (e) {
   await page.screenshot({ path: `${artifacts}/failure.png`, fullPage: true });

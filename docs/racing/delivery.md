@@ -77,6 +77,8 @@ npm run test:racing:e2e
 
 浏览器测试默认使用系统 `/usr/bin/chromium`，否则使用 Playwright 浏览器；可用 `PLAYWRIGHT_CHROMIUM_EXECUTABLE` 显式指定。截图和结果写入被忽略的 `artifacts/racing-browser/`，CI 另外保存为构建产物。每次测试使用隔离浏览器上下文和本地静态服务器，不操作真实用户数据或生产站点。
 
+PR 检查也会在 Playwright WebKit 中运行赛车的 16 项浏览器流程，覆盖打卡、审核、兑换、备份恢复、PIN 恢复和不同窗口宽度。安装 WebKit 后可用 `RACING_BROWSER=webkit node tests/racing/browser.mjs` 复跑，结果保存在 `artifacts/racing-webkit/`。iPhone Safari 的语音、系统文件选择及前后台行为仍需真机验收。
+
 实际结果和逐项验收见 [validation.md](validation.md)。微信构建成功不代表开发者工具或真机手测通过。
 
 ## 部署与回滚
