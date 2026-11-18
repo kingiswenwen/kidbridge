@@ -42,11 +42,11 @@ python3 scripts/render-site-access.py
 
 ## 提交修改
 
-1. Fork 仓库或在有权限的仓库中创建功能分支，保持一次修改聚焦一个问题。
+1. 有仓库写权限时，在已有的 `dev` 分支开发并推送。外部贡献者可以使用自己的 fork，并将 PR 目标选为 `dev`。
 2. 按 [README](README.md#本地运行) 安装依赖并启动项目。
 3. 修改学习页面时，验证导航首页与 `/learning.html#/` 两个入口；界面调整应附上相应截图。
 4. 修改应用代码时运行 `npm run type-check` 与 `npm run build:h5`；修改部署脚本时还需运行下面的 Python 测试。
-5. 向 `main` 提交 PR，说明解决的问题、最终行为及验证结果。GitHub Actions 会执行完整检查；PR 不部署生产站点，合并到 `main` 后才会发布。
+5. GitHub Actions 会创建或复用 `dev → main` PR。构建与发布包演练通过后，工作流按仓库保护规则合并，`main` 随后自动部署。首次配置方法见 [部署文档](docs/server-cicd.md#启用-dev-自动发布)。
 
 ```bash
 npm run type-check

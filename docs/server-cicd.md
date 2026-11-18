@@ -2,17 +2,25 @@
 
 本流程通过 SSH 直接连接网站服务器并部署静态文件，不依赖任何服务器管理面板。此前手动上传网站包的方式不影响此流程。
 
-此工作流在 PR 时构建和测试，合并或推送到 `main` 后自动部署，也可在 Actions 手动运行。推送到其他分支不会更新线上网站。
+日常修改从 `dev` 提交。GitHub Actions 创建或复用 `dev → main` PR，构建与发布包演练均通过后合并。`main` 再构建和部署，并把主分支的新提交同步回 `dev`。也可在 Actions 手动运行生产部署。
 
 ## 当前仓库状态
 
 `kingiswenwen/kidbridge` 已完成服务器接入，类型检查、部署测试、H5 构建、SSH 发布和公网版本验证已全部通过，见[成功执行记录](https://github.com/kingiswenwen/kidbridge/actions/runs/40698219394/attempts/2)。日常修改通过 PR 检查后合并到 `main`，即可触发发布；下述一次性设置用于首次接入、迁移或更换部署凭证。
 
-`main` 的必需检查名保持为 GitHub Actions 提供的 `h5`，并要求分支与主分支保持最新。`h5` 负责构建、回归测试和发布包；`Verify release package` 下载该包，在临时站点运行真实安装脚本和生产浏览器验收，以验证跨任务传包、隔离浏览器环境和发布脚本。独立的 `Deploy and verify production` 任务只在前两个任务均成功且当前引用是 `main` 时部署。PR 的绿色检查仅表示构建和发布演练通过，不能作为已上线的证明。原有 PR 审核要求及管理员绕过权限保留。工作流文件只能定义检查步骤，分支门禁需要在仓库 **Settings → Branches** 中维护。
+`main` 的必需检查 `h5` 负责构建、回归和打包，并校验 PR 来自本仓库的 `dev`。`Verify release package` 在临时站点安装产物并运行生产验收脚本。两个任务均成功才会尝试合并或部署。工作流通过 GitHub 的常规合并接口执行，GitHub 会继续执行 `main` 的保护规则。
 
 两个工作流统一固定 `ubuntu-24.04`，避免 `ubuntu-latest` 自动升级到项目锁定的 Playwright 不支持的系统。部署和只读线上检查从 `package-lock.json` 读取 Playwright 的确切版本，在隔离目录安装浏览器工具，不重复安装业务依赖。升级 Playwright 时须同时验证 runner 系统的兼容性。
 
 `h5` 在 Playwright 的 Ubuntu 24.04 镜像内运行 Chromium 测试，PR 也会测试 WebKit。发布包演练、线上验收和只读检查在临时 runner 上通过 Ubuntu 官方 HTTPS 软件源安装 Chromium headless shell。apt 请求有超时和重试限制，浏览器安装最多执行 8 分钟。PR 更新时取消过时的检查，`main` 的生产流水线会继续完成发布或恢复流程。
+
+## 启用 dev 自动发布
+
+1. 创建仅限本仓库的细粒度个人访问令牌。令牌需要 `Contents: Read and write` 与 `Pull requests: Read and write`。自动合并的 PR 若包含 GitHub Actions 工作流变更，还需 `Workflows: Read and write`。在 **Settings → Secrets and variables → Actions** 中将凭据保存为 Repository secret `DEV_PROMOTION_TOKEN`。
+2. 在 **Settings → Branches** 查看 `main` 的分支保护。保留 **Require a pull request before merging**、必需检查 `h5` 和 **Require branches to be up to date before merging**。如需完全无人值守发布，须让 GitHub 允许这个自动化身份在无需人工批准的情况下合并。个人仓库可以取消该规则里的 **Require approvals**，同时保留 PR 与必需检查。保留强制审核时，GitHub 会等有效批准，批准后重跑失败的合并任务。
+3. 初次配置后，推送下一次 `dev` 提交。如果已有 `dev → main` PR，重跑该 PR 的整次工作流，让任务读取新凭据。可以在 **Actions → Keep dev and main in sync** 选择 `dev` 手动运行，补开缺失的 PR。
+
+`DEV_PROMOTION_TOKEN` 用于发起由独立身份触发的 GitHub 事件，确保自动打开的 PR 能触发 CI，合并产生的 `main` 推送也会触发部署。令牌未配置时，工作流会提示自动化尚未启用，已有 PR 仍可运行构建和发布包演练。同步 `dev` 时优先快进，遇到并行开发时保留双方提交。存在合并冲突时 GitHub 会报错，需要在 `dev` 处理后再继续。
 
 ## 一次性连接配置
 
