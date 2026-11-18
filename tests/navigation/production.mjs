@@ -32,7 +32,11 @@ try{
   await page.locator(marker[0]).filter({hasText:marker[1]}).first().waitFor();
   if(i===1){await page.getByText('开始练习',{exact:true}).click();await page.locator('.option-btn').first().click();await page.locator('.feedback').waitFor();}
   const images=await assertImagesLoaded(page);illustrations.push({entry:target.name,images});
-  if(i===0||i===5){assert(images.length>=4,'Growth and rewards must render their illustrations');assert(images.every(image=>image.width>0&&image.height>0),'Illustrations must have visible dimensions');}
+  if(i===0||i===5){
+   const racingImages=images.filter(image=>new URL(image.src).pathname.startsWith('/static/racing/'));
+   assert(racingImages.length>=4,'Growth and rewards must render their illustrations');
+   assert(racingImages.every(image=>image.width>0&&image.height>0),'Racing illustrations must have visible dimensions');
+  }
   await page.screenshot({path:`${artifacts}/entry-${i+1}.png`,fullPage:true});
  }
  const routes=JSON.parse(await readFile(new URL('../../src/pages.json',import.meta.url),'utf8')).pages;

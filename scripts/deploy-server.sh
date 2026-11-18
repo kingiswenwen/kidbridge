@@ -11,6 +11,17 @@ done
 [[ $GITHUB_SHA =~ ^[a-f0-9]{40}$ ]] || exit 1
 [[ $DEPLOY_URL =~ ^https://[A-Za-z0-9.-]+/?$ ]] || exit 1
 
+verify_live_navigation() {
+  if [[ -n ${PLAYWRIGHT_CI_IMAGE:-} ]]; then
+    docker run --rm --init --ipc=host \
+      --volume "$PWD:/workspace" --workdir /workspace \
+      --env DEPLOY_URL --env GITHUB_SHA \
+      "$PLAYWRIGHT_CI_IMAGE" node tests/navigation/production.mjs
+  else
+    node tests/navigation/production.mjs
+  fi
+}
+
 remote="${DEPLOY_USER}@${DEPLOY_HOST}"
 ssh_options=(-p "$DEPLOY_PORT" -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 -o ServerAliveCountMax=3)
 remote_tmp=$(ssh "${ssh_options[@]}" "$remote" 'mktemp -d /tmp/kidbridge-deploy.XXXXXXXX')
@@ -30,7 +41,7 @@ for attempt in 1 2 3 4; do
      python3 -c 'import json,os; assert json.load(open("/tmp/kidbridge-release-check.json"))["commit"] == os.environ["GITHUB_SHA"]' &&
      curl --fail --silent --show-error --max-time 20 "${DEPLOY_URL%/}/" -o /tmp/kidbridge-live.html &&
      grep -q 'id="growthEntry"' /tmp/kidbridge-live.html &&
-     node tests/navigation/production.mjs; then
+     verify_live_navigation; then
     verified=true
     break
   fi
