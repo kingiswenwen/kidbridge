@@ -19,6 +19,8 @@ jobs:
     # Playwright 1.56.1 does not support the Ubuntu 26.04 latest image.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      PLAYWRIGHT_CI_IMAGE: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -47,12 +49,14 @@ jobs:
       - run: npm run build:h5
       - name: Build WeChat mini program
         run: npm run build:mp-weixin
-      - name: Install browser for racing flow tests
-        run: npx playwright install --with-deps chromium
-      - name: Test racing user flows and existing learning routes
-        run: npm run test:racing:e2e
-      - name: Test same-tab quick starts and embedded navigation
-        run: npm run test:navigation
+      - name: Test racing journeys and navigation in Chromium
+        timeout-minutes: 10
+        run: |
+          docker run --rm --init --ipc=host \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            "$PLAYWRIGHT_CI_IMAGE" \
+            sh -c 'npm run test:racing:e2e && npm run test:navigation'
       - name: Test racing journeys in WebKit
         if: github.event_name == 'pull_request'
         timeout-minutes: 8
@@ -61,7 +65,7 @@ jobs:
             --volume "$GITHUB_WORKSPACE:/workspace" \
             --workdir /workspace \
             --env RACING_BROWSER=webkit \
-            mcr.microsoft.com/playwright:v1.56.1-noble \
+            "$PLAYWRIGHT_CI_IMAGE" \
             node tests/racing/browser.mjs
       - name: Retain browser evidence
         if: always()
