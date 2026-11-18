@@ -1,9 +1,6 @@
 name: Check current live illustrations
 
-on:
-  push:
-    branches: [diagnostics/live-illustrations-20261031]
-  workflow_dispatch:
+on: workflow_dispatch
 
 permissions:
   contents: read

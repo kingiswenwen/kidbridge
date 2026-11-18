@@ -1,0 +1,79 @@
+name: Keep dev and main in sync
+
+on:
+  push:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dev-promotion-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref == 'refs/heads/dev' }}
+
+jobs:
+  open-release-pr:
+    name: Open or reuse dev release PR
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Find or open a dev to main PR
+        env:
+          GH_TOKEN: ${{ secrets.DEV_PROMOTION_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::warning::Automatic PR creation is inactive until DEV_PROMOTION_TOKEN is configured. See docs/server-cicd.md.'
+            exit 0
+          fi
+          api="repos/$GITHUB_REPOSITORY"
+          ahead=$(gh api "$api/compare/main...dev" --jq .ahead_by)
+          if [[ "$ahead" == 0 ]]; then
+            echo 'dev has no commits to release.'
+            exit 0
+          fi
+          pr=$(gh api --method GET "$api/pulls" -f base=main -f head="$GITHUB_REPOSITORY_OWNER:dev" \
+            -f state=open --jq '.[0].html_url // empty')
+          if [[ -n "$pr" ]]; then
+            echo "Using existing release PR: $pr"
+            exit 0
+          fi
+          gh pr create --repo "$GITHUB_REPOSITORY" --base main --head dev \
+            --title 'Release dev to main' \
+            --body 'Dev changes must pass the build and release package checks before merging. A successful merge triggers production deployment.'
+
+  sync-dev:
+    name: Bring main changes back to dev
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Advance dev without rewriting its commits
+        env:
+          GH_TOKEN: ${{ secrets.DEV_PROMOTION_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::warning::Automatic sync is inactive until DEV_PROMOTION_TOKEN is configured. See docs/server-cicd.md.'
+            exit 0
+          fi
+          api="repos/$GITHUB_REPOSITORY"
+          main_sha=$(gh api "$api/git/ref/heads/main" --jq .object.sha)
+          dev_sha=$(gh api "$api/git/ref/heads/dev" --jq .object.sha)
+          status=$(gh api "$api/compare/$dev_sha...$main_sha" --jq .status)
+          case "$status" in
+            identical|behind)
+              echo 'dev already contains main.'
+              ;;
+            ahead)
+              gh api --method PATCH "$api/git/refs/heads/dev" -f sha="$main_sha" -F force=false --jq .object.sha
+              ;;
+            diverged)
+              gh api --method POST "$api/merges" -f base=dev -f head="$main_sha" \
+                -f commit_message='Sync main into dev' --jq .sha
+              ;;
+            *)
+              echo '::error::Cannot determine the relationship between dev and main.'
+              exit 1
+              ;;
+          esac

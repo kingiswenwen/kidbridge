@@ -30,7 +30,8 @@ let browser;
 try {
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   browser = await chromium.launch({ headless: true, executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined), args: ['--no-sandbox'] });
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 }, timezoneId: 'Asia/Shanghai', reducedMotion: 'reduce' });
+  const contextOptions = { viewport: { width: 390, height: 844 }, timezoneId: 'Asia/Shanghai', reducedMotion: 'reduce' };
+  const context = await browser.newContext(contextOptions);
   const page = await context.newPage();
   page.setDefaultTimeout(12000);
   const errors = [];
@@ -210,35 +211,51 @@ try {
   await check('parent and child pages generate the next day without rewriting past tasks or stars', async () => {
     await route('/pages/parent/index');
     await unlockParent();
-    await page.clock.setSystemTime(new Date(`${today}T23:59:50+08:00`));
-    await page.clock.runFor(26000);
-    const nextDate = await page.evaluate(() => {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    });
-    assert.notEqual(nextDate, today);
-    const generated = date => page.waitForFunction(({ key, date }) =>
+    async function crossMidnight(target, date) {
+      const beforeMidnight = new Date(`${date}T23:59:50+08:00`);
+      const expectedDate = new Date(Date.parse(`${date}T00:00:00Z`) + 86_400_000)
+        .toISOString().slice(0, 10);
+      await target.clock.setSystemTime(beforeMidnight);
+      // Cross midnight and let the page's 15-second refresh interval run.
+      await target.clock.runFor(26_000);
+      const browserDate = await target.evaluate(() => new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'Asia/Shanghai', year: 'numeric', month: '2-digit', day: '2-digit',
+      }).format(new Date()));
+      assert.equal(browserDate, expectedDate, 'Browser clock must cross midnight');
+      return expectedDate;
+    }
+    const nextDate = await crossMidnight(page, today);
+    const generated = (target, date) => target.waitForFunction(({ key, date }) =>
       JSON.parse(localStorage.getItem(key)).generatedDates.includes(date),
     { key, date });
-    await generated(nextDate);
-    let saved = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
-    const previousTasks = saved.dailyTasks.filter(t => t.date === today);
-    const previousLedger = saved.pointTransactions;
+    await generated(page, nextDate);
+    const parentState = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
+    const previousTasks = parentState.dailyTasks.filter(t => t.date === today);
+    const previousLedger = parentState.pointTransactions;
     await unlockParent();
     await button('退出家长模式').click();
     await page.locator('.race-page-title').filter({ hasText: '今日赛道' }).waitFor();
     await page.getByRole('button', { name: '早上刷牙，待完成', exact: true }).waitFor();
-    await page.clock.fastForward('24:00:00');
-    const lastDate = new Date(Date.parse(`${nextDate}T12:00:00+08:00`) + 86_400_000)
-      .toISOString().slice(0, 10);
-    await generated(lastDate);
-    saved = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
-    const currentTasks = saved.dailyTasks.filter(t => t.date === lastDate);
-    assert.equal(currentTasks.length, saved.taskDefinitions.filter(t => t.enabled).length);
-    assert(currentTasks.every(t => t.status === 'pending'));
-    assert.deepEqual(saved.dailyTasks.filter(t => t.date === today), previousTasks);
-    assert.deepEqual(saved.pointTransactions, previousLedger);
-    assert.equal(await page.locator('.track-landmark').count(), currentTasks.length);
+    // Start a new clock for the child page while carrying over the saved run.
+    const childContext = await browser.newContext({ ...contextOptions, storageState: await context.storageState() });
+    try {
+      const child = await childContext.newPage();
+      child.on('pageerror', error => { errors.push(error.message); console.error('PAGE ERROR', child.url(), error.stack); });
+      await child.clock.install({ time: new Date(`${nextDate}T23:58:00+08:00`) });
+      await child.goto(`${origin}/learning.html#/pages/racing/index`);
+      await child.getByRole('button', { name: '早上刷牙，待完成', exact: true }).waitFor();
+      const lastDate = await crossMidnight(child, nextDate);
+      await generated(child, lastDate);
+      const childState = JSON.parse(await child.evaluate(k => localStorage.getItem(k), key));
+      const currentTasks = childState.dailyTasks.filter(t => t.date === lastDate);
+      assert.equal(currentTasks.length, childState.taskDefinitions.filter(t => t.enabled).length);
+      assert(currentTasks.every(t => t.status === 'pending'));
+      assert.deepEqual(childState.dailyTasks.filter(t => t.date === today), previousTasks);
+      assert.deepEqual(childState.pointTransactions, previousLedger);
+      assert.equal(await child.locator('.track-landmark').count(), currentTasks.length);
+    } finally {
+      await childContext.close();
+    }
   });
   assert.deepEqual(errors, []);
   assert.deepEqual(failures, []);

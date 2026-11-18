@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: [dev, main]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
@@ -23,6 +24,13 @@ jobs:
     env:
       PLAYWRIGHT_CI_IMAGE: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
+      - name: Require dev as the source for main
+        if: >-
+          github.event_name == 'pull_request' && github.base_ref == 'main' &&
+          (github.head_ref != 'dev' || github.event.pull_request.head.repo.full_name != github.repository)
+        run: |
+          echo '::error::Merge changes into the dev branch before opening a PR to main.'
+          exit 1
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -119,6 +127,38 @@ jobs:
           name: release-smoke-${{ github.sha }}-${{ github.run_attempt }}
           path: artifacts/release-smoke/
           retention-days: 14
+
+  promote-dev:
+    name: Merge verified dev into main
+    needs: [h5, release-check]
+    if: >-
+      github.event_name == 'pull_request' && github.base_ref == 'main' &&
+      github.head_ref == 'dev' && github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Merge the verified PR revision
+        env:
+          GH_TOKEN: ${{ secrets.DEV_PROMOTION_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::warning::Automatic merge is inactive until DEV_PROMOTION_TOKEN is configured. See docs/server-cicd.md.'
+            exit 0
+          fi
+          api="repos/$GITHUB_REPOSITORY"
+          current_main=$(gh api "$api/git/ref/heads/main" --jq .object.sha)
+          current_dev=$(gh api "$api/git/ref/heads/dev" --jq .object.sha)
+          if [[ "$current_main" != "$BASE_SHA" || "$current_dev" != "$HEAD_SHA" ]]; then
+            echo 'A newer revision needs its own checks. Skipping this merge.'
+            exit 0
+          fi
+          merged=$(gh api --method PUT "$api/pulls/$PR_NUMBER/merge" \
+            -f sha="$HEAD_SHA" -f merge_method=merge --jq .merged)
+          [[ "$merged" == true ]]
 
   deploy:
     name: Deploy and verify production
