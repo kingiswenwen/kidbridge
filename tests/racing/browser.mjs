@@ -320,7 +320,7 @@ try {
     },
   );
   await record(
-    "real reward request does not deduct, parent approval deducts, cancellation refunds once",
+    "real reward request preserves stars, approval and cancellation update the family overview",
     async () => {
       await route("/pages/racing/rewards/index");
       await button("生活奖励").click();
@@ -338,7 +338,11 @@ try {
       });
       await route("/pages/parent/index", false);
       await unlock();
-      await route("/pages/parent/review/index");
+      const recentReward = page.locator(".recent-redemptions .race-row")
+        .filter({ hasText: "周末一起去公园" });
+      await recentReward.getByText("3 星 · 待审核", { exact: true }).waitFor();
+      const openReview = () => page.getByRole("button", { name: /^审核与兑现/ }).click();
+      await openReview();
       await button("批准并扣 3 星").click();
       await visible("已批准，星星扣除一次");
       s = await snapshot();
@@ -346,6 +350,9 @@ try {
         s.pointTransactions.reduce((n, t) => n + t.amount, 0),
         1,
       );
+      await button("返回上一页").click();
+      await recentReward.getByText("3 星 · 待兑现", { exact: true }).waitFor();
+      await openReview();
       await button("取消并退星").click();
       await confirmDialog("取消并退星");
       await visible("已取消，星星已退回");
@@ -358,6 +365,8 @@ try {
         s.pointTransactions.filter((t) => t.type === "refund").length,
         1,
       );
+      await button("返回上一页").click();
+      await recentReward.getByText("3 星 · 已取消并退星", { exact: true }).waitFor();
     },
   );
   await record(

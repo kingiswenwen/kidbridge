@@ -59,7 +59,23 @@
         </button></view
       >
       <template v-if="section === 'today'"
-        ><text class="race-subheading">今天的安排</text
+        ><view class="recent-redemptions">
+          <text class="race-subheading">近期兑换</text>
+          <text v-if="!recentRedemptions.length" class="race-muted">
+            还没有生活奖励兑换记录。
+          </text>
+          <view v-for="r in recentRedemptions" :key="r.id" class="race-row">
+            <RaceIcon name="gift" :size="40" />
+            <view class="race-row-main">
+              <text class="race-row-title">{{ r.rewardTitleSnapshot }}</text>
+              <text class="race-muted">
+                {{ r.costSnapshot }} 星 · {{ redemptionLabels[r.status] }}
+              </text>
+              <text class="race-date">申请于 {{ requestDate(r.requestedAt) }}</text>
+            </view>
+          </view>
+        </view>
+        <text class="race-subheading">今天的安排</text
         ><text class="race-muted"
           >跳过不扣星、不算失败；已经完成的记录不能覆盖。</text
         ><view v-if="!store.tasks.length" class="race-empty"
@@ -359,10 +375,10 @@
 <script setup lang="ts">
 import { computed, onUnmounted, ref } from "vue";
 import { onLoad, onShow, onHide } from "@dcloudio/uni-app";
-import type { Schedule } from "@/types/racing";
+import type { Redemption, Schedule } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
 import { returnToRacingPage } from "@/utils/racing/navigation";
-import { STORAGE_KEY, taskTemplateExists } from "@/utils/racing/engine";
+import { localDate, STORAGE_KEY, taskTemplateExists } from "@/utils/racing/engine";
 import { taskTemplates } from "@/data/racing/catalog";
 import { useAppDialog } from "@/utils/dialog";
 import RaceShell from "@/components/racing/RaceShell.vue";
@@ -389,6 +405,18 @@ const statusLabels = {
   completed: "已完成",
   skipped: "已跳过",
 };
+const redemptionLabels: Record<Redemption["status"], string> = {
+  requested: "待审核",
+  approved: "待兑现",
+  fulfilled: "已兑现",
+  rejected: "未通过",
+  cancelled: "已取消并退星",
+};
+const recentRedemptions = computed(() =>
+  [...store.data.redemptions]
+    .sort((a, b) => b.requestedAt - a.requestedAt)
+    .slice(0, 3),
+);
 const submissions = computed(
   () => store.data.dailyTasks.filter((t) => t.status === "submitted").length,
 );
@@ -424,6 +452,9 @@ function go(url: string) {
 function exit() {
   store.lockParent();
   returnToRacingPage("/pages/racing/index");
+}
+function requestDate(at: number) {
+  return localDate(new Date(at));
 }
 function scheduleLabel(s: Schedule) {
   return s.kind === "daily"
