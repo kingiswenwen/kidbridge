@@ -30,7 +30,10 @@ failures = config.get(kind, [])
 code = failures[min(count - 1, len(failures) - 1)] if failures else 0
 if kind == 'node' and config.get('interrupt'):
     os.kill(int(os.environ['SCRIPT_PID']), signal.SIGTERM)
-if code: sys.exit(code)
+if code:
+    if kind == 'connect' and config.get('failed_connect_output'):
+        print(config['failed_connect_output'])
+    sys.exit(code)
 if kind == 'connect': print(config.get('remote_tmp', '/tmp/kidbridge-deploy.ABC12345'))
 if kind == 'activate': print('bad-response' if config.get('bad_receipt') else args[-1].split()[-1])
 if kind == 'curl':
@@ -161,6 +164,13 @@ class TransportTests(unittest.TestCase):
         self.assertNotEqual(self.run_deploy({'remote_tmp': '/tmp/unexpected; touch bad'}).returncode, 0)
         self.assertEqual(self.count('activate'), 0)
         self.assertEqual(self.count('cleanup'), 0)
+
+    def test_failed_connection_output_is_never_used_as_cleanup_command(self):
+        result = self.run_deploy({'connect': [255], 'failed_connect_output': '/tmp/unexpected; touch bad'})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.count('activate'), 0)
+        self.assertEqual(self.count('cleanup'), 0)
+        self.assertEqual(self.report['remote_directory'], '')
 
     def test_missing_configuration_fails_before_connecting(self):
         self.env.pop('DEPLOY_HOST')

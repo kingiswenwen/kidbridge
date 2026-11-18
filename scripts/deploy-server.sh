@@ -73,13 +73,13 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 
-remote_tmp=$(retry_connection ssh "${ssh_options[@]}" "$remote" \
+candidate=$(retry_connection ssh "${ssh_options[@]}" "$remote" \
   "python3 -c 'import sys; assert sys.version_info >= (3, 9)' && test -d $DEPLOY_PATH && test -w $DEPLOY_PATH && mktemp -d /tmp/kidbridge-deploy.XXXXXXXX")
-if [[ ! $remote_tmp =~ ^/tmp/kidbridge-deploy\.[A-Za-z0-9]+$ ]]; then
-  remote_tmp=''
+if [[ ! $candidate =~ ^/tmp/kidbridge-deploy\.[A-Za-z0-9]+$ ]]; then
   echo '::error::Invalid deployment staging directory.' >&2
   exit 1
 fi
+remote_tmp=$candidate
 stage=uploading
 retry_connection scp -P "$DEPLOY_PORT" "${ssh_common[@]}" \
   site.tar.gz scripts/activate-server.py "$remote:$remote_tmp/"
