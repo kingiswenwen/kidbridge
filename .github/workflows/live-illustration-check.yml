@@ -8,28 +8,24 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: live-illustrations-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
-        with:
-          node-version: '24'
-      - name: Install isolated browser tooling
-        run: |
-          mkdir -p /tmp/kidbridge-live-check
-          npm install --prefix /tmp/kidbridge-live-check playwright@1.56.1 --registry=https://registry.npmjs.org --no-audit --fund=false
-          ln -s /tmp/kidbridge-live-check/node_modules node_modules
-          /tmp/kidbridge-live-check/node_modules/.bin/playwright install --with-deps chromium
+      - uses: ./.github/actions/setup-live-browser
       - name: Verify currently deployed release without changing the server
         env:
           DEPLOY_URL: https://kidbridge.wynsunny.cn/
         run: |
-          curl --fail --silent --show-error --max-time 30 "${DEPLOY_URL}kidbridge-release.json" -o /tmp/kidbridge-current-release.json
+          curl --fail --silent --show-error --connect-timeout 10 --max-time 30 --retry 3 --retry-connrefused --retry-max-time 90 "${DEPLOY_URL}kidbridge-release.json" -o /tmp/kidbridge-current-release.json
           live_sha=$(node -e 'const r=require("/tmp/kidbridge-current-release.json");if(!/^[a-f0-9]{40}$/.test(r.commit))throw Error("Invalid live release");process.stdout.write(r.commit)')
-          GITHUB_SHA="$live_sha" node tests/navigation/production.mjs
+          GITHUB_SHA="$live_sha" timeout --signal=TERM --kill-after=15s 300s node tests/navigation/production.mjs
       - name: Exercise live growth journeys in isolated browser storage
         env:
           RACING_TEST_URL: https://kidbridge.wynsunny.cn/
@@ -39,7 +35,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: live-illustrations-${{ github.run_id }}
+          name: live-illustrations-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             artifacts/production-smoke/
             artifacts/live-racing-flow/

@@ -1,0 +1,16 @@
+name: Set up isolated live browser
+description: Install the locked Playwright version without application dependencies
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+      with:
+        node-version: '24'
+    - name: Install locked browser tooling
+      shell: bash
+      run: |
+        tooling=$(mktemp -d "$RUNNER_TEMP/kidbridge-browser.XXXXXXXX")
+        version=$(node -p 'require("./package-lock.json").packages["node_modules/playwright"].version')
+        npm install --prefix "$tooling" "playwright@$version" --registry=https://registry.npmjs.org --no-audit --fund=false
+        ln -s "$tooling/node_modules" node_modules
+        "$tooling/node_modules/.bin/playwright" install --with-deps chromium

@@ -16,7 +16,8 @@ concurrency:
 
 jobs:
   h5:
-    runs-on: ubuntu-latest
+    # Playwright 1.56.1 supports this image, not Ubuntu 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -47,7 +48,7 @@ jobs:
       - name: Build WeChat mini program
         run: npm run build:mp-weixin
       - name: Install browser for racing flow tests
-        run: npx playwright install --with-deps chromium
+        run: npx --no-install playwright install --with-deps chromium
       - name: Test racing user flows and existing learning routes
         run: npm run test:racing:e2e
       - name: Test same-tab quick starts and embedded navigation
@@ -61,6 +62,7 @@ jobs:
             artifacts/racing-browser/
             artifacts/navigation-browser/
           retention-days: 14
+          overwrite: true
       - name: Package release
         env:
           COMMIT: ${{ github.sha }}
@@ -76,8 +78,80 @@ jobs:
           name: kidbridge-h5-${{ github.sha }}
           path: site.tar.gz
           retention-days: 14
+          if-no-files-found: error
+          overwrite: true
+
+  release-check:
+    name: Verify release package
+    needs: h5
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: kidbridge-h5-${{ github.sha }}
+      - uses: ./.github/actions/setup-live-browser
+      - name: Install release into an isolated site and run production checks
+        run: python3 tests/deployment/release-smoke.py
+      - name: Retain release verification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-smoke-${{ github.sha }}-${{ github.run_attempt }}
+          path: artifacts/release-smoke/
+          retention-days: 14
+
+  deploy:
+    name: Deploy and verify production
+    needs: [h5, release-check]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: kidbridge-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Skip superseded releases
+        id: release
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+        run: |
+          current_sha=$(git ls-remote --exit-code origin refs/heads/main | cut -f1)
+          if [[ "$current_sha" != "$EXPECTED_SHA" ]]; then
+            echo 'current=false' >> "$GITHUB_OUTPUT"
+            echo "### Deployment skipped: main has advanced beyond $EXPECTED_SHA" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'current=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check deployment configuration
+        if: steps.release.outputs.current == 'true'
+        env:
+          DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
+          DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
+          DEPLOY_USER: ${{ vars.DEPLOY_USER }}
+          DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          missing=false
+          for name in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER DEPLOY_PATH DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
+            if [[ -z ${!name} ]]; then
+              echo "::error::Missing $name. See docs/server-cicd.md."
+              missing=true
+            fi
+          done
+          [[ "$missing" == false ]]
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        if: steps.release.outputs.current == 'true'
+        with:
+          name: kidbridge-h5-${{ github.sha }}
+      - uses: ./.github/actions/setup-live-browser
+        if: steps.release.outputs.current == 'true'
       - name: Deploy and verify production
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: steps.release.outputs.current == 'true'
+        timeout-minutes: 12
         env:
           DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
           DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
@@ -87,23 +161,20 @@ jobs:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
           DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
         run: |
-          for name in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER DEPLOY_PATH DEPLOY_SSH_KEY DEPLOY_KNOWN_HOSTS; do
-            if [[ -z ${!name} ]]; then
-              echo "::error::Missing $name. Complete docs/server-cicd.md before deploying."
-              exit 1
-            fi
-          done
-          install -m 700 -d ~/.ssh
+          ssh_dir=$(mktemp -d "$RUNNER_TEMP/kidbridge-ssh.XXXXXXXX")
           umask 077
-          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_ed25519
-          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
-          trap 'rm -f ~/.ssh/id_ed25519 ~/.ssh/known_hosts' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ssh_dir/key"
+          printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > "$ssh_dir/known_hosts"
+          export DEPLOY_IDENTITY_FILE="$ssh_dir/key" DEPLOY_HOSTS_FILE="$ssh_dir/known_hosts"
+          trap 'rm -rf -- "$ssh_dir"' EXIT
           bash scripts/deploy-server.sh
 
       - name: Retain live navigation verification evidence
-        if: always() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: always() && steps.release.outputs.current == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: production-navigation-${{ github.sha }}
-          path: artifacts/production-smoke/
+          name: production-navigation-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            artifacts/production-smoke/
+            artifacts/deployment/
           retention-days: 14

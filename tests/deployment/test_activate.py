@@ -92,6 +92,28 @@ class DeploymentTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             deploy.rollback(self.root, receipt)
 
+    def test_caller_receipt_allows_recovery_without_activation_response(self):
+        self.archive()
+        receipt = 'c' * 32
+        self.assertEqual(deploy.activate(self.root, self.bundle, SHA, receipt), receipt)
+        deploy.rollback(self.root, receipt)
+        self.assertEqual((self.root / 'index.html').read_text(), 'old home')
+
+    def test_reused_receipt_cannot_overwrite_original_backup(self):
+        self.archive()
+        receipt = 'c' * 32
+        deploy.activate(self.root, self.bundle, SHA, receipt)
+        with self.assertRaises(FileExistsError):
+            deploy.activate(self.root, self.bundle, SHA, receipt)
+        deploy.rollback(self.root, receipt)
+        self.assertEqual((self.root / 'index.html').read_text(), 'old home')
+
+    def test_invalid_caller_receipt_does_not_update_site(self):
+        self.archive()
+        with self.assertRaises(ValueError):
+            deploy.activate(self.root, self.bundle, SHA, '../outside')
+        self.assertEqual((self.root / 'index.html').read_text(), 'old home')
+
 
 if __name__ == '__main__':
     unittest.main()

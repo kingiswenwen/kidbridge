@@ -59,14 +59,16 @@ def rollback(root, receipt, check_current=True):
             target.unlink(missing_ok=True)
 
 
-def activate(root, archive, commit):
+def activate(root, archive, commit, receipt=None):
     if len(commit) != 40 or any(c not in '0123456789abcdef' for c in commit):
         raise ValueError('Invalid commit SHA')
     backup_root = root.parent / (root.name + '.kidbridge-backups')
     if backup_root.is_symlink():
         raise ValueError('Backup root must not be a symlink')
     backup_root.mkdir(mode=0o700, exist_ok=True)
-    receipt = uuid.uuid4().hex
+    receipt = receipt or uuid.uuid4().hex
+    if len(receipt) != 32 or any(c not in '0123456789abcdef' for c in receipt):
+        raise ValueError('Invalid deployment receipt')
     backup = backup_root / receipt
     backup.mkdir(mode=0o700)
     stage = backup / 'stage'
@@ -122,9 +124,10 @@ if __name__ == '__main__':
     parser.add_argument('archive_or_receipt')
     parser.add_argument('commit', nargs='?')
     parser.add_argument('--rollback', action='store_true')
+    parser.add_argument('--receipt', help='Caller-generated receipt for recovery after a lost SSH response')
     args = parser.parse_args()
     root = target_root(args.root)
     if args.rollback:
         rollback(root, args.archive_or_receipt)
     else:
-        print(activate(root, args.archive_or_receipt, args.commit))
+        print(activate(root, args.archive_or_receipt, args.commit, args.receipt))
