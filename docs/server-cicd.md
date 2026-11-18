@@ -12,7 +12,7 @@
 
 两个工作流统一固定 `ubuntu-24.04`，避免 `ubuntu-latest` 自动升级到项目锁定的 Playwright 不支持的系统。部署和只读线上检查从 `package-lock.json` 读取 Playwright 的确切版本，在隔离目录安装浏览器工具，不重复安装业务依赖。升级 Playwright 时须同时验证 runner 系统的兼容性。
 
-浏览器安装在临时 runner 上统一使用 Ubuntu 官方 HTTPS 软件源，替换曾导致下载极慢的 AWS EC2 区域 mirror list；apt 请求有超时和重试限制，只安装测试实际使用的 Chromium headless shell。安装最多执行 8 分钟，避免网络或软件源异常无限阻塞后续检查。PR 更新时取消过时的检查，尽快验证最新提交；`main` 的生产流水线不因新提交自动取消，保证发布或恢复流程有机会结束。不会在生产服务器执行软件源变更。
+`h5` 在 Playwright 的 Ubuntu 24.04 镜像内运行 Chromium 测试，PR 也会测试 WebKit。发布包演练、线上验收和只读检查在临时 runner 上通过 Ubuntu 官方 HTTPS 软件源安装 Chromium headless shell。apt 请求有超时和重试限制，浏览器安装最多执行 8 分钟。PR 更新时取消过时的检查，`main` 的生产流水线会继续完成发布或恢复流程。
 
 ## 一次性连接配置
 

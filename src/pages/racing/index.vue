@@ -24,8 +24,11 @@
     <RaceTrack
       :total="store.progress.total"
       :completed="store.progress.completed"
+      :tasks="store.tasks"
       :reduced="store.data.parentPreferences.reduceMotion"
+      @select="(id) => go(`/pages/racing/task/index?id=${encodeURIComponent(id)}`)"
     />
+    <button v-if="store.tasks.length" class="race-link track-listen" role="button" tabindex="0" @click="listen">听听今天的赛道</button>
     <view v-if="!store.tasks.length" class="race-empty"
       ><RaceIcon name="sun" :size="80" /><text class="race-heading"
         >今天是自由冒险日</text
@@ -112,6 +115,7 @@ import { onShow, onHide } from "@dcloudio/uni-app";
 import { useRacingStore } from "@/stores/racing";
 import { useAppStore } from "@/stores/app";
 import { timeSlots } from "@/data/racing/catalog";
+import { speak } from "@/utils/speak";
 import RaceShell from "@/components/racing/RaceShell.vue";
 import RaceTrack from "@/components/racing/RaceTrack.vue";
 import RaceIcon from "@/components/racing/RaceIcon.vue";
@@ -137,9 +141,11 @@ const waiting = computed(
   () => store.tasks.filter((t) => t.status === "submitted").length,
 );
 let timer: ReturnType<typeof setInterval>;
+let displayedDate = "";
 async function enter() {
   store.lockParent();
   await store.ensureToday();
+  displayedDate = store.today;
   await nextTick();
   await completion.value?.show();
 }
@@ -147,15 +153,21 @@ onShow(() => {
   enter();
   clearInterval(timer);
   timer = setInterval(() => {
-    const previous = store.today;
     store.tick();
-    if (store.today !== previous) enter();
+    if (store.today !== displayedDate) enter();
   }, 15000);
 });
-onHide(() => clearInterval(timer));
+onHide(() => { clearInterval(timer); completion.value?.hide(); });
 onUnmounted(() => clearInterval(timer));
 function go(url: string) {
   uni.navigateTo({ url });
+}
+function listen() {
+  if (!app.soundEnabled || !store.data.parentPreferences.soundsEnabled) {
+    uni.showToast({ title: "声音已关闭，可以看小站图标", icon: "none" });
+    return;
+  }
+  speak(`今天有 ${store.progress.total} 个挑战，已经完成 ${store.progress.completed} 个。${store.tasks.filter(t => t.status === 'pending').map(t => t.title).join('，')}。想先做哪项都可以。`);
 }
 </script>
 <style scoped>

@@ -17,9 +17,11 @@ concurrency:
 
 jobs:
   h5:
-    # Playwright 1.56.1 supports this image, not Ubuntu 26.04.
+    # Playwright 1.56.1 does not support the Ubuntu 26.04 latest image.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      PLAYWRIGHT_CI_IMAGE: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -48,13 +50,24 @@ jobs:
       - run: npm run build:h5
       - name: Build WeChat mini program
         run: npm run build:mp-weixin
-      - name: Install browser for racing flow tests
+      - name: Test racing journeys and navigation in Chromium
+        timeout-minutes: 10
+        run: |
+          docker run --rm --init --ipc=host \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            "$PLAYWRIGHT_CI_IMAGE" \
+            sh -c 'npm run test:racing:e2e && npm run test:navigation'
+      - name: Test racing journeys in WebKit
+        if: github.event_name == 'pull_request'
         timeout-minutes: 8
-        run: bash scripts/install-ci-browser.sh node_modules/.bin/playwright
-      - name: Test racing user flows and existing learning routes
-        run: npm run test:racing:e2e
-      - name: Test same-tab quick starts and embedded navigation
-        run: npm run test:navigation
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            --env RACING_BROWSER=webkit \
+            "$PLAYWRIGHT_CI_IMAGE" \
+            node tests/racing/browser.mjs
       - name: Retain browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
@@ -62,6 +75,9 @@ jobs:
           name: racing-browser-${{ github.sha }}
           path: |
             artifacts/racing-browser/
+            artifacts/racing-webkit/
+            artifacts/racing-requirements/
+            artifacts/racing-lifecycle/
             artifacts/navigation-browser/
           retention-days: 14
           overwrite: true

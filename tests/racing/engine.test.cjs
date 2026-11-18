@@ -11,6 +11,41 @@ const {
   validDate,
 } = require(path.join(process.env.RACING_TEST_DIR, "engine.cjs"));
 const { sha256 } = require(path.join(process.env.RACING_TEST_DIR, "pin.cjs"));
+test('quick templates create a parent-reviewed daily task once and remain editable', () => {
+  const f = fixture();
+  f.today();
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.equal(f.state.taskDefinitions.length, 1);
+  assert.equal(f.state.dailyTasks.length, 1);
+  assert.equal(f.state.dailyTasks[0].status, 'pending');
+  assert.equal(f.state.dailyTasks[0].checkMode, 'parent');
+  assert.equal(f.state.dailyTasks[0].points, 2);
+  assert.equal(balance(f.state), 0);
+  const once = f.state;
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.deepEqual(f.state, once);
+  const definition = f.state.taskDefinitions[0];
+  f.run({ type: 'saveTask', id: definition.id, input: { ...definition, title: '自己改的刷牙任务' } });
+  f.run({ type: 'addTemplate', templateIndex: 0 });
+  assert.equal(f.state.taskDefinitions.length, 1, 'Renaming an imported template cannot re-add it accidentally');
+  f.ctx.today = '2026-10-30';
+  f.today();
+  assert.equal(f.state.dailyTasks.length, 2);
+});
+test('quick templates enforce authorization, valid choices, capacity and atomic persistence', () => {
+  const f = fixture();
+  f.ctx.parent = false;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: 0 }), /验证/);
+  f.ctx.parent = true;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: -1 }), /模板/);
+  const before = f.state;
+  assert.throws(() => commitCommand({ getItem: () => JSON.stringify(before), setItem: () => { throw Error('disk full'); } }, before, { type: 'addTemplate', templateIndex: 0 }, f.ctx), /disk full/);
+  assert.deepEqual(f.state, before);
+  for (let i = 0; i < 12; i++) f.add({ title: `小挑战${i}` });
+  const full = f.state;
+  assert.throws(() => f.run({ type: 'addTemplate', templateIndex: 0 }), /12/);
+  assert.deepEqual(f.state, full);
+});
 function fixture() {
   let count = 0;
   let state = initialState(1000);
@@ -460,4 +495,16 @@ test("cleared storage cannot silently resurrect a stale in-memory ledger", () =>
   );
   assert.equal(wrote, false);
   assert.equal(balance(f.state), 3);
+});
+
+test('backup rejects future recurring and single-date schedules exceeding daily capacity', () => {
+  for (const kind of ['daily', 'weekly', 'once']) {
+    const f = fixture();
+    for (let i = 0; i < 12; i++) f.add({ schedule: kind === 'daily' ? { kind } : kind === 'weekly' ? { kind, weekdays: [0] } : { kind, date: '2026-12-20' } });
+    const imported = JSON.parse(JSON.stringify(f.state));
+    imported.taskDefinitions.push({ ...imported.taskDefinitions[0], id: 'extra-template' });
+    assert.throws(() => parseState(JSON.stringify(imported)), /12/);
+    imported.taskDefinitions.at(-1).enabled = false;
+    assert.doesNotThrow(() => parseState(JSON.stringify(imported)), 'Disabled templates must remain restorable');
+  }
 });
