@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: server-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   h5:
@@ -53,14 +53,16 @@ jobs:
         run: npm run test:racing:e2e
       - name: Test same-tab quick starts and embedded navigation
         run: npm run test:navigation
-      - name: Install WebKit for pull request checks
-        if: github.event_name == 'pull_request'
-        run: npx playwright install --with-deps webkit
       - name: Test racing journeys in WebKit
         if: github.event_name == 'pull_request'
-        env:
-          RACING_BROWSER: webkit
-        run: node tests/racing/browser.mjs
+        timeout-minutes: 8
+        run: |
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/workspace" \
+            --workdir /workspace \
+            --env RACING_BROWSER=webkit \
+            mcr.microsoft.com/playwright:v1.56.1-noble \
+            node tests/racing/browser.mjs
       - name: Retain browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
