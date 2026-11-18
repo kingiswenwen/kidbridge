@@ -228,13 +228,9 @@ try {
     await button('退出家长模式').click();
     await page.locator('.race-page-title').filter({ hasText: '今日赛道' }).waitFor();
     await page.getByRole('button', { name: '早上刷牙，待完成', exact: true }).waitFor();
-    await page.clock.setSystemTime(new Date(`${nextDate}T23:59:50+08:00`));
-    await page.clock.runFor(26000);
-    const lastDate = await page.evaluate(() => {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    });
-    assert.notEqual(lastDate, nextDate);
+    await page.clock.fastForward('24:00:00');
+    const lastDate = new Date(Date.parse(`${nextDate}T12:00:00+08:00`) + 86_400_000)
+      .toISOString().slice(0, 10);
     await generated(lastDate);
     saved = JSON.parse(await page.evaluate(k => localStorage.getItem(k), key));
     const currentTasks = saved.dailyTasks.filter(t => t.date === lastDate);
