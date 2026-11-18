@@ -119,7 +119,7 @@
   </view>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useRacingStore } from "@/stores/racing";
 import RaceIcon from "./RaceIcon.vue";
 const store = useRacingStore();
@@ -130,6 +130,15 @@ const recovery = ref("");
 const recoveryCode = ref("");
 const savedCode = ref(false);
 const message = ref("");
+// Cached parent pages survive navigation and session expiry. Never retain a
+// successful PIN/recovery code for a later one-click unlock.
+watch(() => store.isParent, () => {
+  pin.value = "";
+  confirmation.value = "";
+  recovery.value = "";
+  recovering.value = false;
+  message.value = "";
+}, { flush: "sync" });
 let timer: ReturnType<typeof setInterval>;
 onMounted(() => {
   store.tick();

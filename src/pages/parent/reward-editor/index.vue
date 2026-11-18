@@ -75,6 +75,7 @@ import { reactive, ref } from "vue";
 import { onLoad, onShow, onHide } from "@dcloudio/uni-app";
 import type { RewardInput } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
+import { returnToRacingPage } from "@/utils/racing/navigation";
 import RaceShell from "@/components/racing/RaceShell.vue";
 import ParentGate from "@/components/racing/ParentGate.vue";
 import RaceIcon from "@/components/racing/RaceIcon.vue";
@@ -147,7 +148,7 @@ async function save() {
     ) {
       uni.showToast({ title: "奖励约定已保存", icon: "none" });
       if (!pageActive) return;
-      uni.redirectTo({ url: "/pages/parent/index?section=rewards" });
+      returnToRacingPage("/pages/parent/index?section=rewards");
     } else message.value = store.error;
   } finally {
     saving.value = false;

@@ -6,8 +6,14 @@
     aria-modal="true"
     aria-label="任务完成反馈"
   >
-    <view class="completion-panel" :class="{ 'reduce-motion': reduced }">
-      <RaceIcon :name="finished ? 'flag' : 'check'" :size="78" />
+    <view class="completion-panel" :class="{ 'reduce-motion': reduced, 'finish-celebration': finished }">
+      <view class="completion-stamp"><RaceIcon :name="finished ? 'flag' : 'check'" :size="68" /></view>
+      <view v-if="!reduced && points > 0" class="star-flight" aria-hidden="true">
+        <view v-for="n in 3" :key="n" class="fuel-star" :style="{ '--launch-x': `${(n - 2) * 90}px` }"><RaceIcon name="star" :size="26" /></view>
+      </view>
+      <view v-if="finished && stage >= 2 && !reduced" class="finish-confetti" aria-hidden="true">
+        <view v-for="n in 12" :key="n" class="confetti-piece" :style="{ left: `${n * 7}%`, '--drift': `${(n % 3 - 1) * 55}px`, backgroundColor: ['#c24832', '#197c70', '#f5b417', '#5ba8f5'][n % 4] }" />
+      </view>
       <text class="race-heading">{{
         finished ? "今天的赛道完成啦！" : "又完成一站啦！"
       }}</text>
@@ -16,19 +22,28 @@
           ? `${date} 的任务已确认`
           : `${progress.completed} / ${progress.total} 站完成，真棒！`
       }}</text>
+      <text v-if="taskTitle" class="completion-task">{{ taskTitle }}</text>
       <RaceTrack
         :total="progress.total"
         :completed="shownCompleted"
         :animate="stage > 0"
         :reduced="reduced"
+        compact
       />
       <text
         class="completion-points"
         role="status"
         :style="{ visibility: stage >= 2 || reduced ? 'visible' : 'hidden' }"
         >{{
-          points ? `获得 ${points} 颗成长星星` : "每一次努力，都让小车前进"
+          finished
+            ? `今天获得 ${dayPoints} 颗成长星星`
+            : points
+              ? `获得 ${points} 颗成长星星`
+              : "每一次努力，都让小车前进"
         }}</text
+      >
+      <text v-if="!finished && !historical && nextTask" class="race-muted"
+        >下一站可以选：{{ nextTask.title }}</text
       >
       <button
         role="button"
@@ -64,6 +79,7 @@ const date = ref("");
 const points = ref(0);
 const stage = ref(0);
 const count = ref(0);
+const taskTitle = ref("");
 const systemReduced = ref(false);
 const finishCelebration = ref(false);
 let startTimer: ReturnType<typeof setTimeout>;
@@ -74,6 +90,26 @@ const reduced = computed(
 const progress = computed(() => raceProgress(store.data, date.value));
 const historical = computed(() => date.value !== store.today);
 const finished = computed(() => !historical.value && finishCelebration.value);
+const dayPoints = computed(() => {
+  const sources = new Set(
+    store.data.dailyTasks
+      .filter((task) => task.date === date.value)
+      .map((task) => `earn:${task.id}`),
+  );
+  return store.data.pointTransactions.reduce(
+    (sum, transaction) =>
+      sum +
+      (transaction.type === "earn" && sources.has(transaction.sourceId)
+        ? transaction.amount
+        : 0),
+    0,
+  );
+});
+const nextTask = computed(() =>
+  store.data.dailyTasks
+    .filter((task) => task.date === date.value && task.status === "pending")
+    .sort((a, b) => a.sortOrder - b.sortOrder)[0],
+);
 const shownCompleted = computed(() =>
   stage.value
     ? progress.value.completed
@@ -88,10 +124,11 @@ async function show() {
   // #endif
   const pending = store.pendingFeedback;
   if (!pending.length) return;
-  date.value = pending[0].date;
+  date.value = (pending.find(e => e.date === store.today) || pending[0]).date;
   const batch = pending.filter((e) => e.date === date.value);
   points.value = batch.reduce((n, e) => n + e.points, 0);
   count.value = batch.length;
+  taskTitle.value = batch.length === 1 ? batch[0].taskTitle : `${batch.length} 个小挑战，一起完成啦`;
   const celebrate =
     date.value === store.today &&
     raceProgress(store.data, date.value).finished &&
@@ -127,6 +164,11 @@ function close(rewards: boolean) {
   clearTimeout(startTimer);
   clearTimeout(endTimer);
   if (rewards) uni.navigateTo({ url: "/pages/racing/rewards/index" });
+}
+function hide() {
+  visible.value = false;
+  clearTimeout(startTimer);
+  clearTimeout(endTimer);
 }
 // #ifdef H5
 let previousFocus: HTMLElement | null = null;
@@ -182,7 +224,7 @@ onUnmounted(() => {
   releaseFocus();
   // #endif
 });
-defineExpose({ show });
+defineExpose({ show, hide });
 </script>
 <style scoped>
 .completion-backdrop {
@@ -196,6 +238,7 @@ defineExpose({ show });
   padding: 20px;
 }
 .completion-panel {
+  position: relative;
   width: 100%;
   max-width: 470px;
   max-height: 90vh;
@@ -209,6 +252,15 @@ defineExpose({ show });
   align-items: center;
   gap: 14px;
 }
+.completion-stamp { position: relative; z-index: 1; }
+.completion-task { color: #465b3a; font-size: 16px; font-weight: 750; }
+.completion-panel:not(.reduce-motion) .completion-stamp { animation: stamp-in .4s ease-out both; }
+.star-flight, .finish-confetti { position: absolute; inset: 0; overflow: hidden; border-radius: 28px; pointer-events: none; }
+.fuel-star { position: absolute; left: calc(50% - 13px); top: 49%; opacity: 0; animation: fuel-flight .6s .4s ease-in both; }
+.confetti-piece { position: absolute; top: 20%; width: 7px; height: 15px; border-radius: 3px; animation: confetti-fall .7s ease-out both; }
+@keyframes stamp-in { from { transform: scale(.75) rotate(-12deg); opacity: .5; } to { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes fuel-flight { 0% { opacity: 0; transform: translate(var(--launch-x), -130px) scale(.7); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(0, 40px) scale(.4); } }
+@keyframes confetti-fall { from { opacity: 1; transform: translate(0, -30px) rotate(0); } to { opacity: 0; transform: translate(var(--drift), 260px) rotate(240deg); } }
 .completion-points {
   font-size: 22px;
   font-weight: 800;
@@ -234,5 +286,7 @@ defineExpose({ show });
   .completion-panel {
     animation: none !important;
   }
+  .fuel-star, .confetti-piece { display: none; animation: none !important; }
+  .completion-stamp { animation: none !important; }
 }
 </style>

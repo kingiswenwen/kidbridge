@@ -6,6 +6,8 @@
 
 ## 交付资料
 
+- [2026-11-17 原需求对齐补完：9 项差异、流程与验证](requirements-alignment-2026-11-17.md)
+
 - [模块使用、源码位置、业务规则、数据与存储、部署回滚](delivery.md)
 - [实际测试结果与 AC-01–AC-20 验收状态](validation.md)
 - [真实页面截图](screenshots/README.md)

@@ -2,6 +2,14 @@
   <RaceShell title="奖励仓库">
     <text class="race-heading">小小努力，攒成惊喜</text
     ><text class="race-muted">攒下成长星星，换喜欢的赛车装扮。</text>
+    <view v-if="unlocked" class="reward-unlock race-panel" :class="{ quiet: reduceMotion }" role="status">
+      <view class="unlock-gift"><RaceIcon name="gift" :size="64" /><RaceIcon class="unlock-star" name="star" :size="28" /></view>
+      <text class="race-heading">新装扮解锁啦！</text>
+      <text class="race-row-title">{{ unlocked.title }}</text>
+      <text class="race-muted">已经放进你的车库，以后都可以使用。</text>
+      <view class="race-actions"><button role="button" tabindex="0" class="race-primary" @click="garage">去车库装上</button>
+        <button role="button" tabindex="0" class="race-secondary" @click="unlocked = undefined">继续挑选</button></view>
+    </view>
     <view v-if="target" class="race-notice"
       ><text
         >我的目标：{{ target.title }} ·
@@ -51,9 +59,15 @@
               : store.data.garage.equipped.colorId
           "
           :sticker-id="
-            preview.cosmeticSlot === 'sticker' ? preview.id : undefined
+            preview.cosmeticSlot === 'sticker'
+              ? preview.id
+              : store.data.garage.equipped.stickerId
           "
-          :wheel-id="preview.cosmeticSlot === 'wheel' ? preview.id : undefined"
+          :wheel-id="
+            preview.cosmeticSlot === 'wheel'
+              ? preview.id
+              : store.data.garage.equipped.wheelId
+          "
           preview
         /><button
           role="button"
@@ -152,7 +166,7 @@
   </RaceShell>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, nextTick } from "vue";
 import { onShow } from "@dcloudio/uni-app";
 import type { RewardDefinition } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
@@ -165,6 +179,8 @@ const store = useRacingStore();
 const { dialog, showDialog, resolveDialog } = useAppDialog();
 const tab = ref("cosmetic");
 const previewId = ref("");
+const unlocked = ref<RewardDefinition>();
+const reduceMotion = ref(false);
 const tabs = [
   { id: "cosmetic", title: "赛车装扮" },
   { id: "real_world", title: "生活奖励" },
@@ -208,6 +224,11 @@ const trophies = computed(() => [
 onShow(() => {
   store.lockParent();
   store.refresh();
+  unlocked.value = undefined;
+  reduceMotion.value = store.data.parentPreferences.reduceMotion;
+  // #ifdef H5
+  reduceMotion.value ||= typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // #endif
 });
 const owned = (id: string) => store.data.garage.ownedItemIds.includes(id);
 const equipped = (id: string) =>
@@ -235,11 +256,14 @@ function redeem(r: RewardDefinition) {
           type: r.type === "cosmetic" ? "buy" : "request",
           id: r.id,
         }))
-      )
-        uni.showToast({
-          title: r.type === "cosmetic" ? "装扮已放入车库" : "申请已交给家长",
-          icon: "none",
-        });
+      ) {
+        if (r.type === 'cosmetic') {
+          unlocked.value = r;
+          await nextTick();
+          uni.pageScrollTo({ scrollTop: 0, duration: reduceMotion.value ? 0 : 200 });
+        }
+        else uni.showToast({ title: "申请已交给家长", icon: "none" });
+      }
     },
   });
 }
@@ -253,4 +277,10 @@ function redeem(r: RewardDefinition) {
 .trophy-note {
   margin: 22px 0;
 }
+.reward-unlock { text-align: center; background: #e7f4df; }
+.unlock-gift { position: relative; display: inline-flex; margin-top: 12px; }
+.unlock-star { position: absolute; right: -24px; top: -12px; }
+.reward-unlock:not(.quiet) .unlock-gift { animation: gift-open .7s ease-out both; }
+@keyframes gift-open { 0% { transform: scale(.75) rotate(-8deg); } 55% { transform: scale(1.08) rotate(5deg); } 100% { transform: scale(1) rotate(0); } }
+@media (prefers-reduced-motion: reduce) { .unlock-gift { animation: none !important; } }
 </style>

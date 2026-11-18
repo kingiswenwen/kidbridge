@@ -59,7 +59,23 @@
         </button></view
       >
       <template v-if="section === 'today'"
-        ><text class="race-subheading">今天的安排</text
+        ><view class="recent-redemptions">
+          <text class="race-subheading">近期兑换</text>
+          <text v-if="!recentRedemptions.length" class="race-muted">
+            还没有生活奖励兑换记录。
+          </text>
+          <view v-for="r in recentRedemptions" :key="r.id" class="race-row">
+            <RaceIcon name="gift" :size="40" />
+            <view class="race-row-main">
+              <text class="race-row-title">{{ r.rewardTitleSnapshot }}</text>
+              <text class="race-muted">
+                {{ r.costSnapshot }} 星 · {{ redemptionLabels[r.status] }}
+              </text>
+              <text class="race-date">申请于 {{ requestDate(r.requestedAt) }}</text>
+            </view>
+          </view>
+        </view>
+        <text class="race-subheading">今天的安排</text
         ><text class="race-muted"
           >跳过不扣星、不算失败；已经完成的记录不能覆盖。</text
         ><view v-if="!store.tasks.length" class="race-empty"
@@ -104,8 +120,9 @@
         >
         <text class="race-subheading">常用任务模板</text
         ><text class="race-muted"
-          >添加后可以修改周期、分值和审核方式，不会自动完成任务。</text
+          >点一下加入今天：每天重复、2 星、家长审核。之后可以编辑。</text
         >
+        <text v-if="templateNotice" class="race-success template-notice" role="status">{{ templateNotice }}</text>
         <view class="template-strip"
           ><button
             role="button"
@@ -114,16 +131,16 @@
             :key="t.title"
             class="template-button"
             :disabled="
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              store.busy || taskTemplateExists(store.data, i)
             "
             :aria-disabled="
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              store.busy || taskTemplateExists(store.data, i)
             "
-            @click="go(`/pages/parent/task-editor/index?template=${i}`)"
+            @click="addTemplate(i)"
           >
             <RaceIcon :name="t.icon" :size="42" /><text>{{ t.title }}</text
             ><text class="race-muted">{{
-              store.data.taskDefinitions.some((x) => x.title === t.title)
+              taskTemplateExists(store.data, i)
                 ? "已添加"
                 : "添加模板"
             }}</text>
@@ -155,6 +172,17 @@
               "
             >
               编辑任务</button
+            ><button
+              role="button"
+              tabindex="0"
+              class="race-link"
+              @click="
+                go(
+                  `/pages/parent/task-editor/index?copy=${encodeURIComponent(t.id)}`,
+                )
+              "
+            >
+              复制模板</button
             ><button
               role="button"
               tabindex="0"
@@ -345,11 +373,12 @@
   ></RaceShell>
 </template>
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { onLoad, onShow } from "@dcloudio/uni-app";
-import type { Schedule } from "@/types/racing";
+import { computed, onUnmounted, ref } from "vue";
+import { onLoad, onShow, onHide } from "@dcloudio/uni-app";
+import type { Redemption, Schedule } from "@/types/racing";
 import { useRacingStore } from "@/stores/racing";
-import { STORAGE_KEY } from "@/utils/racing/engine";
+import { returnToRacingPage } from "@/utils/racing/navigation";
+import { localDate, STORAGE_KEY, taskTemplateExists } from "@/utils/racing/engine";
 import { taskTemplates } from "@/data/racing/catalog";
 import { useAppDialog } from "@/utils/dialog";
 import RaceShell from "@/components/racing/RaceShell.vue";
@@ -363,6 +392,7 @@ const section = ref("today");
 const backupText = ref("");
 const importText = ref("");
 const notice = ref("");
+const templateNotice = ref("");
 const tabs = [
   { id: "today", title: "今天" },
   { id: "tasks", title: "任务" },
@@ -375,6 +405,18 @@ const statusLabels = {
   completed: "已完成",
   skipped: "已跳过",
 };
+const redemptionLabels: Record<Redemption["status"], string> = {
+  requested: "待审核",
+  approved: "待兑现",
+  fulfilled: "已兑现",
+  rejected: "未通过",
+  cancelled: "已取消并退星",
+};
+const recentRedemptions = computed(() =>
+  [...store.data.redemptions]
+    .sort((a, b) => b.requestedAt - a.requestedAt)
+    .slice(0, 3),
+);
 const submissions = computed(
   () => store.data.dailyTasks.filter((t) => t.status === "submitted").length,
 );
@@ -388,13 +430,31 @@ onLoad((q) => {
   if (q?.section && tabs.some((t) => t.id === q.section))
     section.value = q.section;
 });
-onShow(() => store.ensureToday());
+let dayTimer: ReturnType<typeof setInterval>;
+let displayedDate = "";
+async function refreshDay() {
+  await store.ensureToday();
+  displayedDate = store.today;
+}
+onShow(() => {
+  refreshDay();
+  clearInterval(dayTimer);
+  dayTimer = setInterval(() => {
+    store.tick();
+    if (store.today !== displayedDate) refreshDay();
+  }, 15000);
+});
+onHide(() => clearInterval(dayTimer));
+onUnmounted(() => clearInterval(dayTimer));
 function go(url: string) {
   uni.navigateTo({ url });
 }
 function exit() {
   store.lockParent();
-  uni.redirectTo({ url: "/pages/racing/index" });
+  returnToRacingPage("/pages/racing/index");
+}
+function requestDate(at: number) {
+  return localDate(new Date(at));
 }
 function scheduleLabel(s: Schedule) {
   return s.kind === "daily"
@@ -417,6 +477,10 @@ function skip(id: string, title: string) {
 async function addToday(definitionId: string) {
   if (await store.run({ type: "addToday", definitionId }))
     uni.showToast({ title: "今天已安排", icon: "none" });
+}
+async function addTemplate(templateIndex: number) {
+  if (await store.run({ type: 'addTemplate', templateIndex }))
+    templateNotice.value = `${taskTemplates[templateIndex].title}已加入今天，完成后由家长确认。`;
 }
 function preferences(soundsEnabled: boolean, reduceMotion: boolean) {
   store.run({
@@ -544,6 +608,7 @@ function chooseMiniFile() {
 .parent-heading {
   margin: 8px 0 20px;
 }
+.template-notice { display: block; margin-top: 10px; }
 .parent-summary {
   display: flex;
   justify-content: space-around;

@@ -6,7 +6,7 @@ import type {
   TaskDefinition,
   TaskInput,
 } from "../../types/racing";
-import { defaultRewards } from "../../data/racing/catalog";
+import { defaultRewards, taskTemplates } from "../../data/racing/catalog";
 
 export const STORAGE_KEY = "kidbridge-racing-storage-v1";
 export function localDate(now = new Date()): string {
@@ -47,6 +47,13 @@ export function initialState(now = Date.now()): RacingState {
 }
 export function balance(s: RacingState): number {
   return s.pointTransactions.reduce((n, t) => n + t.amount, 0);
+}
+export function taskTemplateExists(s: RacingState, index: number): boolean {
+  const template = taskTemplates[index];
+  return Boolean(template && s.taskDefinitions.some(task =>
+    task.id === `builtin-task:${index}` ||
+    (task.title === template.title && task.occurrenceKey === template.occurrenceKey),
+  ));
 }
 export function raceProgress(s: RacingState, date: string) {
   const tasks = s.dailyTasks.filter(
@@ -173,6 +180,34 @@ export function validateReward(r: RewardInput) {
       "装扮资源无效",
     );
 }
+/** Imported schedules must obey the same future-day limits as editor saves. */
+function validateScheduleCapacity(definitions: TaskDefinition[]) {
+  const daily = definitions.filter(
+    (x) => x.enabled && x.schedule.kind === "daily",
+  ).length;
+  for (let weekday = 0; weekday < 7; weekday++)
+    assert(
+      daily +
+        definitions.filter(
+          (x) =>
+            x.enabled &&
+            x.schedule.kind === "weekly" &&
+            x.schedule.weekdays.includes(weekday),
+        ).length <=
+        12,
+      "重复日程超过每日 12 项上限",
+    );
+  const dates = new Set(
+    definitions.flatMap((x) =>
+      x.enabled && x.schedule.kind === "once" ? [x.schedule.date] : [],
+    ),
+  );
+  for (const date of dates)
+    assert(
+      definitions.filter((x) => matches(x, date)).length <= 12,
+      "单次日期超过每日 12 项上限",
+    );
+}
 export function matches(t: TaskInput, date: string) {
   if (!t.enabled) return false;
   const r = t.schedule;
@@ -206,6 +241,20 @@ export function transition(
   command: RacingCommand,
   ctx: EngineContext,
 ): RacingState {
+  if (command.type === 'addTemplate') {
+    assert(ctx.parent, '请先进入家长中心完成验证');
+    assert(Number.isInteger(command.templateIndex) && command.templateIndex >= 0 && command.templateIndex < taskTemplates.length, '任务模板不存在');
+    if (taskTemplateExists(current, command.templateIndex)) return current;
+    let definitionCreated = false;
+    return transition(current, {
+      type: 'saveTask',
+      input: { ...taskTemplates[command.templateIndex], sortOrder: current.taskDefinitions.length },
+      applyToday: true,
+    }, { ...ctx, id: () => {
+      if (!definitionCreated) { definitionCreated = true; return `builtin-task:${command.templateIndex}`; }
+      return ctx.id();
+    } });
+  }
   const s: RacingState = JSON.parse(JSON.stringify(current));
   const before = JSON.stringify(s);
   const { now, today, parent, id } = ctx;
@@ -304,32 +353,7 @@ export function transition(
         };
         s.taskDefinitions.push(t);
       }
-      // Reject future schedules that could overflow a 12-station day, not just today's instance.
-      const daily = s.taskDefinitions.filter(
-        (x) => x.enabled && x.schedule.kind === "daily",
-      ).length;
-      for (let weekday = 0; weekday < 7; weekday++)
-        assert(
-          daily +
-            s.taskDefinitions.filter(
-              (x) =>
-                x.enabled &&
-                x.schedule.kind === "weekly" &&
-                x.schedule.weekdays.includes(weekday),
-            ).length <=
-            12,
-          "重复日程超过每日 12 项上限",
-        );
-      const dates = new Set(
-        s.taskDefinitions.flatMap((x) =>
-          x.enabled && x.schedule.kind === "once" ? [x.schedule.date] : [],
-        ),
-      );
-      for (const date of dates)
-        assert(
-          s.taskDefinitions.filter((x) => matches(x, date)).length <= 12,
-          "单次日期超过每日 12 项上限",
-        );
+      validateScheduleCapacity(s.taskDefinitions);
       if (command.applyToday) {
         const old = s.dailyTasks.find(
           (x) => x.date === today && x.definitionId === t!.id,
@@ -646,6 +670,7 @@ export function parseState(raw: string): RacingState {
       "模板时间错误",
     );
   });
+  validateScheduleCapacity(s.taskDefinitions);
   s.rewards.forEach(validateReward);
   s.dailyTasks.forEach((t) => {
     validateTask(t);
