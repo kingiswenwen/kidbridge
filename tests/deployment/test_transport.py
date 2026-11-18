@@ -28,7 +28,7 @@ count = int(state.read_text()) + 1 if state.exists() else 1
 state.write_text(str(count))
 failures = config.get(kind, [])
 code = failures[min(count - 1, len(failures) - 1)] if failures else 0
-if kind == 'node' and config.get('interrupt'):
+if kind == config.get('interrupt_during'):
     os.kill(int(os.environ['SCRIPT_PID']), signal.SIGTERM)
 if code:
     if kind == 'connect' and config.get('failed_connect_output'):
@@ -156,9 +156,18 @@ class TransportTests(unittest.TestCase):
         self.assertIn('Rollback could not be confirmed', result.stderr)
 
     def test_interrupted_verification_rolls_back(self):
-        self.assertNotEqual(self.run_deploy({'interrupt': True, 'node': [1]}).returncode, 0)
+        self.assertNotEqual(self.run_deploy({'interrupt_during': 'node', 'node': [1]}).returncode, 0)
         self.assertEqual(self.count('rollback'), 1)
         self.assertEqual(self.report['stage'], 'rolled-back')
+
+    def test_interrupted_activation_preserves_recovery(self):
+        result = self.run_deploy({'interrupt_during': 'activate'})
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.count('activate'), 1)
+        self.assertEqual(self.count('rollback'), 0)
+        self.assertEqual(self.count('cleanup'), 0)
+        self.assertEqual(self.report['stage'], 'activation-unconfirmed')
+        self.assertIn(self.report['receipt'], result.stderr)
 
     def test_invalid_remote_output_is_never_used_as_cleanup_command(self):
         self.assertNotEqual(self.run_deploy({'remote_tmp': '/tmp/unexpected; touch bad'}).returncode, 0)

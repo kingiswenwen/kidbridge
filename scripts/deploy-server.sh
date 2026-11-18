@@ -62,6 +62,10 @@ cleanup() {
       echo "::error::Rollback could not be confirmed. Recovery tool: $remote_tmp/activate-server.py; receipt: $receipt. See docs/server-cicd.md." >&2
     fi
     status=1
+  elif [[ $stage == activating ]]; then
+    stage=activation-unconfirmed
+    preserve_remote=true
+    echo "::error::Activation could not be confirmed. Inspect the release and backup using $remote_tmp/activate-server.py and receipt $receipt before retrying. See docs/server-cicd.md." >&2
   fi
   report
   if [[ -n $remote_tmp && $preserve_remote == false ]]; then
@@ -90,17 +94,10 @@ receipt=$(python3 -c 'import uuid; print(uuid.uuid4().hex)')
 stage=activating
 report
 echo "Activating $GITHUB_SHA; recovery receipt: $receipt"
-if ! response=$(ssh "${ssh_options[@]}" "$remote" \
-  "python3 $remote_tmp/activate-server.py $DEPLOY_PATH $remote_tmp/site.tar.gz $GITHUB_SHA --receipt $receipt"); then
-  stage=activation-unconfirmed
-  preserve_remote=true
-  echo "::error::Activation failed or its response was lost. Do not blindly retry; inspect the release and backup using receipt $receipt and $remote_tmp/activate-server.py. See docs/server-cicd.md." >&2
-  exit 1
-fi
+response=$(ssh "${ssh_options[@]}" "$remote" \
+  "python3 $remote_tmp/activate-server.py $DEPLOY_PATH $remote_tmp/site.tar.gz $GITHUB_SHA --receipt $receipt")
 if [[ $response != "$receipt" ]]; then
-  stage=activation-unconfirmed
-  preserve_remote=true
-  echo "::error::Unexpected activation response. Retained $remote_tmp/activate-server.py; recovery receipt: $receipt." >&2
+  echo 'Unexpected activation response.' >&2
   exit 1
 fi
 activated=true
